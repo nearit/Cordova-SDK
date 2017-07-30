@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    MIT License
+
+    Copyright (c) 2017 nearit.com
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+-->
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="it.near.sdk.cordova-plugin"
+        name="NearIT"
+        version="0.0.1">
+
+    <name>NearIT SDK</name>
+    <description>Cordova plugin for NearIT SDK</description>
+    <author>Fabio Cigliano</author>
+    <license>MIT</license>
+
+    <keywords>cordova,nearit</keywords>
+    <repo>https://github.com/nearit/Cordova-SDK</repo>
+    <issue>https://github.com/nearit/Cordova-SDK/issues</issue>
+
+    <engines>
+        <engine name="cordova" version=">=6.0.0" />
+        <engine name="cordova-ios" version=">=4.0.0" />
+        <engine name="cordova-android" version=">=6.2.3" />
+    </engines>
+
+    <!-- iOs platform definition -->
+    <platform name="ios">
+
+        <!--
+            Cocoa pods dependency
+            https://github.com/blakgeek/cordova-plugin-cocoapods-support
+        -->
+        <dependency id="cordova-plugin-cocoapod-support" />
+
+        <!--
+            disabling use-frameworks due to
+            https://issues.apache.org/jira/browse/CB-10072
+        -->
+        <pods-config ios-min-version="9.0"
+                     use-frameworks="false" />
+
+        <!--
+            NearIT iOS SDK dependency
+            https://github.com/nearit/Near-iOS-SDK
+            Supporting iOs 9.0 and later
+            Near-iOS-SDK release 1.0.4
+        -->
+        <pod name="NearITSDK" configurations="release,debug"
+             git="https://github.com/nearit/Near-iOS-SDK"
+             tag="1.0.4" />
+
+        <config-file target="config.xml" parent="/*">
+            <feature name="NearIT">
+                <param name="ios-package" value="CDVNearIT" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+
+        <config-file platform="ios" target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
+            <string>I need your location</string>
+        </config-file>
+
+        <config-file platform="ios" target="*-Info.plist" parent="LSRequiresIPhoneOS">
+            <true />
+        </config-file>
+
+        <!-- source files -->
+        <header-file src="src/ios/Macros.h" />
+
+        <header-file src="src/ios/NSObject+AssociatedObjectSupport.h" />
+        <source-file src="src/ios/NSObject+AssociatedObjectSupport.m" />
+
+        <header-file src="src/ios/AppDelegate+NearIT.h" />
+        <source-file src="src/ios/AppDelegate+NearIT.m" />
+
+        <header-file src="src/ios/CDVNearIT.h" />
+        <source-file src="src/ios/CDVNearIT.m" />
+
+        <!--
+        hook to fix CODE_SIGN_ENTITLEMENTS
+        https://issues.apache.org/jira/browse/CB-12212
+        -->
+        <hook type="before_prepare" src="hooks/02_before_prepare_ios.js"/>
+
+    </platform>
+
+    <!-- customize config.xml and platform project files -->
+    <hook type="before_prepare" src="hooks/01_before_prepare.js" />
+
+    <js-module src="www/nearit.js" name="nearit">
+        <runs />
+        <clobbers target="nearit" />
+    </js-module>
+
+    <!-- browser platform definition -->
+    <platform name="browser">
+        <config-file target="config.xml" parent="/*">
+            <feature name="NearIT">
+                <param name="browser-package" value="NearIT" />
+            </feature>
+        </config-file>
+
+        <js-module src="src/browser/CDVNearIT.js" name="CDVNearIT">
+            <runs/>
+            <clobbers target="nearitproxy" />
+        </js-module>
+    </platform>
+
+</plugin>

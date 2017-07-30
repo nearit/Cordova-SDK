@@ -1,0 +1,45 @@
+{
+  "name": "nearit-cordova-sdk",
+  "version": "0.0.1",
+  "description": "Cordova plugin for NearIT SDK",
+  "author": {
+    "name" : "Fabio Cigliano",
+    "email" : "fabio.cigliano@gmail.com",
+    "url" : "http://fabio.cigliano.name"
+  },
+  "license": "MIT",
+  "cordova": {
+    "id": "it.near.sdk.cordova-plugin",
+    "platforms": [
+      "ios",
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nearit/Cordova-SDK"
+  },
+  "keywords": [
+    "cordova",
+    "nearit",
+    "ecosystem:cordova",
+    "cordova:plugin",
+    "cordova-ios",
+    "cordova-android"
+  ],
+  "bugs": {
+    "url": "https://github.com/nearit/Cordova-SDK/issues"
+  },
+  "homepage": "https://github.com/nearit/Cordova-SDK#readme",
+  "scripts": {
+    "test": "npm run jshint",
+    "jshint": "node node_modules/jshint/bin/jshint www && node node_modules/jshint/bin/jshint src && node node_modules/jshint/bin/jshint tests"
+  },
+  "dependencies": {
+    "elementtree": "0.1.7",
+    "plist": "^2.1.0"
+  },
+  "devDependencies": {
+    "jshint": "^2.6.0"
+  }
+}
