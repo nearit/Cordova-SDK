@@ -56,4 +56,6 @@
 @property (nonatomic, strong) CLLocationManager *locationManager;
 #endif
 
+- (void)permissionRequest;
+
 @end

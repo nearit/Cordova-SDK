@@ -117,32 +117,8 @@
                                                     NO;
 #endif
 
-#ifdef NEARIT_USE_LOCATION
-    self.locationManager = [[CLLocationManager alloc] init];
-    self.locationManager.delegate = self;
-    [self.locationManager requestAlwaysAuthorization];
-#endif
-
-#ifdef NEARIT_USE_PUSH_NOTIFICATION
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
-        [[UNUserNotificationCenter currentNotificationCenter]
-            requestAuthorizationWithOptions:UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound
-         completionHandler:^(BOOL granted, NSError * _Nullable error) {
-             // completion handler
-             NITLogD(TAG, @"push notification permission callback (granted=%i, error=%@)", granted, error);
-             if (granted) {
-                 [[CDVNearIT instance] fireWindowEvent:CDVNE_PushNotification_Granted];
-             } else {
-                 [[CDVNearIT instance] fireWindowEvent:CDVNE_PushNotification_NotGranted withMessage:[error localizedDescription]];
-             }
-        }];
-        UNUserNotificationCenter.currentNotificationCenter.delegate = self;
-    } else {
-        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound
-                                                                                        categories:nil]];
-    }
-    NITLogI(TAG, @"registering for push notifications");
-    [application registerForRemoteNotifications];
+#ifdef NEARIT_SHOULD_AUTO_ASK_FOR_PERMISSION_AT_STARTUP
+    [self permissionRequest];
 #endif
 
     // This line at runtime does not go into an infinite loop
@@ -341,5 +317,40 @@ static char key2;
 
 }
 #endif
+
+- (void)permissionRequest {
+    NITLogV(TAG, @"permission request to the user");
+
+    UIApplication* application = [UIApplication sharedApplication];
+
+#ifdef NEARIT_USE_LOCATION
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    [self.locationManager requestAlwaysAuthorization];
+#endif
+
+#ifdef NEARIT_USE_PUSH_NOTIFICATION
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
+        [[UNUserNotificationCenter currentNotificationCenter]
+            requestAuthorizationWithOptions:UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound
+         completionHandler:^(BOOL granted, NSError * _Nullable error) {
+             // completion handler
+             NITLogD(TAG, @"push notification permission callback (granted=%i, error=%@)", granted, error);
+             if (granted) {
+                 [[CDVNearIT instance] fireWindowEvent:CDVNE_PushNotification_Granted];
+             } else {
+                 [[CDVNearIT instance] fireWindowEvent:CDVNE_PushNotification_NotGranted withMessage:[error localizedDescription]];
+             }
+        }];
+        UNUserNotificationCenter.currentNotificationCenter.delegate = self;
+    } else {
+        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound
+                                                                                        categories:nil]];
+    }
+    NITLogI(TAG, @"registering for push notifications");
+    [application registerForRemoteNotifications];
+#endif
+
+}
 
 @end

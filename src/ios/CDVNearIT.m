@@ -323,7 +323,6 @@ __weak CDVNearIT *instance = nil;
                                   callbackId:[command callbackId]];
 }
 
-
 #pragma mark - NITManager
 
 /**
@@ -357,6 +356,32 @@ __weak CDVNearIT *instance = nil;
 
     NITLogD(TAG, @"NITManager :: stop");
     [[NITManager defaultManager] stop];
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                  callbackId:[command callbackId]];
+}
+
+/**
+ * Manually ask for permission
+ * <code><pre>
+    cordova.exec(successCb, errorCb, "nearit", "permissionRequest", []);
+ </pre></code>
+ */
+- (void)permissionRequest:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+
+#ifndef NEARIT_SHOULD_AUTO_ASK_FOR_PERMISSION_AT_STARTUP
+    NITLogD(TAG, @"NITManager :: request permission to the user");
+    [[UIApplication sharedApplication] delegate] permissionRequest];
+#else
+    /**
+     * disabled this cordova method if automatically handled at startup
+     * @see AppDelegate+NearIT.m
+     */
+#endif
 
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
 
