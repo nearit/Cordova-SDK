@@ -67,6 +67,8 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 - (void)fireWindowEvent:( CDVEventType )event withMessage:(NSString* _Nonnull)message;
 - (void)fireWindowEvent:( CDVEventType )event withArguments:(NSDictionary* _Nonnull)arguments;
 
+- (void)fireEvent:( CDVInvokedUrlCommand* _Nonnull )command;
+
 #pragma mark - Profile Id
 
 - (void)resetProfile:( CDVInvokedUrlCommand* _Nonnull )command;

@@ -58,17 +58,17 @@ __weak CDVNearIT *instance = nil;
 
     switch(eventType) {
 
-        case CDVNE_PushNotification_Granted:    result = @"nearit.pushGranted"; break;
-        case CDVNE_PushNotification_NotGranted: result = @"nearit.pushDenied"; break;
-        case CDVNE_PushNotification_Remote:     result = @"nearit.pushReceived"; break;
-        case CDVNE_PushNotification_Local:      result = @"nearit.pushReceived"; break;
+        case CDVNE_PushNotification_Granted:    result = @"pushGranted.nearit"; break;
+        case CDVNE_PushNotification_NotGranted: result = @"pushDenied.nearit"; break;
+        case CDVNE_PushNotification_Remote:     result = @"pushReceived.nearit"; break;
+        case CDVNE_PushNotification_Local:      result = @"pushReceived.nearit"; break;
 
-        case CDVNE_Location_Granted:    result = @"nearit.locationGranted"; break;
-        case CDVNE_Location_NotGranted: result = @"nearit.locationDenied"; break;
+        case CDVNE_Location_Granted:    result = @"locationGranted.nearit"; break;
+        case CDVNE_Location_NotGranted: result = @"locationDenied.nearit"; break;
 
-        case CDVNE_Event_Simple:     result = @"nearit.eventSimple"; break;
-        case CDVNE_Event_CustomJSON: result = @"nearit.eventJSON"; break;
-        case CDVNE_Event_Error:      result = @"nearit.error"; break;
+        case CDVNE_Event_Simple:     result = @"eventSimple.nearit"; break;
+        case CDVNE_Event_CustomJSON: result = @"eventJSON.nearit"; break;
+        case CDVNE_Event_Error:      result = @"error.nearit"; break;
 
         default:
             [NSException raise:NSGenericException format:@"Unexpected CDVEventType."];
@@ -82,7 +82,7 @@ __weak CDVNearIT *instance = nil;
     NSString* eventName = [self formatTypeToString:event];
     NITLogI(TAG, @"fire window event %@", eventName);
 
-    [self.commandDelegate evalJs:[NSString stringWithFormat:@"window.dispatchEvent(new CustomEvent('%@', {}));", eventName, nil]];
+    [self.commandDelegate evalJs:[NSString stringWithFormat:@"cordova.fireWindowEvent('%@', {});", eventName, nil]];
 
 }
 
@@ -124,8 +124,34 @@ __weak CDVNearIT *instance = nil;
     }
 
     NITLogI(TAG, @"fire window event %@ with arguments: %@", eventName, arguments2);
-    [self.commandDelegate evalJs:[NSString stringWithFormat:@"window.dispatchEvent(new CustomEvent('%@', %@));", eventName, jsonString, nil]];
+    [self.commandDelegate evalJs:[NSString stringWithFormat:@"cordova.fireWindowEvent('%@', %@);", eventName, jsonString, nil]];
 
+}
+
+/**
+ * Fire NearIT event (just for testing)
+ * <code><pre>
+    cordova.exec(successCb, errorCb, "nearit", "fireEvent", [eventType]);
+</pre></code>
+ */
+- (void)fireEvent:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+
+    NSString* eventType = [[command arguments] objectAtIndex:0];
+
+    if (!IS_EMPTY(eventType)) {
+
+        [self.commandDelegate evalJs:[NSString stringWithFormat:@"cordova.fireWindowEvent('%@', {});", eventType, nil]];
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                         messageAsString:@"Missing eventType parameter"];
+    }
+
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                  callbackId:[command callbackId]];
 }
 
 #pragma mark - Profile Id

@@ -41,6 +41,33 @@ function CDVNearIT() {
 }
 
 /*
+ * Event handling
+ */
+
+/**
+ * Fire NearIT event (just for testing)
+ * @param string     eventType see NearIT.eventTYpe
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ * @param array opts method arguments
+ */
+CDVNearIT.prototype.fireEvent = function(successCallback, errorCallback, opts) {
+    try {
+
+        console.log("CDVNearIT :: fireEvent", opts);
+        var eventType = opts[0];
+        window.dispatchEvent(new CustomEvent(eventType, {
+            detail: "test event"
+        }));
+
+        successCallback();
+    } catch(err) {
+        console.error(err);
+        errorCallback(err);
+    }
+};
+
+/*
  * User Profile Id
  */
 

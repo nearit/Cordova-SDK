@@ -40,17 +40,17 @@ function NearIT() {
     var self = this;
 
     self.eventType = {
-        "CDVNE_PushNotification_Granted": "nearit.pushGranted",
-        "CDVNE_PushNotification_NotGranted": "nearit.pushDenied",
-        "CDVNE_PushNotification_Remote": "nearit.pushReceived",
-        "CDVNE_PushNotification_Local": "nearit.pushReceived",
+        "CDVNE_PushNotification_Granted": "pushGranted.nearit",
+        "CDVNE_PushNotification_NotGranted": "pushDenied.nearit",
+        "CDVNE_PushNotification_Remote": "pushReceived.nearit",
+        "CDVNE_PushNotification_Local": "pushReceived.nearit",
 
-        "CDVNE_Location_Granted": "nearit.locationGranted",
-        "CDVNE_Location_NotGranted": "nearit.locationDenied",
+        "CDVNE_Location_Granted": "locationGranted.nearit",
+        "CDVNE_Location_NotGranted": "locationDenied.nearit",
 
-        "CDVNE_Event_Simple": "nearit.eventSimple",
-        "CDVNE_Event_CustomJSON": "nearit.eventJSON",
-        "CDVNE_Event_Error": "nearit.error"
+        "CDVNE_Event_Simple": "eventSimple.nearit",
+        "CDVNE_Event_CustomJSON": "eventJSON.nearit",
+        "CDVNE_Event_Error": "error"
     };
 }
 
@@ -60,23 +60,34 @@ function NearIT() {
 
 /**
  * Wrapper method to attach an event listener specific for NearIT Events
- * @param eventType see NearIT.eventTYpe
- * @param eventCallback callback function
+ * @param string     eventType see NearIT.eventTYpe
+ * @param {Function} eventCallback callback function
  */
 NearIT.prototype.addEventListener = function(eventType, eventCallback) {
     if (!this.eventType.hasOwnProperty(eventType)) {
         console.log("Failed to attach listener, due to: unknown event type " + eventType);
     } else {
-        window.addEventListener(eventType, function() {
+        window.addEventListener(this.eventType[eventType], function() {
             console.log("NearIT :: event " + eventType + " triggered ", arguments);
             eventCallback.apply(this, arguments);
         });
     }
 }
 
+/**
+ * Fire NearIT event from UI (just for testing)
+ * @param string     eventType see NearIT.eventTYpe
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.fireEvent = function(eventType, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, "nearit", "fireEvent", [eventType]);
+}
+
 /*
  * User Profile Id
  */
+
 /**
  * Reset NearIT user profile
  * @param {Function} successCallback The function to call when the call is successful
