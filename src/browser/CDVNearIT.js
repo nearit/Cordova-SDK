@@ -44,6 +44,8 @@ function CDVNearIT() {
  * User Profile Id
  */
 
+var _profileId = 'N34R1TF4K31D1234';
+
 /**
  * Reset NearIT user profile
  * @param {Function} successCallback The function to call when the call is successful
@@ -51,6 +53,7 @@ function CDVNearIT() {
  * @param array opts method arguments
  */
 CDVNearIT.prototype.resetProfile = function(successCallback, errorCallback, opts) {
+    _profileId = null;
     successCallback();
 };
 
@@ -61,7 +64,7 @@ CDVNearIT.prototype.resetProfile = function(successCallback, errorCallback, opts
  * @param array opts method arguments
  */
 CDVNearIT.prototype.getProfileId = function(successCallback, errorCallback, opts) {
-    successCallback('N34R1TF4K31D1234');
+    successCallback(_profileId);
 };
 
 /**
@@ -78,6 +81,7 @@ CDVNearIT.prototype.setProfileId = function(successCallback, errorCallback, opts
     } else if((""+opts[0]).length == 0) {
         errorCallback("missing profileId argument");
     } else {
+        _profileId = opts[0];
         successCallback();
     }
 };
@@ -116,7 +120,7 @@ CDVNearIT.prototype.setUserData = function(successCallback, errorCallback, opts)
  * @param {Function} errorCallback The function to call when there is an error
  * @param array opts method arguments
  */
-CDVNearIT.prototype.trackNotifiedEvent = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.sendTrackingWithRecipeIdForEventNotified = function(successCallback, errorCallback, opts) {
     opts = opts || [];
 
     if (opts.length != 1) {
@@ -134,7 +138,7 @@ CDVNearIT.prototype.trackNotifiedEvent = function(successCallback, errorCallback
  * @param {Function} errorCallback The function to call when there is an error
  * @param array opts method arguments
  */
-CDVNearIT.prototype.trackEngagedEvent = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.sendTrackingWithRecipeIdForEventEngaged = function(successCallback, errorCallback, opts) {
     opts = opts || [];
 
     if (opts.length != 1) {
@@ -152,7 +156,7 @@ CDVNearIT.prototype.trackEngagedEvent = function(successCallback, errorCallback,
  * @param {Function} errorCallback The function to call when there is an error
  * @param array opts method arguments
  */
-CDVNearIT.prototype.trackEngagedEvent = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.sendTrackingWithRecipeIdForCustomEvent = function(successCallback, errorCallback, opts) {
     opts = opts || [];
 
     if (opts.length != 1) {
@@ -185,6 +189,16 @@ CDVNearIT.prototype.startRadar = function(successCallback, errorCallback, opts) 
  * @param opts
  */
 CDVNearIT.prototype.stopRadar = function(successCallback, errorCallback, opts) {
+    successCallback();
+};
+
+/**
+ * Request push notification and location permission
+ * @param successCallback
+ * @param errorCallback
+ * @param opts
+ */
+CDVNearIT.prototype.permissionRequest = function(successCallback, errorCallback, opts) {
     successCallback();
 };
 

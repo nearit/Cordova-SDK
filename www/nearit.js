@@ -64,7 +64,7 @@ function NearIT() {
  * @param eventCallback callback function
  */
 NearIT.prototype.addEventListener = function(eventType, eventCallback) {
-    if (!NearIT.eventType.hasOwnProperty(eventType)) {
+    if (!this.eventType.hasOwnProperty(eventType)) {
         console.log("Failed to attach listener, due to: unknown event type " + eventType);
     } else {
         window.addEventListener(eventType, eventCallback);
@@ -148,7 +148,7 @@ NearIT.prototype.trackEngagedEvent = function(recipeId, successCallback, errorCa
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.trackEngagedEvent = function(recipeId, eventName, successCallback, errorCallback) {
+NearIT.prototype.trackCustomEvent = function(recipeId, eventName, successCallback, errorCallback) {
     exec(successCallback, errorCallback, "nearit", "sendTrackingWithRecipeIdForCustomEvent", [recipeId, eventName]);
 };
 
@@ -161,7 +161,7 @@ NearIT.prototype.trackEngagedEvent = function(recipeId, eventName, successCallba
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.trackEngagedEvent = function(successCallback, errorCallback) {
+NearIT.prototype.startRadar = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, "nearit", "startRadar", []);
 };
 
@@ -170,8 +170,17 @@ NearIT.prototype.trackEngagedEvent = function(successCallback, errorCallback) {
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.trackEngagedEvent = function(successCallback, errorCallback) {
+NearIT.prototype.stopRadar = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, "nearit", "stopRadar", []);
+};
+
+/**
+ * Request permission to push notification and geolocation services
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.permissionRequest = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, "nearit", "permissionRequest", []);
 };
 
 /*
