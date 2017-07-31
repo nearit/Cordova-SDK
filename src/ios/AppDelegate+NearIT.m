@@ -226,10 +226,17 @@
          // Handle push notification message
          NITLogD(TAG, @"didReceiveRemoteNotification content=%@ recipe=%@ error=%@", content, recipe, error);
 
-         [self manager:[NITManager defaultManager]
-           handleEvent:CDVNE_PushNotification_Remote
-           withContent:content
-                recipe:recipe];
+         if (error) {
+            [self manager:[NITManager defaultManager]
+                  eventFailureWithError:error
+                  recipe:recipe];
+         } else {
+            [self manager:[NITManager defaultManager]
+                  handleEvent:CDVNE_PushNotification_Remote
+                  withContent:content
+                  recipe:recipe];
+         }
+
     }];
 
     completionHandler(UIBackgroundFetchResultNoData);
@@ -245,10 +252,16 @@
         // Handle local notification message
         NITLogD(TAG, @"didReceiveLocalNotification content=%@ recipe=%@ error=%@", content, recipe, error);
 
-        [self manager:[NITManager defaultManager]
-          handleEvent:CDVNE_PushNotification_Local
-          withContent:content
-               recipe:recipe];
+        if (error) {
+            [self manager:[NITManager defaultManager]
+                  eventFailureWithError:error
+                  recipe:recipe];
+        } else {
+            [self manager:[NITManager defaultManager]
+                  handleEvent:CDVNE_PushNotification_Local
+                  withContent:content
+                  recipe:recipe];
+        }
     }];
 
 }
@@ -264,10 +277,17 @@
          // Handle push notification message
          NITLogD(TAG, @"didReceiveLocalNotification content=%@ recipe=%@ error=%@", content, recipe, error);
 
-         [self manager:[NITManager defaultManager]
-           handleEvent:CDVNE_PushNotification_Remote
-           withContent:content
-                recipe:recipe];
+         if (error) {
+            [self manager:[NITManager defaultManager]
+                  eventFailureWithError:error
+                  recipe:recipe];
+         } else {
+            [self manager:[NITManager defaultManager]
+                  handleEvent:CDVNE_PushNotification_Remote
+                  withContent:content
+                  recipe:recipe];
+         }
+
     }];
 
     if (!isRemote) {
@@ -276,10 +296,16 @@
             // Handle local notification message
             NITLogD(TAG, @"didReceiveRemoteNotification content=%@ recipe=%@ error=%@", content, recipe, error);
 
-            [self manager:[NITManager defaultManager]
-              handleEvent:CDVNE_PushNotification_Local
-              withContent:content
-                   recipe:recipe];
+            if (error) {
+                [self manager:[NITManager defaultManager]
+                      eventFailureWithError:error
+                      recipe:recipe];
+            } else {
+                [self manager:[NITManager defaultManager]
+                      handleEvent:CDVNE_PushNotification_Local
+                      withContent:content
+                      recipe:recipe];
+            }
         }];
     }
 
