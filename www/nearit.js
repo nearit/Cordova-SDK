@@ -67,7 +67,10 @@ NearIT.prototype.addEventListener = function(eventType, eventCallback) {
     if (!this.eventType.hasOwnProperty(eventType)) {
         console.log("Failed to attach listener, due to: unknown event type " + eventType);
     } else {
-        window.addEventListener(eventType, eventCallback);
+        window.addEventListener(eventType, function() {
+            console.log("NearIT :: event " + eventType + " triggered ", arguments);
+            eventCallback.apply(this, arguments);
+        });
     }
 }
 

@@ -32,6 +32,7 @@
 
 #include "CDVNearIT.h"
 #import "NITJSONAPIResource.h"
+#import "AppDelegate+NearIT.h"
 
 #define TAG @"CDVNearIT"
 
@@ -81,7 +82,7 @@ __weak CDVNearIT *instance = nil;
     NSString* eventName = [self formatTypeToString:event];
     NITLogI(TAG, @"fire window event %@", eventName);
 
-    [self.commandDelegate evalJs:[NSString stringWithFormat:@"cordova.fireWindowEvent('%@');", eventName, nil]];
+    [self.commandDelegate evalJs:[NSString stringWithFormat:@"window.dispatchEvent(new CustomEvent('%@', {}));", eventName, nil]];
 
 }
 
@@ -123,7 +124,7 @@ __weak CDVNearIT *instance = nil;
     }
 
     NITLogI(TAG, @"fire window event %@ with arguments: %@", eventName, arguments2);
-    [self.commandDelegate evalJs:[NSString stringWithFormat:@"cordova.fireWindowEvent('%@', %@);", eventName, jsonString, nil]];
+    [self.commandDelegate evalJs:[NSString stringWithFormat:@"window.dispatchEvent(new CustomEvent('%@', %@));", eventName, jsonString, nil]];
 
 }
 
@@ -303,7 +304,7 @@ __weak CDVNearIT *instance = nil;
     CDVPluginResult* pluginResult = nil;
 
     NSString* recipeId = [[command arguments] objectAtIndex:0];
-    NSString* eventName = [[command arguments] objectAtIndex:0];
+    NSString* eventName = [[command arguments] objectAtIndex:1];
 
     if (IS_EMPTY(recipeId)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
@@ -375,7 +376,7 @@ __weak CDVNearIT *instance = nil;
 
 #ifndef NEARIT_SHOULD_AUTO_ASK_FOR_PERMISSION_AT_STARTUP
     NITLogD(TAG, @"NITManager :: request permission to the user");
-    [[UIApplication sharedApplication] delegate] permissionRequest];
+    [(AppDelegate*)[[UIApplication sharedApplication] delegate] permissionRequest];
 #else
     /**
      * disabled this cordova method if automatically handled at startup
