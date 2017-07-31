@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "cordova": {
-    "id": "it.near.sdk.cordova-plugin",
+    "id": "it.near.sdk.cordova",
     "platforms": [
       "ios",
       "android"

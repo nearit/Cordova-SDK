@@ -153,6 +153,11 @@ var preferenceMappingData = {
             value: 'true',
             destination: 'preference'
         },
+        'nearit-ask-for-permission-at-startup': {
+            target: 'config.xml',
+            value: 'true',
+            destination: 'preference'
+        },
         'nearit-auto-track-notified-event': {
             target: 'config.xml',
             value: 'true',
@@ -162,7 +167,7 @@ var preferenceMappingData = {
             target: 'config.xml',
             value: 'true',
             destination: 'preference'
-        }
+        },
     },
     'android': {
         'android-manifest-hardwareAccelerated': {
@@ -206,20 +211,29 @@ var preferenceMappingData = {
             destination: 'android:name'
         },
         'nearit-feature-geofencing': {
-            target: 'src/it/near/sdk/cordova-plugin/android/NITConfig.java'
+            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
         },
         'nearit-feature-push': {
-            target: 'src/it/near/sdk/cordova-plugin/android/NITConfig.java'
+            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
         },
         'nearit-feature-proximity': {
-            target: 'src/it/near/sdk/cordova-plugin/android/NITConfig.java'
+            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
         },
         'nearit-api-key': {
-            target: 'src/it/near/sdk/cordova-plugin/android/NITConfig.java'
+            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
         },
         'nearit-show-background-notification': {
-            target: 'src/it/near/sdk/cordova-plugin/android/NITConfig.java'
-        }
+            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
+        },
+        'nearit-auto-track-notified-event': {
+            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
+        },
+        'nearit-auto-track-engaged-event': {
+            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
+        },
+        'nearit-ask-for-permission-at-startup': {
+            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
+        },
     },
     'ios': {
         'nearit-feature-geofencing': {
@@ -264,7 +278,13 @@ var preferenceMappingData = {
             content: '#define NEARIT_SHOULD_TRACK_ENGAGED_EVENT',
             parent: null,
             type: "compile-flag"
-        }
+        },
+        'nearit-ask-for-permission-at-startup': {
+            target: '*-Prefix.pch',
+            content: '#define NEARIT_SHOULD_AUTO_ASK_FOR_PERMISSION_AT_STARTUP',
+            parent: null,
+            type: "compile-flag"
+        },
     }
 };
 
@@ -578,6 +598,11 @@ var lib = {
         },
 
         updateAndroidClass: function (targetFile, configItems) {
+            if (!fs.existsSync(targetFile)) {
+                console.log("* skipping to process: " + path.basename(targetFile));
+                return false;
+            }
+
             var content = fs.readFileSync(targetFile, 'utf-8');
             var changed = false;
 

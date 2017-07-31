@@ -48,7 +48,7 @@ var text = fs.readFileSync(xcconfigFile, 'utf-8');
 var idx1 = text.search(/^\s?CODE_SIGN_ENTITLEMENTS/gm);
 if (idx1 !== -1) {
     text = text.slice(0, idx1) + "" +
-        "// [this line was commented out automatically by it.near.sdk.cordova-plugin plugin hook due to a Cordova issue CB-12212]\n" +
+        "// [this line was commented out automatically by it.near.sdk.cordova plugin hook due to a Cordova issue CB-12212]\n" +
         "// https://issues.apache.org/jira/browse/CB-12212\n" +
         "// " + text.slice(idx1);
     console.log("Fixing build.xcconfig for CODE_SIGN_ENTITLEMENTS (CB-12212)");
