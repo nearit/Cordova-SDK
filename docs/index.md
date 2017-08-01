@@ -2,8 +2,8 @@
 
 NearIT allows to engage app users by sending **context-aware targeted content**.
 
-
-[![CocoaPods](https://img.shields.io/cocoapods/l/NearITSDK.svg)]()
+[![license](https://img.shields.io/github/license/nearit/Cordova-SDK.svg)](LICENSE)
+[![platforms](https://img.shields.io/badge/platforms-iOS-yellowgreen.svg)]()
 [![Documentation Status](https://readthedocs.org/projects/nearit-ios/badge/?version=latest)](http://nearit-ios.readthedocs.io/en/latest/?badge=latest)
 
 ## Recipes
