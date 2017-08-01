@@ -91,5 +91,6 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 - (void)startRadar:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)stopRadar:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)permissionRequest:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)refreshRecipes:( CDVInvokedUrlCommand* _Nonnull )command;
 
 @end

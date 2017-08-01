@@ -68,6 +68,12 @@ angular.module('starter.services', [])
       data: ['eventSimple.nearit'],
     },
 
+    {
+      id: 'refreshRecipes',
+      name: 'Refresh NearIT recipes',
+      data: [],
+    },
+
   ];
 
   return {
