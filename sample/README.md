@@ -11,6 +11,14 @@ You need to install ionic and cordova cli with:
 $ npm install -g ionic cordova
 ```
 
+Then install project dependencies:
+
+```bash
+$ cd ./sample/
+$ npm install
+$ ionic cordova prepare
+```
+
 ## How to run
 
 Then run browser platform: 
