@@ -29,7 +29,9 @@
         var logLine = args.join(' - ') + "<br>\n";
 
         var logDiv = document.getElementById("js_logs");
-        logDiv.innerHTML = logLine + logDiv.innerHTML;
+        if (logDiv) {
+            logDiv.innerHTML = logLine + logDiv.innerHTML;
+        }
 
         setTimeout(function() {
           window.location = '#/tab/dash';
