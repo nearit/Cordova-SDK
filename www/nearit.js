@@ -197,6 +197,15 @@ NearIT.prototype.permissionRequest = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, "nearit", "permissionRequest", []);
 };
 
+/**
+ * Manually refresh NearIT recipes
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.refreshRecipes = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, "nearit", "refreshRecipes", []);
+};
+
 /*
  *
  */
