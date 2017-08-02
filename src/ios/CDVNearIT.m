@@ -416,4 +416,27 @@ __weak CDVNearIT *instance = nil;
                                   callbackId:[command callbackId]];
 }
 
+/**
+ * Manually refresh NearIT recipes
+ * <code><pre>
+    cordova.exec(successCb, errorCb, "nearit", "refreshRecipes", []);
+ </pre></code>
+ */
+- (void)refreshRecipes:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    [[NITManager defaultManager] refreshConfigWithCompletionHandler:^(NSError* error) {
+        CDVPluginResult* pluginResult = nil;
+
+        if (error) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                            messageAsString:[error localizedDescription]];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        }
+
+        [[self commandDelegate] sendPluginResult:pluginResult
+                                      callbackId:[command callbackId]];
+    }];
+}
+
 @end

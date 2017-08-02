@@ -229,6 +229,16 @@ CDVNearIT.prototype.permissionRequest = function(successCallback, errorCallback,
     successCallback();
 };
 
+/**
+ * Manually refresh NearIT recipes
+ * @param successCallback
+ * @param errorCallback
+ * @param opts
+ */
+CDVNearIT.prototype.refreshRecipes = function(successCallback, errorCallback, opts) {
+    successCallback();
+};
+
 /*
  *
  */
