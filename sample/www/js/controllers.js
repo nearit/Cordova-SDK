@@ -23,8 +23,12 @@ angular.module('starter.controllers', [])
             inputType: 'text',
             inputPlaceholder: argName
           }).then(function(res) {
-            args.push(res);
-            resolve();
+            if (res === undefined) {
+              reject('cancel');
+            } else {
+              args.push(res);
+              resolve();
+            }
           }).catch(function() {
             reject();
           });
@@ -72,6 +76,8 @@ angular.module('starter.controllers', [])
       });
       // @end nearit-cordova-sdk
 
+    }).catch(function(err) {
+      console.log(err);
     });
 
   };

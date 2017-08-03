@@ -23,6 +23,7 @@
     <script src="cordova.js"></script>
 
     <script>
+
       var appendLog = function() {
         var args = Array.prototype.slice.call(arguments);
         args = [new Date().toLocaleTimeString()].concat(args);
@@ -37,6 +38,14 @@
           window.location = '#/tab/dash';
         }, 1000);
       }
+
+      var clearLogs = function() {
+        var logDiv = document.getElementById("js_logs");
+        if (logDiv) {
+          logDiv.innerHTML = "";
+        }
+      };
+
     </script>
 
     <!-- your app's js -->

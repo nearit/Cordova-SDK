@@ -21,7 +21,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         nearit.addEventListener(eventType, function() {
 
           var args2 = Array.prototype.slice.call(arguments);
-          args2 = args2.map(JSON.stringify);
           args2 = ['demo :: <b>' + eventType + '</b>'].concat(args2);
           appendLog.apply(appendLog, args2);
 
