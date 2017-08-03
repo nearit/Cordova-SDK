@@ -3,13 +3,13 @@ theme: readthedocs
 extra_css : ["css/nearitdocs.css"]
 pages:
     - 'Getting started' : 'index.md'
-    #- 'User Guide' :
-     #   - 'Installation' : 'installation.md'
-      #  - 'Enable Triggers' : 'enable-triggers.md'
-       # - 'Handle recipe content' : 'handle-content.md'
-        #- 'User profiling' : 'user-profilation.md'
+    - 'User Guide' :
+        - 'Installation' : 'installation.md'
+        - 'Enable Triggers' : 'enable-triggers.md'
+        - 'Handle recipe content' : 'handle-content.md'
+        - 'User profiling' : 'user-profilation.md'
 #    - 'Advanced topics' :
  #       - 'Testing' : 'testing.md'
   #      - 'Logging' : 'logging.md'
-   #     - 'Push capabilities and certificates' : 'apns_walkthrough.md'
+ #       - 'Push capabilities and certificates' : 'apns_walkthrough.md'
     #    - 'Local background notification' : 'local-background-notification.md'
