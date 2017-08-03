@@ -52,6 +52,8 @@ function NearIT() {
         "CDVNE_Event_CustomJSON": "eventJSON.nearit",
         "CDVNE_Event_Error": "error"
     };
+
+    self.serviceName = "nearit";
 }
 
 /*
@@ -81,7 +83,7 @@ NearIT.prototype.addEventListener = function(eventType, eventCallback) {
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.fireEvent = function(eventType, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "nearit", "fireEvent", [eventType]);
+    exec(successCallback, errorCallback, this.serviceName, "fireEvent", [eventType]);
 }
 
 /*
@@ -94,7 +96,7 @@ NearIT.prototype.fireEvent = function(eventType, successCallback, errorCallback)
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.resetProfile = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "nearit", "resetProfile", []);
+    exec(successCallback, errorCallback, this.serviceName, "resetProfile", []);
 };
 
 /**
@@ -103,7 +105,7 @@ NearIT.prototype.resetProfile = function(successCallback, errorCallback) {
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.getProfileId = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "nearit", "getProfileId", []);
+    exec(successCallback, errorCallback, this.serviceName, "getProfileId", []);
 };
 
 /**
@@ -113,7 +115,7 @@ NearIT.prototype.getProfileId = function(successCallback, errorCallback) {
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.setProfileId = function(profileId, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "nearit", "setProfileId", [profileId]);
+    exec(successCallback, errorCallback, this.serviceName, "setProfileId", [profileId]);
 };
 
 /*
@@ -128,7 +130,7 @@ NearIT.prototype.setProfileId = function(profileId, successCallback, errorCallba
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.setUserData = function(key, value, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "nearit", "setUserData", [key, value]);
+    exec(successCallback, errorCallback, this.serviceName, "setUserData", [key, value]);
 };
 
 /*
@@ -142,7 +144,7 @@ NearIT.prototype.setUserData = function(key, value, successCallback, errorCallba
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.trackNotifiedEvent = function(recipeId, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "nearit", "sendTrackingWithRecipeIdForEventNotified", [recipeId]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventNotified", [recipeId]);
 };
 
 /**
@@ -152,7 +154,7 @@ NearIT.prototype.trackNotifiedEvent = function(recipeId, successCallback, errorC
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.trackEngagedEvent = function(recipeId, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "nearit", "sendTrackingWithRecipeIdForEventEngaged", [recipeId]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventEngaged", [recipeId]);
 };
 
 /**
@@ -163,7 +165,7 @@ NearIT.prototype.trackEngagedEvent = function(recipeId, successCallback, errorCa
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.trackCustomEvent = function(recipeId, eventName, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "nearit", "sendTrackingWithRecipeIdForCustomEvent", [recipeId, eventName]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForCustomEvent", [recipeId, eventName]);
 };
 
 /*
@@ -176,7 +178,7 @@ NearIT.prototype.trackCustomEvent = function(recipeId, eventName, successCallbac
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.startRadar = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "nearit", "startRadar", []);
+    exec(successCallback, errorCallback, this.serviceName, "startRadar", []);
 };
 
 /**
@@ -185,7 +187,7 @@ NearIT.prototype.startRadar = function(successCallback, errorCallback) {
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.stopRadar = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "nearit", "stopRadar", []);
+    exec(successCallback, errorCallback, this.serviceName, "stopRadar", []);
 };
 
 /**
@@ -194,7 +196,7 @@ NearIT.prototype.stopRadar = function(successCallback, errorCallback) {
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.permissionRequest = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "nearit", "permissionRequest", []);
+    exec(successCallback, errorCallback, this.serviceName, "permissionRequest", []);
 };
 
 /**
@@ -203,7 +205,7 @@ NearIT.prototype.permissionRequest = function(successCallback, errorCallback) {
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.refreshRecipes = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, "nearit", "refreshRecipes", []);
+    exec(successCallback, errorCallback, this.serviceName, "refreshRecipes", []);
 };
 
 /*

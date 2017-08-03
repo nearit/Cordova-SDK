@@ -36,9 +36,10 @@
 
 var fs = require('fs'),
     path = require('path'),
-    et = require('elementtree');
+    et = require('elementtree'),
+    assert = require('assert');
 
-var rootdir = process.cwd();
+var pluginname = "it.near.sdk.cordova";
 
 var lib = {
 
@@ -76,65 +77,116 @@ var lib = {
         return el;
     },
 
+    replaceClassname: function (packagename, sourceFile, targetFile) {
+        var replace = "/* {package} */" + packagename;
+
+        assert(fs.existsSync(sourceFile), 'unable to find ' + sourceFile + ": are you running from main project dir?");
+        assert(fs.existsSync(targetFile), 'unable to find ' + targetFile + ": are you running from main project dir?");
+
+        var text = fs.readFileSync(sourceFile, 'utf-8');
+        var destinationText = fs.readFileSync(targetFile, 'utf-8');
+
+        var regexp = new RegExp('(\\/\\* {package} \\*\\/.*)(\\\\|;)', 'g');
+        var line = false;
+        var changed = false;
+
+        while (line = regexp.exec(text)) {
+
+            var idx1 = line[1].indexOf('.MainActivity');
+            if (idx1 > -1) {
+                line[1] = line[1].substr(0, idx1);
+            }
+
+            if (line[1] !== replace) {
+                changed = true;
+                text = text.replace(line[1], replace);
+            }
+        }
+
+        if (destinationText !== text) {
+            console.log("Wrote Android " + path.basename(targetFile));
+            fs.writeFileSync(targetFile, text, 'utf-8');
+        }
+    },
+
 };
 
-/*
- * Customize NeariIT MainActivity java class
- */
+var rootdir = process.cwd();
+var platformDir = path.join(rootdir, 'platforms', 'android');
+var pluginDir = path.join(rootdir, 'plugins', pluginname, 'src', 'android');
+var pluginClassDir = path.join(platformDir, 'src', pluginname.split(".").join(path.sep), 'android');
 
 var config = lib.parseElementtreeSync(path.join(rootdir, 'config.xml'));
-
 var packagename = config.getroot().get('id');
+var cordovaClassDir = path.join(platformDir, 'src',  packagename.split(".").join(path.sep));
+
+/*
+ * Initial checks
+ */
+
+assert(fs.existsSync(pluginDir), 'unable to find ' + pluginDir + ": are you running from main project dir?");
+assert(fs.existsSync(pluginClassDir), 'unable to find ' + pluginClassDir + ": are you running from main project dir?");
+assert(fs.existsSync(cordovaClassDir), 'unable to find ' + cordovaClassDir + ": are you running from main project dir?");
 
 /*
  * Override MainActivity and customize package to replace Cordova default one
  */
 
-var sourceFile = path.join(rootdir, 'plugins/it.near.sdk.cordova/src/android/MainActivity.java');
-var text = fs.readFileSync(sourceFile, 'utf-8');
+var sourceFile = path.join(pluginDir, 'MainActivity.java');
+var targetFile = path.join(cordovaClassDir,  'MainActivity.java');
+lib.replaceClassname(packagename, sourceFile, targetFile);
 
-var targetFile = path.join(rootdir, 'platforms/android/src/' + packagename.split(".").join("/") + '/MainActivity.java');
-var destinationText = fs.readFileSync(targetFile, 'utf-8');
+/*
+ * Customize CDVNearIT.java to refer to MainActivit
+ */
 
-var regexp = new RegExp('([^ ]* \{package\}?.*)', 'gi');
-var line = false;
-var changed = false;
-
-var replace = "/* {package} */" + packagename + ";";
-
-while (line = regexp.exec(text)) {
-    if (line[1] !== replace) {
-        changed = true;
-        text = text.replace(line[1], replace);
-    }
-}
-
-if (destinationText !== text) {
-    console.log("Wrote Android " + path.basename(targetFile));
-    fs.writeFileSync(targetFile, text, 'utf-8');
-}
+var sourceFile = path.join(pluginDir, 'CDVNearIT.java');
+var targetFile = path.join(pluginClassDir,  'CDVNearIT.java');
+lib.replaceClassname(packagename, sourceFile, targetFile);
 
 /*
  * Customize AndroidManifest.xml to set <application android:name=""> attribute
  * @link https://stackoverflow.com/questions/27550060
  */
 
-const appClass = 'it.near.sdk.cordova.android.MyApplication';
+var appClass = pluginname + '.android.MyApplication';
 
-var manifestFile = path.join(rootdir, 'platforms/android/', 'AndroidManifest.xml');
+var manifestFile = path.join(platformDir, 'AndroidManifest.xml');
 
 if (fs.existsSync(manifestFile)) {
 
-    fs.readFile(manifestFile, 'utf8', function (err,data) {
+    fs.readFile(manifestFile, 'utf8', function (err, data) {
         if (err) {
             throw new Error('Unable to find AndroidManifest.xml: ' + err);
         }
 
-        if (data.indexOf(appClass) == -1) {
-            var result = data.replace(/<application/g, '<application android:name="' + appClass + '"');
+        // check if tag is already assigned with the same appClass
+        var regexp = new RegExp('<application .* (android:name="' + appClass.replace(".", "\\.") + '") .*>', 'g');
+        var line = regexp.exec(data);
+
+        if (line == null) {
+            // exact match is failing
+            // let's check if name is changed meanwhile
+
+            regexp = new RegExp('<application.[^>]*(android:name=".[^\\>"]*").[^>]*>', 'g');
+            line = regexp.exec(data);
+
+            if (line) {
+                // tag is found,
+                // I have to replace the content
+
+                data = data.replace(line[1], 'android:name="' + appClass + '"');
+            }
+
+            else {
+                // tag is missing
+                // I have to add it
+
+                data = data.replace(/<application/g, '<application android:name="' + appClass + '"');
+            }
 
             console.log("Wrote " + path.basename(manifestFile));
-            fs.writeFile(manifestFile, result, 'utf8', function (err) {
+            fs.writeFile(manifestFile, data, 'utf8', function (err) {
                 if (err) throw new Error('Unable to write into AndroidManifest.xml: ' + err);
             });
         }

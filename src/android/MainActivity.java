@@ -1,4 +1,4 @@
-package /* {package} */io.ionic.starterfabio;
+package /* {package} */;
 
 /*
     MIT License

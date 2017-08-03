@@ -43,6 +43,15 @@
         <engine name="cordova-android" version=">=6.2.3" />
     </engines>
 
+    <!-- customize config.xml and platform project files -->
+    <hook type="after_plugin_install" src="hooks/01_before_prepare.js" />
+    <hook type="before_prepare" src="hooks/01_before_prepare.js" />
+
+    <js-module src="www/nearit.js" name="nearit">
+        <runs />
+        <clobbers target="nearit" />
+    </js-module>
+
     <!-- iOs platform definition -->
     <platform name="ios">
 
@@ -104,15 +113,6 @@
 
     </platform>
 
-    <!-- customize config.xml and platform project files -->
-    <hook type="after_plugin_install" src="hooks/01_before_prepare.js" />
-    <hook type="before_prepare" src="hooks/01_before_prepare.js" />
-
-    <js-module src="www/nearit.js" name="nearit">
-        <runs />
-        <clobbers target="nearit" />
-    </js-module>
-
     <!-- browser platform definition -->
     <platform name="browser">
         <config-file target="config.xml" parent="/*">
@@ -134,8 +134,8 @@
             <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="25" />
         </edit-config>
 
-        <config-file target="config.xml" parent="/*">
-            <feature name="NearIT">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="nearit">
                 <param name="android-package" value="it.near.sdk.cordova.android.CDVNearIT" />
                 <param name="onload" value="true" />
             </feature>
@@ -156,13 +156,15 @@
                     <category android:name="android.intent.category.DEFAULT" />
                 </intent-filter>
             </receiver>
-            <activity android:name="it.near.sdk.cordova.android.PermissionsActivity" android:theme="@style/NearDialogTheme" />
+            <activity android:name="it.near.sdk.cordova.android.PermissionsActivity"
+                      android:theme="@style/NearDialogTheme" />
         </config-file>
 
         <source-file src="src/android/MyApplication.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/PermissionsActivity.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/NITConfig.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearIT.java" target-dir="src/it/near/sdk/cordova/android" />
+        <source-file src="src/android/styles.xml" target-dir="res/values" />
         <!--<source-file src="src/android/MainActivity.java" target-dir="src/it/near/sdk/cordova/android" />-->
 
         <framework src="src/android/nearit.gradle" custom="true" type="gradleReference" />

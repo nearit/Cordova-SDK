@@ -37,7 +37,6 @@ import org.json.JSONObject;
 
 import java.util.Map;
 
-import io.ionic.starterfabio.MainActivity;
 import it.near.sdk.NearItManager;
 import it.near.sdk.operation.UserDataNotifier;
 import it.near.sdk.recipes.RecipeRefreshListener;
@@ -49,10 +48,10 @@ import it.near.sdk.recipes.models.Recipe;
 public class CDVNearIT extends CordovaPlugin
 {
 
-	protected final String TAG = "CDVNearIT";
+	private final String TAG = "CDVNearIT";
 
-	protected Context mContext = null;
-	protected static CDVNearIT mInstance = null;
+	private Context mContext = null;
+	private static CDVNearIT mInstance = null;
 
 	public static CDVNearIT getInstance() {
 		return mInstance;
@@ -76,41 +75,54 @@ public class CDVNearIT extends CordovaPlugin
 	 * @throws JSONException
 	 */
 	@Override
-    public boolean execute(String action, JSONArray args, CallbackContext callbackContext)
+    public boolean execute(
+    		final String action,
+		    final JSONArray args,
+		    final CallbackContext callbackContext
+	)
 			throws JSONException
 	{
-	    try {
-		    if (action.equals("fireEvent")) {
-			    this.fireEvent(args, callbackContext);
-		    } else if (action.equals("resetProfile")) {
-			    this.resetProfile(args, callbackContext);
-		    } else if (action.equals("getProfileId")) {
-			    this.getProfileId(args, callbackContext);
-		    } else if (action.equals("setProfileId")) {
-			    this.setProfileId(args, callbackContext);
-		    } else if (action.equals("setUserData")) {
-			    this.setUserData(args, callbackContext);
-		    } else if (action.equals("sendTrackingWithRecipeIdForEventNotified")) {
-			    this.sendTrackingWithRecipeIdForEventNotified(args, callbackContext);
-		    } else if (action.equals("sendTrackingWithRecipeIdForEventEngaged")) {
-			    this.sendTrackingWithRecipeIdForEventEngaged(args, callbackContext);
-		    } else if (action.equals("sendTrackingWithRecipeIdForCustomEvent")) {
-			    this.sendTrackingWithRecipeIdForCustomEvent(args, callbackContext);
-		    } else if (action.equals("startRadar")) {
-			    this.startRadar(args, callbackContext);
-		    } else if (action.equals("stopRadar")) {
-			    this.stopRadar(args, callbackContext);
-		    } else if (action.equals("permissionRequest")) {
-			    this.permissionRequest(args, callbackContext);
-		    } else if (action.equals("refreshRecipes")) {
-			    this.refreshRecipes(args, callbackContext);
-		    } else {
-			    return false;
-		    }
-	    } catch(Exception err) {
-		    // TODO: log this error
-		    callbackContext.error(err.getLocalizedMessage());
-	    }
+
+		cordova.getThreadPool().execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					if (action.equals("fireEvent")) {
+						CDVNearIT.this.fireEvent(args, callbackContext);
+					} else if (action.equals("resetProfile")) {
+						CDVNearIT.this.resetProfile(args, callbackContext);
+					} else if (action.equals("getProfileId")) {
+						CDVNearIT.this.getProfileId(args, callbackContext);
+					} else if (action.equals("setProfileId")) {
+						CDVNearIT.this.setProfileId(args, callbackContext);
+					} else if (action.equals("setUserData")) {
+						CDVNearIT.this.setUserData(args, callbackContext);
+					} else if (action.equals("sendTrackingWithRecipeIdForEventNotified")) {
+						CDVNearIT.this.sendTrackingWithRecipeIdForEventNotified(args, callbackContext);
+					} else if (action.equals("sendTrackingWithRecipeIdForEventEngaged")) {
+						CDVNearIT.this.sendTrackingWithRecipeIdForEventEngaged(args, callbackContext);
+					} else if (action.equals("sendTrackingWithRecipeIdForCustomEvent")) {
+						CDVNearIT.this.sendTrackingWithRecipeIdForCustomEvent(args, callbackContext);
+					} else if (action.equals("startRadar")) {
+						CDVNearIT.this.startRadar(args, callbackContext);
+					} else if (action.equals("stopRadar")) {
+						CDVNearIT.this.stopRadar(args, callbackContext);
+					} else if (action.equals("permissionRequest")) {
+						CDVNearIT.this.permissionRequest(args, callbackContext);
+					} else if (action.equals("refreshRecipes")) {
+						CDVNearIT.this.refreshRecipes(args, callbackContext);
+					} else {
+						final String message = "unknown action " + action;
+						Log.e(TAG, message);
+						CDVNearIT.this.fireWindowEvent(CDVEventType.CDVNE_Event_Error, message);
+					}
+				} catch (Exception err) {
+					// TODO: log this error
+					callbackContext.error(err.getLocalizedMessage());
+				}
+			}
+		});
+
         return true;
     }
 
@@ -203,6 +215,7 @@ public class CDVNearIT extends CordovaPlugin
 	 */
 	public void fireEvent(JSONArray args, CallbackContext callbackContext) throws Exception
     {
+
 	    if (args.length() != 1) {
 		    throw new Exception("Wrong number of arguments! expected 1");
 	    }
@@ -237,7 +250,12 @@ public class CDVNearIT extends CordovaPlugin
     {
 
 	    Log.d(TAG, "NITManager :: resetProfile");
-	    NearItManager.getInstance(mContext).resetProfileId();
+	    cordova.getThreadPool().execute(new Runnable() {
+		    @Override
+		    public void run() {
+			    NearItManager.getInstance(mContext).resetProfileId();
+		    }
+	    });
 
 	    callbackContext.success();
     }
@@ -251,18 +269,22 @@ public class CDVNearIT extends CordovaPlugin
 	 * @param callbackContext Cordova callback context
 	 * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void getProfileId(JSONArray args, CallbackContext callbackContext) throws Exception
+	public void getProfileId(JSONArray args, final CallbackContext callbackContext) throws Exception
     {
 
 	    Log.d(TAG, "NITManager :: getProfileId");
-	    String profileId = NearItManager.getInstance(mContext).getProfileId();
+	    cordova.getThreadPool().execute(new Runnable() {
+		    @Override
+		    public void run() {
+			    String profileId = NearItManager.getInstance(mContext).getProfileId();
 
-	    if (profileId == null || profileId.length() == 0) {
-		    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.NO_RESULT));
-	    } else {
-		    callbackContext.success(profileId);
-	    }
-
+			    if (profileId == null || profileId.length() == 0) {
+				    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.NO_RESULT));
+			    } else {
+				    callbackContext.success(profileId);
+			    }
+		    }
+	    });
     }
 
 	/**
@@ -276,6 +298,7 @@ public class CDVNearIT extends CordovaPlugin
 	 */
 	public void setProfileId(JSONArray args, CallbackContext callbackContext) throws Exception
     {
+
 	    if (args.length() != 1) {
 		    throw new Exception("Wrong number of arguments! expected 1");
 	    }
@@ -307,6 +330,7 @@ public class CDVNearIT extends CordovaPlugin
      */
     public void setUserData(JSONArray args, final CallbackContext callbackContext) throws Exception
     {
+
 	    if (args.length() != 2) {
 		    throw new Exception("Wrong number of arguments! expected 2");
 	    }
@@ -323,7 +347,7 @@ public class CDVNearIT extends CordovaPlugin
 	    }
 
 	    Log.d(TAG, "NITManager :: setUserData(" + key + ", " + value + ")");
-	    NearItManager.getInstance(mContext).setUserData(key, value, new UserDataNotifier() {
+        NearItManager.getInstance(mContext).setUserData(key, value, new UserDataNotifier() {
 
 		    @Override
 		    public void onDataCreated() {
@@ -336,7 +360,6 @@ public class CDVNearIT extends CordovaPlugin
 		    }
 
 	    });
-
     }
 
     /*
@@ -356,6 +379,7 @@ public class CDVNearIT extends CordovaPlugin
                                                          CallbackContext callbackContext)
 		    throws Exception
     {
+
         if (args.length() != 1) {
 	        throw new Exception("Wrong number of arguments! expected 1");
         }
@@ -388,6 +412,7 @@ public class CDVNearIT extends CordovaPlugin
                                                         CallbackContext callbackContext)
 		    throws Exception
     {
+
 	    if (args.length() != 1) {
 		    throw new Exception("Wrong number of arguments! expected 1");
 	    }
@@ -420,6 +445,7 @@ public class CDVNearIT extends CordovaPlugin
                                                        CallbackContext callbackContext)
 		    throws Exception
     {
+
 	    if (args.length() != 2) {
 		    throw new Exception("Wrong number of arguments! expected 2");
 	    }
@@ -498,7 +524,7 @@ public class CDVNearIT extends CordovaPlugin
 
         if (!NITConfig.AUTO_ASK_FOR_PERMISSION_AT_STARTUP) {
             Log.d(TAG, "NITManager :: request permission to the user");
-	        PermissionsActivity.run(MainActivity.getInstance());
+	        PermissionsActivity.run(/* {package} */it.near.sdk.cordova.sample.MainActivity.getInstance());
         } else {
             /**
              * disabled this cordova method if automatically handled at startup
@@ -520,6 +546,7 @@ public class CDVNearIT extends CordovaPlugin
      */
     public void refreshRecipes(JSONArray args, final CallbackContext callbackContext) throws Exception
     {
+
 	    Log.i(TAG, "NITManager :: refreshing recipes");
 	    NearItManager.getInstance(mContext).refreshConfigs(new RecipeRefreshListener() {
 
