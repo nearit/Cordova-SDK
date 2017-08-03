@@ -1,10 +1,12 @@
 # NearIT Cordova SDK
+[![license](https://img.shields.io/github/license/nearit/Cordova-SDK.svg)](LICENSE)
+[![cordova](https://img.shields.io/badge/Cordova-6.0.0-green.svg)](https://cordova.apache.org/)
+![platforms](https://img.shields.io/badge/platforms-Android%20&%20iOS-brightgreen.svg)
+[![Android](https://img.shields.io/badge/Android-15-blue.svg)](https://developer.android.com/about/dashboards/index.html#Platform)
+[![iOS](https://img.shields.io/badge/iOS-9-blue.svg)](https://developer.apple.com/ios/)
+[![Documentation Status](https://readthedocs.org/projects/nearit-cordova-sdk/badge/?version=latest)](http://nearit-cordova-sdk.readthedocs.io/en/latest/?badge=latest)
 
 NearIT allows to engage app users by sending **context-aware targeted content**.
-
-[![license](https://img.shields.io/github/license/nearit/Cordova-SDK.svg)](LICENSE)
-[![platforms](https://img.shields.io/badge/platforms-iOS-yellowgreen.svg)]()
-[![Documentation Status](https://readthedocs.org/projects/nearit-ios/badge/?version=latest)](http://nearit-ios.readthedocs.io/en/latest/?badge=latest)
 
 ## Recipes
 NearIT allows to manage apps by defining "recipes". Those are simple rules made of 3 ingredients:
