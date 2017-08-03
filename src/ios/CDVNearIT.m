@@ -252,11 +252,22 @@ __weak CDVNearIT *instance = nil;
                                          messageAsString:@"Missing value parameter"];
     } else {
 
-        NITLogD(TAG, @"NITManager :: setDeferredUserDataWithKey(%@, %@)", key, value);
-        [[NITManager defaultManager] setDeferredUserDataWithKey:key
-                                                          value:value];
+        NITLogD(TAG, @"NITManager :: setUserDataWithKey(%@, %@)", key, value);
+        [[NITManager defaultManager] setUserDataWithKey:key value:value completionHandler:^(NSError* error) {
+            CDVPluginResult* pluginResult = nil;
 
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            if (error) {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                 messageAsString:[error localizedDescription]];
+            } else {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            }
+
+            [[self commandDelegate] sendPluginResult:pluginResult
+                                          callbackId:[command callbackId]];
+        }];
+
+        return;
     }
 
     [[self commandDelegate] sendPluginResult:pluginResult

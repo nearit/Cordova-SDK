@@ -247,23 +247,23 @@
 {
     NITLogV(TAG, @"didReceiveLocalNotification");
 
-    [[NITManager defaultManager] handleLocalNotification:notification
-                            completionHandler:^(id _Nullable content, NITRecipe * _Nullable recipe, NSError * _Nullable error) {
-        // Handle local notification message
-        NITLogD(TAG, @"didReceiveLocalNotification content=%@ recipe=%@ error=%@", content, recipe, error);
+    [[NITManager defaultManager] processRecipeWithUserInfo:notification.userInfo
+        completion:^(id  _Nullable content, NITRecipe * _Nullable recipe, NSError * _Nullable error) {
+            // Handle push notification message
+            NITLogD(TAG, @"didReceiveLocalNotification content=%@ recipe=%@ error=%@", content, recipe, error);
 
-        if (error) {
-            [self manager:[NITManager defaultManager]
-                  eventFailureWithError:error
-                  recipe:recipe];
-        } else {
-            [self manager:[NITManager defaultManager]
-                  handleEvent:CDVNE_PushNotification_Local
+            if (error) {
+                [self manager:[NITManager defaultManager]
+        eventFailureWithError:error
+                       recipe:recipe];
+            } else {
+                [self manager:[NITManager defaultManager]
+                  handleEvent:CDVNE_PushNotification_Remote
                   withContent:content
-                  recipe:recipe];
-        }
-    }];
+                       recipe:recipe];
+            }
 
+        }];
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
@@ -272,42 +272,23 @@
 {
     NITLogV(TAG, @"didReceiveNotificationResponse");
 
-    BOOL isRemote = [[NITManager defaultManager] processRecipeWithUserInfo:response.notification.request.content.userInfo
-                                                     completion:^(id  _Nullable content, NITRecipe * _Nullable recipe, NSError * _Nullable error) {
-         // Handle push notification message
-         NITLogD(TAG, @"didReceiveLocalNotification content=%@ recipe=%@ error=%@", content, recipe, error);
-
-         if (error) {
-            [self manager:[NITManager defaultManager]
-                  eventFailureWithError:error
-                  recipe:recipe];
-         } else {
-            [self manager:[NITManager defaultManager]
-                  handleEvent:CDVNE_PushNotification_Remote
-                  withContent:content
-                  recipe:recipe];
-         }
-
-    }];
-
-    if (!isRemote) {
-        [[NITManager defaultManager] handleLocalNotificationResponse:response
-                                        completionHandler:^(id  _Nullable content, NITRecipe * _Nullable recipe, NSError * _Nullable error) {
-            // Handle local notification message
-            NITLogD(TAG, @"didReceiveRemoteNotification content=%@ recipe=%@ error=%@", content, recipe, error);
+    [[NITManager defaultManager] processRecipeWithUserInfo:response.notification.request.content.userInfo
+        completion:^(id  _Nullable content, NITRecipe * _Nullable recipe, NSError * _Nullable error) {
+            // Handle push notification message
+            NITLogD(TAG, @"didReceiveNotification content=%@ recipe=%@ error=%@", content, recipe, error);
 
             if (error) {
                 [self manager:[NITManager defaultManager]
-                      eventFailureWithError:error
-                      recipe:recipe];
+        eventFailureWithError:error
+                       recipe:recipe];
             } else {
                 [self manager:[NITManager defaultManager]
-                      handleEvent:CDVNE_PushNotification_Local
-                      withContent:content
-                      recipe:recipe];
+                  handleEvent:CDVNE_PushNotification_Remote
+                  withContent:content
+                       recipe:recipe];
             }
+
         }];
-    }
 
 }
 #endif

@@ -72,11 +72,11 @@
             NearIT iOS SDK dependency
             https://github.com/nearit/Near-iOS-SDK
             Supporting iOs 9.0 and later
-            Near-iOS-SDK release 1.0.4
+            Near-iOS-SDK release 1.0.8
         -->
         <pod name="NearITSDK" configurations="release,debug"
              git="https://github.com/nearit/Near-iOS-SDK"
-             tag="1.0.4" />
+             tag="1.0.8" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="NearIT">
