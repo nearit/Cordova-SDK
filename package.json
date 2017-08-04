@@ -1,12 +1,8 @@
 {
-  "name": "it.near.sdk.cordova",
+  "name": "@nearit/it.near.sdk.cordova",
   "version": "0.0.1",
   "description": "Cordova plugin for NearIT SDK",
-  "author": {
-    "name": "Fabio Cigliano",
-    "email": "fabio.cigliano@gmail.com",
-    "url": "http://fabio.cigliano.name"
-  },
+  "author": "Fabio Cigliano <fabio.cigliano@gmail.com> (http://fabio.cigliano.name)",
   "license": "MIT",
   "cordova": {
     "id": "it.near.sdk.cordova",
@@ -17,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nearit/Cordova-SDK"
+    "url": "git+https://github.com/nearit/Cordova-SDK.git"
   },
   "keywords": [
     "cordova",
@@ -41,5 +37,9 @@
   },
   "devDependencies": {
     "jshint": "^2.6.0"
+  },
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
   }
 }

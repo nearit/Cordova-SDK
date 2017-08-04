@@ -28,14 +28,14 @@
 # http://ionicframework.com/docs/v1/guide/installation.html
 
 # create a sample Ionic app
-ionic start ionic-testapp tabs --type ionic1 --no-git --skip-link
+ionic start sample tabs --type ionic1 --no-git --skip-link
 
 # move to app folder
-cd ./ionic-testapp
+cd ./sample
 
 # change package name, default one can create problem
 # with provisioning profiles on ios
-sed -i -e 's/io.ionic.starter/it.near.sdk.cordova.sample/g' config.xml
+sed -i -e 's/io.ionic.starter/it.near.sdk.cordova.sample2/g' config.xml
 
 # add the desired platform
 ionic cordova platform add browser ios android
