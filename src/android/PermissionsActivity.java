@@ -73,22 +73,30 @@ public class PermissionsActivity
     }
 
     public boolean allPermissionGranted() {
-        boolean anyLocationProv = false;
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean anyLocationProv = NITConfig.ENABLE_GEO;
+        boolean bluetoothOn = true;
 
-        anyLocationProv |= locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        anyLocationProv |= locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if (!anyLocationProv) {
 
-        boolean bluetoothOn = false;
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        bluetoothOn = mBluetoothAdapter != null && mBluetoothAdapter.isEnabled();
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        int permissionCheck = PackageManager.PERMISSION_DENIED;
-        permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
+            anyLocationProv |= locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            anyLocationProv |= locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-        return anyLocationProv &&
-                bluetoothOn &&
-                permissionCheck == PackageManager.PERMISSION_GRANTED;
+            int permissionCheck = PackageManager.PERMISSION_DENIED;
+            permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
+            anyLocationProv &= permissionCheck == PackageManager.PERMISSION_GRANTED;
+
+        }
+
+        if (!bluetoothOn) {
+
+            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            bluetoothOn = mBluetoothAdapter != null && mBluetoothAdapter.isEnabled();
+
+        }
+
+        return anyLocationProv && bluetoothOn;
     }
 
     /**
@@ -146,7 +154,11 @@ public class PermissionsActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == LOCATION_SETTINGS_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                openBluetoothSettings();
+                if (this->allPermissionGranted()) {
+                    openBluetoothSettings();
+                } else {
+                    finish();
+                }
             } else {
                 finish();
             }
@@ -178,7 +190,11 @@ public class PermissionsActivity
                     case LocationSettingsStatusCodes.SUCCESS:
                         // The bluetooth permissions are strictly necessary for beacons,
                         // but not for geofences
-                        openBluetoothSettings();
+                        if (this->allPermissionGranted()) {
+                            openBluetoothSettings();
+                        } else {
+                            finish();
+                        }
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         try {
@@ -187,7 +203,6 @@ public class PermissionsActivity
                                     LOCATION_SETTINGS_CODE);
                         } catch (IntentSender.SendIntentException e) {
                             e.printStackTrace();
-
                         }
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:

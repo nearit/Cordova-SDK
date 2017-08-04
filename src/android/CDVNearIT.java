@@ -530,6 +530,8 @@ public class CDVNearIT extends CordovaPlugin
              * disabled this cordova method if automatically handled at startup
              * @see MainActivity.java
              */
+            Log.d(TAG, "NITManager :: start");
+            NearItManager.getInstance(mContext).startRadar();
         }
 
         callbackContext.success();
