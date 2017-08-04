@@ -104,9 +104,9 @@ __weak CDVNearIT *instance = nil;
         [arguments2 setObject:[NSDictionary dictionary] forKey:@"data"];
     }
     if ([arguments2 objectForKey:@"recipe"] != nil) {
+        NSMutableDictionary* recipeDict = [NSMutableDictionary dictionary];
         NITRecipe* recipe = [arguments2 objectForKey:@"recipe"];
-        NITJSONAPIResource* resourceObject = [recipe resourceObject];
-        NSDictionary* recipeDict = [resourceObject toDictionary];
+        [recipeDict setObject:[recipe ID] forKey:@"ID"];
         [arguments2 setObject:recipeDict forKey:@"recipe"];
     }
 
