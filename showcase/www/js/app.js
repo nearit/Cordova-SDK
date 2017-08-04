@@ -18,12 +18,14 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       // (just for demo)
       Object.keys(nearit.eventType).forEach(function(eventType) {
         appendLog("demo :: attaching event listener for " + eventType);
-        nearit.addEventListener(eventType, function() {
-
-          var args2 = Array.prototype.slice.call(arguments);
-          args2 = ['demo :: <b>' + eventType + '</b>'].concat(args2);
+        nearit.addEventListener(eventType, function(event) {
+          try {
+            event = JSON.stringify(event);
+          } catch(err) {
+            // doing nothing
+          }
+          var args2 = ['demo :: <b>' + eventType + '</b>'].concat(event);
           appendLog.apply(appendLog, args2);
-
         });
       });
       //

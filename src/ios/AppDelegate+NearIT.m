@@ -119,6 +119,9 @@
 
 #ifdef NEARIT_SHOULD_AUTO_ASK_FOR_PERMISSION_AT_STARTUP
     [self permissionRequest];
+#else
+    NITLogI(TAG, @"NITManager start");
+    [[NITManager defaultManager] start];
 #endif
 
     // This line at runtime does not go into an infinite loop
@@ -196,7 +199,7 @@
     [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error
                             withArguments:[NSDictionary dictionaryWithObjectsAndKeys:
                                            recipe, @"recipe",
-                                           [error localizedDescription], @"message",
+                                           [error description], @"message",
                                            nil]];
 
 }
@@ -339,7 +342,11 @@ static char key2;
              if (granted) {
                  [[CDVNearIT instance] fireWindowEvent:CDVNE_PushNotification_Granted];
              } else {
-                 [[CDVNearIT instance] fireWindowEvent:CDVNE_PushNotification_NotGranted withMessage:[error localizedDescription]];
+                 [[CDVNearIT instance] fireWindowEvent:CDVNE_PushNotification_NotGranted];
+             }
+
+             if (error) {
+                 [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:[error description]];
              }
         }];
         UNUserNotificationCenter.currentNotificationCenter.delegate = self;

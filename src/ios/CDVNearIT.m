@@ -87,7 +87,8 @@ __weak CDVNearIT *instance = nil;
 }
 
 - (void)fireWindowEvent:( CDVEventType )event withMessage:(NSString* _Nonnull)message {
-    NSDictionary* arguments = [NSDictionary dictionaryWithObject:message forKey:@"message"];
+    NSDictionary* arguments = [NSDictionary dictionaryWithObject:(message != nil ? message : @"unknown")
+                                                              forKey:@"message"];
     [self fireWindowEvent:event withArguments:arguments];
 }
 
@@ -117,7 +118,7 @@ __weak CDVNearIT *instance = nil;
                                                          error:&error];
 
     if (!jsonData) {
-        NITLogE(TAG, @"Error while serializing event JSON due to %@", error.localizedDescription);
+        NITLogE(TAG, @"Error while serializing event JSON due to %@", error);
         jsonString = @"{}";
     } else {
         jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -258,7 +259,7 @@ __weak CDVNearIT *instance = nil;
 
             if (error) {
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                 messageAsString:[error localizedDescription]];
+                                                 messageAsString:[error description]];
             } else {
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             }
@@ -442,7 +443,7 @@ __weak CDVNearIT *instance = nil;
 
         if (error) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                            messageAsString:[error localizedDescription]];
+                                            messageAsString:[error description]];
         } else {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         }
