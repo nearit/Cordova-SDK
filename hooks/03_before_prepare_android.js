@@ -109,13 +109,27 @@ var lib = {
         }
     },
 
+    copyIfChanged: function (sourceFile, targetFile) {
+
+        assert(fs.existsSync(sourceFile), 'unable to find ' + sourceFile + ": are you running from main project dir?");
+        assert(fs.existsSync(targetFile), 'unable to find ' + targetFile + ": are you running from main project dir?");
+
+        var sourceText = fs.readFileSync(sourceFile, 'utf-8');
+        var destinationText = fs.readFileSync(targetFile, 'utf-8');
+
+        if (destinationText !== sourceText) {
+            console.log("Wrote Android " + path.basename(targetFile));
+            fs.writeFileSync(targetFile, sourceText, 'utf-8');
+        }
+    },
+
 };
 
 var rootdir = process.cwd();
 var platformDir = path.join(rootdir, 'platforms', 'android');
 var pluginDir = path.join(rootdir, 'plugins', pluginname, 'src', 'android');
 var pluginClassDir = path.join(platformDir, 'src', pluginname.split(".").join(path.sep), 'android');
-
+var resourcesDir = path.join(rootdir, 'resources', 'android');
 var config = lib.parseElementtreeSync(path.join(rootdir, 'config.xml'));
 var packagename = config.getroot().get('id');
 var cordovaClassDir = path.join(platformDir, 'src',  packagename.split(".").join(path.sep));
@@ -191,4 +205,17 @@ if (fs.existsSync(manifestFile)) {
             });
         }
     });
+}
+
+/*
+ * Copy google-services.json file
+ * from resources/android/google-services.json to platforms/android/google-services.json
+ */
+
+var manifestFile = path.join(platformDir, 'AndroidManifest.xml');
+
+if (fs.existsSync(manifestFile)) {
+    var sourceFile = path.join(resourcesDir, 'google-services.json');
+    var targetFile = path.join(platformDir, 'google-services.json');
+    lib.copyIfChanged(sourceFile, targetFile);
 }
