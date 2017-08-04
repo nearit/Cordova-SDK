@@ -3,6 +3,14 @@
 NearIT takes care of delivering content at the right time, you will just need to handle content inside your app. 
 
 <br>
+
+## Notifications
+Notifications are automatically managed by NearIT Cordova SDK, if you want to use your own logic to display them, edit your Cordova project `config.xml`
+```xml
+<preference name="nearit-show-background-notification" value="false" />
+```
+and follow the [Handling content](#handling_content) section.
+
 ## Handling content
 To receive the contents you should add the appropriate NearSDK's eventListeners.
 ```js
@@ -35,7 +43,13 @@ The method will also return already redeemed coupons so you get to decide to fil
 
 NearIT analytics on recipes are built from trackings describing the status of user engagement with a recipe. The two recipe states are "Notified" and "Engaged" to represent a recipe delivered to the user and a recipe that the user responded to.
 
-Push notifications recipes track themselves as notified, but you should track it yourself for any other case.
+Trackings are automatically sent by the NearIT Cordova SDK, but if you want to manually track ***Engaged*** status edit your Cordova project `config.xml` file as follow
+```xml
+<preference name="nearit-auto-track-engaged-event" value="false" />
+```
+
+<br>
+To manually track events use the following methods
 ```js
 nearit.trackNotifiedEvent(recipeId, successCallback, errorCallback) // Track `Notified` Event
 
