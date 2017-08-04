@@ -53,9 +53,4 @@ public class NITConfig
      */
     public static final boolean AUTO_TRACK_ENGAGED_EVENT = true;
 
-    /**
-     * This field key is automatically mapped to preference {nearit-ask-for-permission-at-startup}
-     */
-    public static final boolean AUTO_ASK_FOR_PERMISSION_AT_STARTUP = true;
-
 }

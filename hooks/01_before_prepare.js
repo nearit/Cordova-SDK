@@ -153,11 +153,6 @@ var preferenceMappingData = {
             value: 'true',
             destination: 'preference'
         },
-        'nearit-ask-for-permission-at-startup': {
-            target: 'config.xml',
-            value: 'true',
-            destination: 'preference'
-        },
         'nearit-auto-track-engaged-event': {
             target: 'config.xml',
             value: 'true',
@@ -223,9 +218,6 @@ var preferenceMappingData = {
         'nearit-auto-track-engaged-event': {
             target: 'src/it/near/sdk/cordova/android/NITConfig.java'
         },
-        'nearit-ask-for-permission-at-startup': {
-            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
-        },
     },
     'ios': {
         'nearit-feature-geofencing': {
@@ -262,12 +254,6 @@ var preferenceMappingData = {
         'nearit-auto-track-engaged-event': {
             target: '*-Prefix.pch',
             content: '#define NEARIT_SHOULD_TRACK_ENGAGED_EVENT',
-            parent: null,
-            type: "compile-flag"
-        },
-        'nearit-ask-for-permission-at-startup': {
-            target: '*-Prefix.pch',
-            content: '#define NEARIT_SHOULD_AUTO_ASK_FOR_PERMISSION_AT_STARTUP',
             parent: null,
             type: "compile-flag"
         },

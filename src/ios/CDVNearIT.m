@@ -412,17 +412,8 @@ __weak CDVNearIT *instance = nil;
 {
     CDVPluginResult* pluginResult = nil;
 
-#ifndef NEARIT_SHOULD_AUTO_ASK_FOR_PERMISSION_AT_STARTUP
     NITLogD(TAG, @"NITManager :: request permission to the user");
     [(AppDelegate*)[[UIApplication sharedApplication] delegate] permissionRequest];
-#else
-    /**
-     * disabled this cordova method if automatically handled at startup
-     * @see AppDelegate+NearIT.m
-     */
-     NITLogD(TAG, @"NITManager :: start");
-     [[NITManager defaultManager] start];
-#endif
 
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
 

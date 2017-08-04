@@ -117,13 +117,6 @@
                                                     NO;
 #endif
 
-#ifdef NEARIT_SHOULD_AUTO_ASK_FOR_PERMISSION_AT_STARTUP
-    [self permissionRequest];
-#else
-    NITLogI(TAG, @"NITManager start");
-    [[NITManager defaultManager] start];
-#endif
-
     // This line at runtime does not go into an infinite loop
     // because it will call the real method instead of ours.
     return [self customapplication:application didFinishLaunchingWithOptions:launchOptions];
