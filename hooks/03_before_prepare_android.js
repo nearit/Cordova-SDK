@@ -112,10 +112,13 @@ var lib = {
     copyIfChanged: function (sourceFile, targetFile) {
 
         assert(fs.existsSync(sourceFile), 'unable to find ' + sourceFile + ": are you running from main project dir?");
-        assert(fs.existsSync(targetFile), 'unable to find ' + targetFile + ": are you running from main project dir?");
 
         var sourceText = fs.readFileSync(sourceFile, 'utf-8');
-        var destinationText = fs.readFileSync(targetFile, 'utf-8');
+        var destinationText = false;
+
+        if (fs.existsSync(targetFile)) {
+            destinationText = fs.readFileSync(targetFile, 'utf-8');
+        }
 
         if (destinationText !== sourceText) {
             console.log("Wrote Android " + path.basename(targetFile));
@@ -175,7 +178,7 @@ if (fs.existsSync(manifestFile)) {
         }
 
         // check if tag is already assigned with the same appClass
-        var regexp = new RegExp('<application .* (android:name="' + appClass.replace(".", "\\.") + '") .*>', 'g');
+        var regexp = new RegExp('<application .*(android:name="' + appClass.replace(".", "\\.") + '") .*>', 'g');
         var line = regexp.exec(data);
 
         if (line == null) {
@@ -212,10 +215,9 @@ if (fs.existsSync(manifestFile)) {
  * from resources/android/google-services.json to platforms/android/google-services.json
  */
 
-var manifestFile = path.join(platformDir, 'AndroidManifest.xml');
+var sourceFile = path.join(resourcesDir, 'google-services.json');
+var targetFile = path.join(platformDir, 'google-services.json');
 
-if (fs.existsSync(manifestFile)) {
-    var sourceFile = path.join(resourcesDir, 'google-services.json');
-    var targetFile = path.join(platformDir, 'google-services.json');
+if (fs.existsSync(sourceFile)) {
     lib.copyIfChanged(sourceFile, targetFile);
 }

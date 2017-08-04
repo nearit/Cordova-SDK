@@ -82,6 +82,7 @@ public class CDVNearIT extends CordovaPlugin
 	)
 			throws JSONException
 	{
+		Log.d(TAG, "execute(" + action + ")");
 
 		cordova.getThreadPool().execute(new Runnable() {
 			@Override
@@ -522,17 +523,8 @@ public class CDVNearIT extends CordovaPlugin
     public void permissionRequest(JSONArray args, CallbackContext callbackContext) throws Exception
     {
 
-        if (!NITConfig.AUTO_ASK_FOR_PERMISSION_AT_STARTUP) {
-            Log.d(TAG, "NITManager :: request permission to the user");
-	        PermissionsActivity.run(/* {package} */it.near.sdk.cordova.sample.MainActivity.getInstance());
-        } else {
-            /**
-             * disabled this cordova method if automatically handled at startup
-             * @see MainActivity.java
-             */
-            Log.d(TAG, "NITManager :: start");
-            NearItManager.getInstance(mContext).startRadar();
-        }
+        Log.d(TAG, "NITManager :: request permission to the user");
+        PermissionsActivity.run(/* {package} */.MainActivity.getInstance());
 
         callbackContext.success();
     }

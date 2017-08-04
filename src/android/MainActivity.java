@@ -81,10 +81,10 @@ public class MainActivity
             PermissionsActivity.run(MainActivity.this);
         }
 
-        if (NITConfig.ENABLE_PROXIMITY) {
+        /*if (NITConfig.ENABLE_PROXIMITY) {
             Log.i(TAG, "NITManager proximity listener start");
             NearItManager.getInstance(this).addProximityListener(this);
-        }
+        }*/
 
         // Set by <content src="index.html" /> in config.xml
         loadUrl(launchUrl);
@@ -108,10 +108,10 @@ public class MainActivity
     public void onDestroy() {
         super.onDestroy();
 
-        if (NITConfig.ENABLE_PROXIMITY) {
+        /*if (NITConfig.ENABLE_PROXIMITY) {
             Log.i(TAG, "NITManager proximity listener stop");
             NearItManager.getInstance(this).removeProximityListener(this);
-        }
+        }*/
     }
 
     @Override

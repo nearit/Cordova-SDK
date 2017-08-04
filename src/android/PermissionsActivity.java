@@ -154,7 +154,7 @@ public class PermissionsActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == LOCATION_SETTINGS_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                if (this->allPermissionGranted()) {
+                if (this.allPermissionGranted()) {
                     openBluetoothSettings();
                 } else {
                     finish();
@@ -190,7 +190,7 @@ public class PermissionsActivity
                     case LocationSettingsStatusCodes.SUCCESS:
                         // The bluetooth permissions are strictly necessary for beacons,
                         // but not for geofences
-                        if (this->allPermissionGranted()) {
+                        if (PermissionsActivity.this.allPermissionGranted()) {
                             openBluetoothSettings();
                         } else {
                             finish();
