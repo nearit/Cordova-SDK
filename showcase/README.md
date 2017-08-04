@@ -11,12 +11,16 @@ You need to install ionic and cordova cli with:
 $ npm install -g ionic cordova
 ```
 
-Then install project dependencies:
-
+### Install project dependencies
+Inside `./sample` folder run:
 ```bash
-$ cd ./sample/
-$ npm install
 $ ionic cordova prepare
+```
+
+### Insert NearIT API Key
+Open `config.xml` and insert your NearIT App API Key (the one you can find on [NearIT](go.nearit.com))
+```xml
+<preference name="nearit-api-key" value="Your.Api.Key" />
 ```
 
 ## How to run
@@ -28,7 +32,7 @@ $ ionic cordova platform add browser
 $ ionic cordova run --livereload browser
 ```
 
-Then run iOs platform: 
+Then run iOS platform: 
 
 ```bash
 $ ionic cordova platform add ios
