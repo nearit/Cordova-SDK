@@ -419,6 +419,8 @@ __weak CDVNearIT *instance = nil;
      * disabled this cordova method if automatically handled at startup
      * @see AppDelegate+NearIT.m
      */
+     NITLogD(TAG, @"NITManager :: start");
+     [[NITManager defaultManager] start];
 #endif
 
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];

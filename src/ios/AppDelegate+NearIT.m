@@ -184,10 +184,6 @@
         eventWithContent:(id)content recipe:(NITRecipe *)recipe
 {
 
-#ifdef NEARIT_SHOULD_TRACK_NOTIFIED_EVENT
-    [manager sendTrackingWithRecipeId:recipe.ID event:NITRecipeNotified];
-#endif
-
     [self manager:manager handleEvent:CDVNE_Null withContent:content recipe:recipe];
 }
 
@@ -205,7 +201,6 @@
 
 }
 
-#ifdef NEARIT_USE_PUSH_NOTIFICATION
 // MARK: - Push Notification handling
 
 - (void)application:(UIApplication *)application
@@ -291,7 +286,6 @@
         }];
 
 }
-#endif
 
 #ifdef NEARIT_USE_LOCATION
 // MARK: - Location Manager Handling
@@ -336,7 +330,6 @@ static char key2;
     [self.locationManager requestAlwaysAuthorization];
 #endif
 
-#ifdef NEARIT_USE_PUSH_NOTIFICATION
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
         [[UNUserNotificationCenter currentNotificationCenter]
             requestAuthorizationWithOptions:UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound
@@ -354,6 +347,8 @@ static char key2;
         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound
                                                                                         categories:nil]];
     }
+
+#ifdef NEARIT_USE_PUSH_NOTIFICATION
     NITLogI(TAG, @"registering for push notifications");
     [application registerForRemoteNotifications];
 #endif
