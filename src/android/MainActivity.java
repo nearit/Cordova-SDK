@@ -77,10 +77,6 @@ public class MainActivity
             moveTaskToBack(true);
         }
 
-        if (NITConfig.AUTO_ASK_FOR_PERMISSION_AT_STARTUP) {
-            PermissionsActivity.run(MainActivity.this);
-        }
-
         /*if (NITConfig.ENABLE_PROXIMITY) {
             Log.i(TAG, "NITManager proximity listener start");
             NearItManager.getInstance(this).addProximityListener(this);
