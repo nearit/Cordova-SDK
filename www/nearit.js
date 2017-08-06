@@ -66,14 +66,14 @@ function NearIT() {
  * @param {Function} eventCallback callback function
  */
 NearIT.prototype.addEventListener = function(eventType, eventCallback) {
-    if (!this.eventType.hasOwnProperty(eventType)) {
-        console.log("Failed to attach listener, due to: unknown event type " + eventType);
-    } else {
-        window.addEventListener(this.eventType[eventType], function() {
-            console.log("NearIT :: event " + eventType + " triggered ", arguments);
-            eventCallback.apply(this, arguments);
-        });
+    if (this.eventType.hasOwnProperty(eventType)) {
+        eventType = this.eventType[eventType];
     }
+
+    window.addEventListener(eventType, function() {
+        console.log("NearIT :: event " + eventType + " triggered ", arguments);
+        eventCallback.apply(this, arguments);
+    });
 }
 
 /**
