@@ -19,11 +19,14 @@ CDVNE_Location_NotGranted // Location permissions have been denued
 ```
 
 <br>
+
 ## Location based Triggers
 
 When you want to start the radar for geofences and beacons call this method:
 
-**N.B:** You'd want to do this **AFTER** `Location permission` has been granted
+**N.B:** You'd want to do this **AFTER** `permission` has been granted. 
+
+Please note that after `nearit.permissionRequest()` SDK will automatically call `nearit.startRadar` for you.
 
 ```javascript
 nearit.startRadar(successCallback, errorCallback)
@@ -31,6 +34,7 @@ nearit.startRadar(successCallback, errorCallback)
 
 <!--
 <br>
+
 ## Push Triggers (Not Yet Available)
 To enable push notification capability for your app you need to follow the steps specific to your target platform
 
