@@ -56,5 +56,5 @@ nearit.<someMethod>()
 ```
 
 ## Integration guide
-For information on how to integrate all NearIT feautures in your app, visit the [documentation website](http://nearit-cordova-sdk.readthedocs.io/)
+For information on how to integrate all NearIT features in your app, visit the [documentation website](http://nearit-cordova-sdk.readthedocs.io/)
 
