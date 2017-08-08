@@ -42,7 +42,7 @@ ionic cordova platform add browser ios android
 
 # add NearIT Cordova SDK (plugin)
 #ionic cordova plugin add https://github.com/nearit/Cordova-SDK.git
-ionic cordova plugin add @nearit/it.near.sdk.cordova
+ionic cordova plugin add it.near.sdk.cordova
 
 # prepare platform projects
 cordova prepare browser ios android
