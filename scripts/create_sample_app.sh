@@ -35,13 +35,14 @@ cd ./sample
 
 # change package name, default one can create problem
 # with provisioning profiles on ios
-sed -i -e 's/io.ionic.starter/it.near.sdk.cordova.sample2/g' config.xml
+sed -i -e 's/io.ionic.starter/it.near.sdk.cordova.mysample/g' config.xml
 
 # add the desired platform
 ionic cordova platform add browser ios android
 
 # add NearIT Cordova SDK (plugin)
-ionic cordova plugin add https://github.com/nearit/Cordova-SDK.git
+#ionic cordova plugin add https://github.com/nearit/Cordova-SDK.git
+ionic cordova plugin add @nearit/it.near.sdk.cordova
 
 # prepare platform projects
 cordova prepare browser ios android
