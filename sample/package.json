@@ -24,7 +24,7 @@
         "cordova-plugin-statusbar": "^2.2.1",
         "cordova-plugin-whitelist": "^1.3.1",
         "ionic-plugin-keyboard": "^2.2.1",
-        "it.near.sdk.cordova": "^0.0.2"
+        "@nearit/it.near.sdk.cordova": "^0.0.3"
     },
     "cordova": {
         "plugins": {
@@ -34,7 +34,7 @@
             "cordova-plugin-statusbar": {},
             "cordova-plugin-whitelist": {},
             "ionic-plugin-keyboard": {},
-            "it.near.sdk.cordova": {}
+            "@nearit/it.near.sdk.cordova": {}
         },
         "platforms": [
             "android",
