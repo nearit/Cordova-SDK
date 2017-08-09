@@ -26,7 +26,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="it.near.sdk.cordova"
         name="NearIT"
-        version="0.0.1">
+        version="0.0.5">
 
     <name>NearIT SDK</name>
     <description>Cordova plugin for NearIT SDK</description>
@@ -42,6 +42,15 @@
         <engine name="cordova-ios" version=">=4.0.0" />
         <engine name="cordova-android" version=">=6.2.3" />
     </engines>
+
+    <!-- customize config.xml and platform project files -->
+    <hook type="after_plugin_install" src="hooks/01_before_prepare.js" />
+    <hook type="before_prepare" src="hooks/01_before_prepare.js" />
+
+    <js-module src="www/nearit.js" name="nearit">
+        <runs />
+        <clobbers target="nearit" />
+    </js-module>
 
     <!-- iOs platform definition -->
     <platform name="ios">
@@ -63,11 +72,11 @@
             NearIT iOS SDK dependency
             https://github.com/nearit/Near-iOS-SDK
             Supporting iOs 9.0 and later
-            Near-iOS-SDK release 1.0.4
+            Near-iOS-SDK release 1.0.8
         -->
         <pod name="NearITSDK" configurations="release,debug"
              git="https://github.com/nearit/Near-iOS-SDK"
-             tag="1.0.4" />
+             tag="1.0.8" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="NearIT">
@@ -104,15 +113,6 @@
 
     </platform>
 
-    <!-- customize config.xml and platform project files -->
-    <hook type="after_plugin_install" src="hooks/01_before_prepare.js" />
-    <hook type="before_prepare" src="hooks/01_before_prepare.js" />
-
-    <js-module src="www/nearit.js" name="nearit">
-        <runs />
-        <clobbers target="nearit" />
-    </js-module>
-
     <!-- browser platform definition -->
     <platform name="browser">
         <config-file target="config.xml" parent="/*">
@@ -125,6 +125,55 @@
             <runs/>
             <clobbers target="nearitproxy" />
         </js-module>
+    </platform>
+
+    <!-- Android platform definition -->
+    <platform name="android">
+
+        <edit-config file="AndroidManifest.xml" target="/manifest/uses-sdk" mode="merge">
+            <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="25" />
+        </edit-config>
+
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="nearit">
+                <param name="android-package" value="it.near.sdk.cordova.android.CDVNearIT" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <receiver android:exported="false" android:name="it.near.sdk.recipes.background.NearItBroadcastReceiver">
+                <intent-filter>
+                    <action android:name="it.near.sdk.permission.GEO_MESSAGE" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                </intent-filter>
+                <intent-filter>
+                    <action android:name="it.near.sdk.permission.PUSH_MESSAGE" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                </intent-filter>
+            </receiver>
+            <activity android:name="it.near.sdk.cordova.android.PermissionsActivity"
+                      android:theme="@style/NearDialogTheme" />
+        </config-file>
+
+        <source-file src="src/android/MyApplication.java" target-dir="src/it/near/sdk/cordova/android" />
+        <source-file src="src/android/PermissionsActivity.java" target-dir="src/it/near/sdk/cordova/android" />
+        <source-file src="src/android/NITConfig.java" target-dir="src/it/near/sdk/cordova/android" />
+        <source-file src="src/android/CDVNearIT.java" target-dir="src/it/near/sdk/cordova/android" />
+        <source-file src="src/android/styles.xml" target-dir="res/values" />
+        <!--<source-file src="src/android/MainActivity.java" target-dir="src/it/near/sdk/cordova/android" />-->
+
+        <framework src="src/android/nearit.gradle" custom="true" type="gradleReference" />
+
+        <!--
+        To replace android MainActivity
+        -->
+        <hook type="before_prepare" src="hooks/03_before_prepare_android.js"/>
+
     </platform>
 
 </plugin>

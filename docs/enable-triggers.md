@@ -27,6 +27,7 @@ CDVNE_Location_NotGranted // Location permissions have been denued
 ```
 
 <br>
+
 ## Location based Triggers
 Enable the feature from your Cordova project `config.xml`
 ```xml
@@ -35,12 +36,15 @@ Enable the feature from your Cordova project `config.xml`
 
 <br>
 When you want to start the radar for geofences and beacons call this method:
-```javascript
-nearit.startRadar(successCallback, errorCallback)
-```
-**N.B:** You'd want to do this **AFTER** `Location permission` has been granted
+
+
+**N.B:** You'd want to do this **AFTER** `permission` has been granted. 
+
+Please note that after `nearit.permissionRequest()` SDK will automatically call `nearit.startRadar` for you.
+
 
 <br>
+
 ## Push Triggers
 To enable push notification capability for your app
 
@@ -49,6 +53,7 @@ Edit your Cordova project `config.xml`
 <preference name="nearit-feature-push" value="true" />
 ```
 and then follow the steps specific to your target platform
+
 
 ### iOS
 on iOS, you need to generate a `.p12` certificate and upload it to NearIT CMS. 

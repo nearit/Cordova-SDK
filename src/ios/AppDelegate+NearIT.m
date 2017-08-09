@@ -117,10 +117,6 @@
                                                     NO;
 #endif
 
-#ifdef NEARIT_SHOULD_AUTO_ASK_FOR_PERMISSION_AT_STARTUP
-    [self permissionRequest];
-#endif
-
     // This line at runtime does not go into an infinite loop
     // because it will call the real method instead of ours.
     return [self customapplication:application didFinishLaunchingWithOptions:launchOptions];
@@ -184,10 +180,6 @@
         eventWithContent:(id)content recipe:(NITRecipe *)recipe
 {
 
-#ifdef NEARIT_SHOULD_TRACK_NOTIFIED_EVENT
-    [manager sendTrackingWithRecipeId:recipe.ID event:NITRecipeNotified];
-#endif
-
     [self manager:manager handleEvent:CDVNE_Null withContent:content recipe:recipe];
 }
 
@@ -200,12 +192,11 @@
     [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error
                             withArguments:[NSDictionary dictionaryWithObjectsAndKeys:
                                            recipe, @"recipe",
-                                           [error localizedDescription], @"message",
+                                           [error description], @"message",
                                            nil]];
 
 }
 
-#ifdef NEARIT_USE_PUSH_NOTIFICATION
 // MARK: - Push Notification handling
 
 - (void)application:(UIApplication *)application
@@ -247,23 +238,23 @@
 {
     NITLogV(TAG, @"didReceiveLocalNotification");
 
-    [[NITManager defaultManager] handleLocalNotification:notification
-                            completionHandler:^(id _Nullable content, NITRecipe * _Nullable recipe, NSError * _Nullable error) {
-        // Handle local notification message
-        NITLogD(TAG, @"didReceiveLocalNotification content=%@ recipe=%@ error=%@", content, recipe, error);
+    [[NITManager defaultManager] processRecipeWithUserInfo:notification.userInfo
+        completion:^(id  _Nullable content, NITRecipe * _Nullable recipe, NSError * _Nullable error) {
+            // Handle push notification message
+            NITLogD(TAG, @"didReceiveLocalNotification content=%@ recipe=%@ error=%@", content, recipe, error);
 
-        if (error) {
-            [self manager:[NITManager defaultManager]
-                  eventFailureWithError:error
-                  recipe:recipe];
-        } else {
-            [self manager:[NITManager defaultManager]
-                  handleEvent:CDVNE_PushNotification_Local
+            if (error) {
+                [self manager:[NITManager defaultManager]
+        eventFailureWithError:error
+                       recipe:recipe];
+            } else {
+                [self manager:[NITManager defaultManager]
+                  handleEvent:CDVNE_PushNotification_Remote
                   withContent:content
-                  recipe:recipe];
-        }
-    }];
+                       recipe:recipe];
+            }
 
+        }];
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
@@ -272,45 +263,25 @@
 {
     NITLogV(TAG, @"didReceiveNotificationResponse");
 
-    BOOL isRemote = [[NITManager defaultManager] processRecipeWithUserInfo:response.notification.request.content.userInfo
-                                                     completion:^(id  _Nullable content, NITRecipe * _Nullable recipe, NSError * _Nullable error) {
-         // Handle push notification message
-         NITLogD(TAG, @"didReceiveLocalNotification content=%@ recipe=%@ error=%@", content, recipe, error);
-
-         if (error) {
-            [self manager:[NITManager defaultManager]
-                  eventFailureWithError:error
-                  recipe:recipe];
-         } else {
-            [self manager:[NITManager defaultManager]
-                  handleEvent:CDVNE_PushNotification_Remote
-                  withContent:content
-                  recipe:recipe];
-         }
-
-    }];
-
-    if (!isRemote) {
-        [[NITManager defaultManager] handleLocalNotificationResponse:response
-                                        completionHandler:^(id  _Nullable content, NITRecipe * _Nullable recipe, NSError * _Nullable error) {
-            // Handle local notification message
-            NITLogD(TAG, @"didReceiveRemoteNotification content=%@ recipe=%@ error=%@", content, recipe, error);
+    [[NITManager defaultManager] processRecipeWithUserInfo:response.notification.request.content.userInfo
+        completion:^(id  _Nullable content, NITRecipe * _Nullable recipe, NSError * _Nullable error) {
+            // Handle push notification message
+            NITLogD(TAG, @"didReceiveNotification content=%@ recipe=%@ error=%@", content, recipe, error);
 
             if (error) {
                 [self manager:[NITManager defaultManager]
-                      eventFailureWithError:error
-                      recipe:recipe];
+        eventFailureWithError:error
+                       recipe:recipe];
             } else {
                 [self manager:[NITManager defaultManager]
-                      handleEvent:CDVNE_PushNotification_Local
-                      withContent:content
-                      recipe:recipe];
+                  handleEvent:CDVNE_PushNotification_Remote
+                  withContent:content
+                       recipe:recipe];
             }
+
         }];
-    }
 
 }
-#endif
 
 #ifdef NEARIT_USE_LOCATION
 // MARK: - Location Manager Handling
@@ -355,7 +326,6 @@ static char key2;
     [self.locationManager requestAlwaysAuthorization];
 #endif
 
-#ifdef NEARIT_USE_PUSH_NOTIFICATION
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
         [[UNUserNotificationCenter currentNotificationCenter]
             requestAuthorizationWithOptions:UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound
@@ -365,7 +335,11 @@ static char key2;
              if (granted) {
                  [[CDVNearIT instance] fireWindowEvent:CDVNE_PushNotification_Granted];
              } else {
-                 [[CDVNearIT instance] fireWindowEvent:CDVNE_PushNotification_NotGranted withMessage:[error localizedDescription]];
+                 [[CDVNearIT instance] fireWindowEvent:CDVNE_PushNotification_NotGranted];
+             }
+
+             if (error) {
+                 [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:[error description]];
              }
         }];
         UNUserNotificationCenter.currentNotificationCenter.delegate = self;
@@ -373,6 +347,8 @@ static char key2;
         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound
                                                                                         categories:nil]];
     }
+
+#ifdef NEARIT_USE_PUSH_NOTIFICATION
     NITLogI(TAG, @"registering for push notifications");
     [application registerForRemoteNotifications];
 #endif

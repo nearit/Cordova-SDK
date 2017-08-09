@@ -87,7 +87,8 @@ __weak CDVNearIT *instance = nil;
 }
 
 - (void)fireWindowEvent:( CDVEventType )event withMessage:(NSString* _Nonnull)message {
-    NSDictionary* arguments = [NSDictionary dictionaryWithObject:message forKey:@"message"];
+    NSDictionary* arguments = [NSDictionary dictionaryWithObject:(message != nil ? message : @"unknown")
+                                                              forKey:@"message"];
     [self fireWindowEvent:event withArguments:arguments];
 }
 
@@ -104,9 +105,9 @@ __weak CDVNearIT *instance = nil;
         [arguments2 setObject:[NSDictionary dictionary] forKey:@"data"];
     }
     if ([arguments2 objectForKey:@"recipe"] != nil) {
+        NSMutableDictionary* recipeDict = [NSMutableDictionary dictionary];
         NITRecipe* recipe = [arguments2 objectForKey:@"recipe"];
-        NITJSONAPIResource* resourceObject = [recipe resourceObject];
-        NSDictionary* recipeDict = [resourceObject toDictionary];
+        [recipeDict setObject:[recipe ID] forKey:@"ID"];
         [arguments2 setObject:recipeDict forKey:@"recipe"];
     }
 
@@ -117,7 +118,7 @@ __weak CDVNearIT *instance = nil;
                                                          error:&error];
 
     if (!jsonData) {
-        NITLogE(TAG, @"Error while serializing event JSON due to %@", error.localizedDescription);
+        NITLogE(TAG, @"Error while serializing event JSON due to %@", error);
         jsonString = @"{}";
     } else {
         jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -252,11 +253,22 @@ __weak CDVNearIT *instance = nil;
                                          messageAsString:@"Missing value parameter"];
     } else {
 
-        NITLogD(TAG, @"NITManager :: setDeferredUserDataWithKey(%@, %@)", key, value);
-        [[NITManager defaultManager] setDeferredUserDataWithKey:key
-                                                          value:value];
+        NITLogD(TAG, @"NITManager :: setUserDataWithKey(%@, %@)", key, value);
+        [[NITManager defaultManager] setUserDataWithKey:key value:value completionHandler:^(NSError* error) {
+            CDVPluginResult* pluginResult = nil;
 
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            if (error) {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                 messageAsString:[error description]];
+            } else {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            }
+
+            [[self commandDelegate] sendPluginResult:pluginResult
+                                          callbackId:[command callbackId]];
+        }];
+
+        return;
     }
 
     [[self commandDelegate] sendPluginResult:pluginResult
@@ -400,15 +412,8 @@ __weak CDVNearIT *instance = nil;
 {
     CDVPluginResult* pluginResult = nil;
 
-#ifndef NEARIT_SHOULD_AUTO_ASK_FOR_PERMISSION_AT_STARTUP
     NITLogD(TAG, @"NITManager :: request permission to the user");
     [(AppDelegate*)[[UIApplication sharedApplication] delegate] permissionRequest];
-#else
-    /**
-     * disabled this cordova method if automatically handled at startup
-     * @see AppDelegate+NearIT.m
-     */
-#endif
 
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
 
@@ -429,7 +434,7 @@ __weak CDVNearIT *instance = nil;
 
         if (error) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                            messageAsString:[error localizedDescription]];
+                                            messageAsString:[error description]];
         } else {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         }

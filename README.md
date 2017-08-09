@@ -15,7 +15,6 @@
 NearIT allows to engage app users by sending **context-aware targeted content**.
 
 ## Recipes
------
 NearIT allows to manage apps by defining "recipes". Those are simple rules made of 3 ingredients:
 
 * **WHO**: define the target users
@@ -25,7 +24,6 @@ NearIT allows to manage apps by defining "recipes". Those are simple rules made 
 <br>
 
 ## How it works
------
 [**NearIT web interface**](https://go.nearit.com/) allows you to configure all the features quickly.
 Once the settings are configured, **everyone** - even people without technical skills - can manage context-aware mobile content.
 
@@ -34,7 +32,6 @@ Once the settings are configured, **everyone** - even people without technical s
 <br>
 
 ## Installation
------
 Minimum Requirements:
 
 - **Cordova**: 6.0.0
@@ -59,6 +56,5 @@ nearit.<someMethod>()
 ```
 
 ## Integration guide
------
-For information on how to integrate all NearIT feautures in your app, visit the [documentation website](http://nearit-cordova-sdk.readthedocs.io/)
+For information on how to integrate all NearIT features in your app, visit the [documentation website](http://nearit-cordova-sdk.readthedocs.io/)
 

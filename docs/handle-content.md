@@ -39,6 +39,7 @@ nearit.getCoupons(successCallback, errorCallback)
 The method will also return already redeemed coupons so you get to decide to filter them if necessary.
 -->
 <br>
+
 ## Trackings
 
 NearIT analytics on recipes are built from trackings describing the status of user engagement with a recipe. The two recipe states are "Notified" and "Engaged" to represent a recipe delivered to the user and a recipe that the user responded to.
