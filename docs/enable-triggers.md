@@ -27,6 +27,7 @@ Enable the feature from your Cordova project `config.xml`
 
 <br>
 When you want to start the radar for geofences and beacons call this method:
+
 ```js
 nearit.startRadar(successCallback, errorCallback)
 ```
