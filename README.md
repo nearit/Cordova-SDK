@@ -9,7 +9,7 @@
 
 [![cordova](https://img.shields.io/badge/Cordova-6.0.0-green.svg)](https://cordova.apache.org/)
 ![platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS-brightgreen.svg)
-[![Android](https://img.shields.io/badge/Android-15-blue.svg)](https://developer.android.com/about/dashboards/index.html#Platform)
+[![Android](https://img.shields.io/badge/Android-16-blue.svg)](https://developer.android.com/about/dashboards/index.html#Platform)
 [![iOS](https://img.shields.io/badge/iOS-9-blue.svg)](https://developer.apple.com/ios/)
 
 NearIT allows to engage app users by sending **context-aware targeted content**.
@@ -35,7 +35,7 @@ Once the settings are configured, **everyone** - even people without technical s
 Minimum Requirements:
 
 - **Cordova**: 6.0.0
-- **Android** Min SDK: ***15***
+- **Android** Min SDK: ***16***
 - **iOS** Min Platform: ***iOS 9***
 
 To start using the SDK, add this plugin to your Cordova project

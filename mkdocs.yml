@@ -8,8 +8,6 @@ pages:
         - 'Enable Triggers' : 'enable-triggers.md'
         - 'Handle recipe content' : 'handle-content.md'
         - 'User profiling' : 'user-profilation.md'
-#    - 'Advanced topics' :
- #       - 'Testing' : 'testing.md'
-  #      - 'Logging' : 'logging.md'
- #       - 'Push capabilities and certificates' : 'apns_walkthrough.md'
-    #    - 'Local background notification' : 'local-background-notification.md'
+    - 'Advanced topics' :
+        - 'Android Push notifications' : 'fcm_walkthrough.md'
+        - 'iOS Push certificates' : 'apns_walkthrough.md'
