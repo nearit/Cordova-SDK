@@ -35,18 +35,14 @@
 #import "Macros.h"
 #import <NearITSDK/NearITSDK.h>
 
-#ifdef NEARIT_USE_PUSH_NOTIFICATION
 #import <UserNotifications/UserNotifications.h>
-#endif
 
 #ifdef NEARIT_USE_LOCATION
 #import <CoreLocation/CoreLocation.h>
 #endif
 
 @interface AppDelegate (NearIT) <
-#ifdef NEARIT_USE_PUSH_NOTIFICATION
                                  UNUserNotificationCenterDelegate,
-#endif
 #ifdef NEARIT_USE_LOCATION
                                  CLLocationManagerDelegate,
 #endif

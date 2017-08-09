@@ -1,54 +1,81 @@
-// NearIT Ionic Demo App
+// Ionic Starter App
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-// 'starter.services' is found in services.js
-// 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
+angular.module('starter', ['ionic', 'starter.controllers'])
 
 .run(function($ionicPlatform) {
-
-  // nearit-cordova-sdk
-  $ionicPlatform.ready(function() {
-    if (window.nearit) {
-      // ensure that the plugin is initialized
-
-      // add an event listener for every nearit event
-      // (just for demo)
-      Object.keys(nearit.eventType).forEach(function(eventType) {
-        appendLog("demo :: attaching event listener for " + eventType);
-        nearit.addEventListener(eventType, function() {
-
-          var args2 = Array.prototype.slice.call(arguments);
-          args2 = args2.map(JSON.stringify);
-          args2 = ['demo :: <b>' + eventType + '</b>'].concat(args2);
-          appendLog.apply(appendLog, args2);
-
-        });
-      });
-      //
-    }
-  });
-  // @end nearit-cordova-sdk
-
-
   $ionicPlatform.ready(function() {
 
-    // Hide the accessory bar by default (remove this to show the
-    // accessory bar above the keyboard for form inputs)
-    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+    if(window.cordova && window.cordova.plugins.Keyboard) {
+      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+      // for form inputs)
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+
+      // Don't remove this line unless you know what you are doing. It stops the viewport
+      // from snapping when text inputs are focused. Ionic handles this internally for
+      // a much nicer keyboard experience.
       cordova.plugins.Keyboard.disableScroll(true);
     }
 
-    // org.apache.cordova.statusbar required
-    if (window.StatusBar) {
+    if(window.StatusBar) {
       StatusBar.styleDefault();
     }
 
-  });
+    toastr.options = {
+      "closeButton": true,
+      "debug": false,
+      "newestOnTop": false,
+      "progressBar": false,
+      "positionClass": "toast-top-full-width",
+      "preventDuplicates": true,
+      "onclick": null,
+      "showDuration": "300",
+      "hideDuration": "1000",
+      "timeOut": "5000",
+      "extendedTimeOut": "1000",
+      "showEasing": "swing",
+      "hideEasing": "linear",
+      "showMethod": "fadeIn",
+      "hideMethod": "fadeOut"
+    };
 
+    // nearit-cordova-sdk
+    $ionicPlatform.ready(function() {
+      if (window.nearit) {
+        // ensure that the plugin is initialized
+
+        // add an event listener for those nearit events
+
+        nearit.addEventListener(nearit.eventType.CDVNE_Event_Simple, function(event) {
+          toastr.info("Simple notification", event.message);
+        });
+
+        nearit.addEventListener(nearit.eventType.CDVNE_Event_CustomJSON, function(event) {
+          toastr.info("Custom JSON", JSON.stringify(event.data));
+        });
+
+        // ask user for permissions
+        nearit.permissionRequest(function() {
+          console.log(arguments);
+        }, function() {
+          console.log(arguments);
+        });
+
+        // set user profile data
+        nearit.setUserData("gender", "M", function() {
+          console.log(arguments);
+        }, function() {
+          console.log(arguments);
+        });
+
+        //
+      }
+    });
+    // @end nearit-cordova-sdk
+
+  });
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -59,55 +86,15 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   // Each state's controller can be found in controllers.js
   $stateProvider
 
-  // setup an abstract state for the tabs directive
-  .state('tab', {
-    url: '/tab',
-    abstract: true,
-    templateUrl: 'templates/tabs.html'
-  })
-
-  // Each tab has its own nav history stack:
-  .state('tab.dash', {
-
-    url: '/dash',
-    views: {
-      'tab-dash': {
-        templateUrl: 'templates/tab-dash.html',
-        controller: 'DashCtrl'
-      }
-    }
-  })
-
-  .state('tab.action', {
-      url: '/action',
-      views: {
-        'tab-action': {
-          templateUrl: 'templates/tab-action.html',
-          controller: 'ActionCtrl'
-        }
-      }
-    })
-    .state('tab.chat-detail', {
-      url: '/action/:actionId',
-      views: {
-        'tab-action': {
-          templateUrl: 'templates/run-action.html',
-          controller: 'ActionRunCtrl'
-        }
-      }
+    .state('main', {
+      url: '/main',
+      templateUrl: 'templates/main.html',
+      controller: 'MainCtrl'
     })
 
-  .state('tab.account', {
-    url: '/account',
-    views: {
-      'tab-account': {
-        templateUrl: 'templates/tab-account.html',
-        controller: 'AccountCtrl'
-      }
-    }
-  });
+  ;
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/dash');
+  $urlRouterProvider.otherwise('/main');
 
-});
+})

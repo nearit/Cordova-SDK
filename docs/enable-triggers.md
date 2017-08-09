@@ -1,63 +1,62 @@
 # Enable triggers
 
 Depending on what recipe triggers you want to use, some setup is necessary.
+<br>
+## Request permissions
+To use NearIT SDK features users need to grant your app proper permissions (Notifications and Location). You can open a dialog prompting the user to grant permissions by calling this method:
+
+```javascript
+nearit.permissionRequest(successCallback, errorCallback)
+```
+If the request is successfull `successCallback` will be invoked, but this does **NOT** mean the user gave your the required permissions. Permission state changes will be instead notified through events:
+```js
+CDVNE_PushNotification_Granted // Notification permission has been granted
+CDVNE_PushNotification_NotGranted // Notification permission has been denied
+
+CDVNE_Location_Granted // Location permissions have been granted
+CDVNE_Location_NotGranted // Location permissions have been denued
+```
+
+<br>
 
 ## Location based Triggers
+Enable the feature from your Cordova project `config.xml`
+```xml
+<preference name="nearit-feature-geofencing" value="true" />
+```
 
+<br>
 When you want to start the radar for geofences and beacons call this method:
 
-```swift
-// Swift
-// call this when you are given the proper permission for scanning (.Always or .InUse)
-manager.start()
-// to stop the radar call the method manager.stop()
+```js
+nearit.startRadar(successCallback, errorCallback)
 ```
 
-```objective-c
-// Objective-C
-// call this when you are given the proper permission for scanning (.Always or .InUse)
-[manager start];
-// to stop the radar call the method [manager stop];
-```
+**N.B:** You'd want to do this **AFTER** `permission` has been granted. 
 
-You must add the `NSLocationAlwaysUsageDescription` or `NSLocationWhenInUseUsageDescription` in the project Info.plist
+Please note that after `nearit.permissionRequest()` SDK will automatically call `nearit.startRadar` for you.
+
+
+<br>
 
 ## Push Triggers
-
-You will need to enable push notification capability for your app, generate a .p12 certificate and upload it to NearIT. If you need help follow [those steps](apns_walkthrough.md).
-
-Then in your app code you need to ask for the token.
-
-```swift
-// Swift
-func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool
-    application.registerForRemoteNotifications()
-    // ...
-}
+To enable push notification capability for your app edit your Cordova project `config.xml`
+```xml
+<preference name="nearit-feature-push" value="true" />
 ```
+and then follow the steps specific to your target platform
 
-```objective-c
-// Objective-C
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [application registerForRemoteNotifications];
-    // ...
-}
-```
 
-When you get the token in the app, just give it to the SDK.
+### iOS
+You need to generate a `.p12` certificate and upload it to NearIT CMS. 
+If you need help follow [these steps](apns_walkthrough.md).
 
-```swift
-// Swift
-func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-    manager.setDeviceToken(token)
-}
-```
+### Android
+You need to setup a Firebase project, copy the `google-services.json` to your `resources/android/` folder, upload a FCM key to NearIT. 
+If you need help follow [these steps](fcm_walkthrough.md).
 
-```objective-c
-// Objective-C
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    [manager setDeviceTokenWithData:token];
-}
-```
 
-To learn how to deal with in-app content see this [section](handle-content.md).
+<br>
+
+## Handling in-app content
+To learn how to deal with in-app content see next [section](handle-content.md).

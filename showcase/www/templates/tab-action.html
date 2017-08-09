@@ -1,0 +1,11 @@
+<ion-view view-title="Action">
+  <ion-content>
+    <ion-list>
+      <ion-item class="item-icon-right" ng-repeat="action in actions" type="item-text-wrap" href="#/tab/action/{{action.id}}">
+        <h2>{{action.name}}</h2>
+        <p>method: <i>nearit.{{action.id}}</i></p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

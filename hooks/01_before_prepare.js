@@ -138,27 +138,17 @@ var preferenceMappingData = {
             value: 'false',
             destination: 'preference'
         },
-        'nearit-feature-proximity': {
+        /*'nearit-feature-proximity': {
             target: 'config.xml',
             value: 'false',
             destination: 'preference'
-        },
+        },*/
         'nearit-api-key': {
             target: 'config.xml',
             value: 'Your.API.Key',
             destination: 'preference'
         },
         'nearit-show-background-notification': {
-            target: 'config.xml',
-            value: 'true',
-            destination: 'preference'
-        },
-        'nearit-ask-for-permission-at-startup': {
-            target: 'config.xml',
-            value: 'true',
-            destination: 'preference'
-        },
-        'nearit-auto-track-notified-event': {
             target: 'config.xml',
             value: 'true',
             destination: 'preference'
@@ -216,22 +206,16 @@ var preferenceMappingData = {
         'nearit-feature-push': {
             target: 'src/it/near/sdk/cordova/android/NITConfig.java'
         },
-        'nearit-feature-proximity': {
+        /*'nearit-feature-proximity': {
             target: 'src/it/near/sdk/cordova/android/NITConfig.java'
-        },
+        },*/
         'nearit-api-key': {
             target: 'src/it/near/sdk/cordova/android/NITConfig.java'
         },
         'nearit-show-background-notification': {
             target: 'src/it/near/sdk/cordova/android/NITConfig.java'
         },
-        'nearit-auto-track-notified-event': {
-            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
-        },
         'nearit-auto-track-engaged-event': {
-            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
-        },
-        'nearit-ask-for-permission-at-startup': {
             target: 'src/it/near/sdk/cordova/android/NITConfig.java'
         },
     },
@@ -248,12 +232,12 @@ var preferenceMappingData = {
             parent: null,
             type: "compile-flag"
         },
-        'nearit-feature-proximity': {
+        /*'nearit-feature-proximity': {
             target: '*-Prefix.pch',
             content: '#define NEARIT_PROXIMITY',
             parent: null,
             type: "compile-flag"
-        },
+        },*/
         'nearit-api-key': {
             target: '*-Prefix.pch',
             content: '#define NEARIT_APIKEY @"{value}"',
@@ -267,21 +251,9 @@ var preferenceMappingData = {
             parent: null,
             type: "compile-flag"
         },
-        'nearit-auto-track-notified-event': {
-            target: '*-Prefix.pch',
-            content: '#define NEARIT_SHOULD_TRACK_NOTIFIED_EVENT',
-            parent: null,
-            type: "compile-flag"
-        },
         'nearit-auto-track-engaged-event': {
             target: '*-Prefix.pch',
             content: '#define NEARIT_SHOULD_TRACK_ENGAGED_EVENT',
-            parent: null,
-            type: "compile-flag"
-        },
-        'nearit-ask-for-permission-at-startup': {
-            target: '*-Prefix.pch',
-            content: '#define NEARIT_SHOULD_AUTO_ASK_FOR_PERMISSION_AT_STARTUP',
             parent: null,
             type: "compile-flag"
         },
