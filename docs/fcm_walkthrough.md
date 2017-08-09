@@ -16,5 +16,4 @@ copy it inside your Cordova project `resources/android` folder.
 3. Open [NearIT](https://go.nearit.com), select your app and navigate to **“Settings > Push Settings”**.
 Paste your project FCM Key under the **“Setup Android push notifications”** block.
 
-![nearitsettings](push_help/androidpushtutorial.gif "")
-
+![nearitsettings](push_help/fcm_upload.gif "")
