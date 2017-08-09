@@ -1,5 +1,3 @@
-**Warning**: the development is currently in **alpha stage**.
-
 # NearIT Cordova SDK
 > Cordova plugin for NearIT SDK
 
