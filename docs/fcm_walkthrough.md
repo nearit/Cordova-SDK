@@ -1,10 +1,11 @@
 # Android push key setup
 
 <br>
-1. If you don't already have a Firebase project, create one at [Google Firebase Console](https://console.firebase.google.com/).
+1. If you don't already have a **Firebase project**, create one at [Google Firebase Console](https://console.firebase.google.com/).
+Inside the project, select **"Add Firebase to your Android app"** (make sure to enter the right package name of your app).
 
 <br>
-2. After the project is ready, download `google-services.json` file to your computer and
+2. Download `google-services.json` file to your computer and
 copy it inside your Cordova project `resources/android` folder.
 
 ![google-services.json](push_help/google_services_json.png "")
