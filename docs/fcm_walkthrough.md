@@ -1,7 +1,7 @@
 # Android push key setup
 
 <br>
-1. If you don't already have a **Firebase project**, create one at [Google Firebase Console](https://console.firebase.google.com/).
+1. If you don't already have a **Firebase project**, create one at [Google Firebase Console](https://console.firebase.google.com/).<br>
 Inside the project, select **"Add Firebase to your Android app"** (make sure to enter the right package name of your app).
 
 <br>
