@@ -26,14 +26,14 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="it.near.sdk.cordova"
         name="NearIT"
-        version="0.0.5">
+        version="0.0.6">
 
     <name>NearIT SDK</name>
     <description>Cordova plugin for NearIT SDK</description>
     <author>Fabio Cigliano</author>
     <license>MIT</license>
 
-    <keywords>cordova,nearit</keywords>
+    <keywords>cordova,nearit,proximity</keywords>
     <repo>https://github.com/nearit/Cordova-SDK</repo>
     <issue>https://github.com/nearit/Cordova-SDK/issues</issue>
 
@@ -156,16 +156,15 @@
                     <category android:name="android.intent.category.DEFAULT" />
                 </intent-filter>
             </receiver>
+            
             <activity android:name="it.near.sdk.cordova.android.PermissionsActivity"
                       android:theme="@style/NearDialogTheme" />
         </config-file>
 
-        <source-file src="src/android/MyApplication.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/PermissionsActivity.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/NITConfig.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearIT.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/styles.xml" target-dir="res/values" />
-        <!--<source-file src="src/android/MainActivity.java" target-dir="src/it/near/sdk/cordova/android" />-->
 
         <framework src="src/android/nearit.gradle" custom="true" type="gradleReference" />
 
@@ -173,6 +172,7 @@
         To replace android MainActivity
         -->
         <hook type="before_prepare" src="hooks/03_before_prepare_android.js"/>
+        <hook type="after_prepare" src="hooks/04_after_prepare_android.js"/>
 
     </platform>
 
