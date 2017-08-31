@@ -24,8 +24,9 @@ package it.near.sdk.cordova.android;
     SOFTWARE.
  */
 
-import android.content.Context;
 import android.util.Log;
+
+import com.google.gson.Gson;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
@@ -41,16 +42,15 @@ import it.near.sdk.NearItManager;
 import it.near.sdk.operation.UserDataNotifier;
 import it.near.sdk.recipes.RecipeRefreshListener;
 import it.near.sdk.recipes.models.Recipe;
+import it.near.sdk.trackings.TrackingInfo;
 
 /**
  * This class implements NearIT plugin interface for Android.
  */
-public class CDVNearIT extends CordovaPlugin
-{
+public class CDVNearIT extends CordovaPlugin {
 
 	private final String TAG = "CDVNearIT";
 
-	private Context mContext = null;
 	private static CDVNearIT mInstance = null;
 
 	public static CDVNearIT getInstance() {
@@ -62,7 +62,6 @@ public class CDVNearIT extends CordovaPlugin
 		super.pluginInitialize();
 		Log.d(TAG, "pluginInitialize");
 
-		mContext = MyApplication.getContext();
 		mInstance = this;
 	}
 
@@ -124,8 +123,8 @@ public class CDVNearIT extends CordovaPlugin
 			}
 		});
 
-        return true;
-    }
+		return true;
+	}
 
 
     /*
@@ -158,9 +157,9 @@ public class CDVNearIT extends CordovaPlugin
             this.type = type;
         }
 
-        /* (non-Javadoc)
-		 * @see java.lang.Enum#toString()
-		 */
+				/* (non-Javadoc)
+			 	* @see java.lang.Enum#toString()
+			 	*/
         @Override
         public String toString() {
             return type;
@@ -181,29 +180,57 @@ public class CDVNearIT extends CordovaPlugin
 			");");
 	}
 
-    public void fireWindowEvent(CDVEventType event)
-    {
-	    this.fireWindowEvent(event.toString(), new JSONObject());
-    }
+	public void fireWindowEvent(CDVEventType event, String message) {
+			this.fireWindowEvent(event, message, null);
+	}
 
-    public void fireWindowEvent(CDVEventType event, String message)
-    {
-	    JSONObject arguments = new JSONObject();
+	public void fireWindowEvent(CDVEventType event, String message, TrackingInfo trackingInfo) {
+		final JSONObject arguments = new JSONObject();
 
 		try {
 			arguments.put("message", message);
 		} catch(JSONException err) {
-			Log.e(TAG, "error while fireWindowEvent with event " + event
-					+ " and message " + message, err);
+			Log.e(TAG, "error while fireWindowEvent with event " + event + " and message " + message, err);
 		}
 
-	    this.fireWindowEvent(event.toString(), arguments);
-    }
+		if (trackingInfo != null) {
+			// JSONify trackingInfo
+			final String trackingInfoJson = new Gson().toJson(trackingInfo);
 
-    public void fireWindowEvent(CDVEventType event, Map<String, Object> arguments)
-    {
-	    this.fireWindowEvent(event.toString(), new JSONObject(arguments));
-    }
+			try {
+				arguments.put("trackingInfo", trackingInfoJson);
+			} catch(JSONException err) {
+				Log.e(TAG, "error while converting TrackingInfo fireWindowEvent with event " + event
+								+ " and message " + message, err);
+			}
+		}
+
+		this.fireWindowEvent(event.toString(), arguments);
+	}
+
+	public void fireWindowEvent(CDVEventType event, Map<String, Object> arguments, TrackingInfo trackingInfo) {
+		final JSONObject jsonToSend = new JSONObject();
+
+		try {
+			jsonToSend.put("content", new JSONObject(arguments));
+		} catch(JSONException err) {
+			Log.e(TAG, "error while fireWindowEvent with event " + event + " and message " + arguments, err);
+		}
+
+		if (trackingInfo != null) {
+			// JSONify trackingInfo
+			final String trackingInfoJson = new Gson().toJson(trackingInfo);
+
+			try {
+				jsonToSend.put("trackingInfo", trackingInfoJson);
+			} catch(JSONException err) {
+				Log.e(TAG, "error while converting TrackingInfo fireWindowEvent with event " + event
+								+ " and content " + arguments, err);
+			}
+		}
+
+		this.fireWindowEvent(event.toString(), jsonToSend);
+	}
 
 	/**
 	 * Fire NearIT event (just for testing)
@@ -254,7 +281,7 @@ public class CDVNearIT extends CordovaPlugin
 	    cordova.getThreadPool().execute(new Runnable() {
 		    @Override
 		    public void run() {
-			    NearItManager.getInstance(mContext).resetProfileId();
+			    NearItManager.getInstance().resetProfileId();
 		    }
 	    });
 
@@ -277,7 +304,7 @@ public class CDVNearIT extends CordovaPlugin
 	    cordova.getThreadPool().execute(new Runnable() {
 		    @Override
 		    public void run() {
-			    String profileId = NearItManager.getInstance(mContext).getProfileId();
+			    String profileId = NearItManager.getInstance().getProfileId();
 
 			    if (profileId == null || profileId.length() == 0) {
 				    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.NO_RESULT));
@@ -311,7 +338,8 @@ public class CDVNearIT extends CordovaPlugin
 	    }
 
 	    Log.i(TAG, "NITManager :: setProfileId(" + profileId + ")");
-	    NearItManager.getInstance(mContext).setProfileId(profileId);
+	    NearItManager.getInstance()
+							.setProfileId(profileId);
 
 	    callbackContext.success();
     }
@@ -348,19 +376,19 @@ public class CDVNearIT extends CordovaPlugin
 	    }
 
 	    Log.d(TAG, "NITManager :: setUserData(" + key + ", " + value + ")");
-        NearItManager.getInstance(mContext).setUserData(key, value, new UserDataNotifier() {
+        NearItManager.getInstance()
+								.setUserData(key, value, new UserDataNotifier() {
+									@Override
+									public void onDataCreated() {
+										callbackContext.success();
+									}
 
-		    @Override
-		    public void onDataCreated() {
-			    callbackContext.success();
-		    }
+									@Override
+									public void onDataNotSetError(String error) {
+										callbackContext.error(error);
+									}
 
-		    @Override
-		    public void onDataNotSetError(String error) {
-			    callbackContext.error(error);
-		    }
-
-	    });
+								});
     }
 
     /*
@@ -370,7 +398,7 @@ public class CDVNearIT extends CordovaPlugin
     /**
      * Track an event of type "NITRecipeNotified"
      * <code><pre>
-        cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventNotified", [recipeId]);
+        cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventNotified", [trackingInfo]);
     </pre></code>
      * @param args Cordova exec arguments
      * @param callbackContext Cordova callback context
@@ -381,29 +409,21 @@ public class CDVNearIT extends CordovaPlugin
 		    throws Exception
     {
 
-        if (args.length() != 1) {
-	        throw new Exception("Wrong number of arguments! expected 1");
-        }
+			if (args.length() != 1) {
+				throw new Exception("Wrong number of arguments! expected 1");
+			}
 
-        String recipeId = args.getString(0);
+			final String trackingInfoJsonString = args.getString(0);
 
-        if (recipeId == null || recipeId.length() == 0) {
-	        throw new Exception("Missing recipeId parameter");
-        }
+			this.sendTracking(trackingInfoJsonString, Recipe.NOTIFIED_STATUS);
 
-	    Log.d(TAG, "NITManager :: track recipe (" + recipeId + ") event (" + Recipe.NOTIFIED_STATUS + ")");
-	    NearItManager.getInstance(mContext).sendTracking(
-		    recipeId,
-		    Recipe.NOTIFIED_STATUS
-	    );
-
-        callbackContext.success();
+			callbackContext.success();
     }
 
     /**
      * Track an event of type "NITRecipeEngaged"
      * <code><pre>
-        cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventEngaged", [recipeId]);
+        cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventEngaged", [trackingInfo]);
     </pre></code>
      * @param args Cordova exec arguments
      * @param callbackContext Cordova callback context
@@ -418,25 +438,17 @@ public class CDVNearIT extends CordovaPlugin
 		    throw new Exception("Wrong number of arguments! expected 1");
 	    }
 
-        String recipeId = args.getString(0);
+			final String trackingInfoJsonString = args.getString(0);
 
-        if (recipeId == null || recipeId.length() == 0) {
-            throw new Exception("Missing recipeId parameter");
-        }
+			this.sendTracking(trackingInfoJsonString, Recipe.ENGAGED_STATUS);
 
-	    Log.d(TAG, "NITManager :: track recipe (" + recipeId + ") event (" + Recipe.ENGAGED_STATUS + ")");
-	    NearItManager.getInstance(mContext).sendTracking(
-			    recipeId,
-			    Recipe.ENGAGED_STATUS
-	    );
-
-        callbackContext.success();
+			callbackContext.success();
     }
 
     /**
      * Track a custom event
      * <code><pre>
-        cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForCustomEvent", [recipeId, eventName]);
+        cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForCustomEvent", [trackingInfo, eventName]);
     </pre></code>
      * @param args Cordova exec arguments
      * @param callbackContext Cordova callback context
@@ -451,25 +463,31 @@ public class CDVNearIT extends CordovaPlugin
 		    throw new Exception("Wrong number of arguments! expected 2");
 	    }
 
-        String recipeId  = args.getString(0);
-        String eventName = args.getString(1);
+			final String trackingInfoJsonString  = args.getString(0);
+			final String eventName = args.getString(1);
 
-        if (recipeId == null || recipeId.length() == 0) {
-            throw new Exception("Missing recipeId parameter");
-        }
+			this.sendTracking(trackingInfoJsonString, eventName);
 
-        if (eventName == null|| eventName.length() == 0) {
-            throw new Exception("Missing eventName parameter");
-        }
-
-        Log.d(TAG, "NITManager :: track recipe (" + recipeId + ") event (" + eventName + ")");
-	    NearItManager.getInstance(mContext).sendTracking(
-			    recipeId,
-			    eventName
-	    );
-
-        callbackContext.success();
+			callbackContext.success();
     }
+
+    private void sendTracking(final String trackingInfoJsonString, final String eventName) throws Exception {
+			if (trackingInfoJsonString == null || trackingInfoJsonString.length() == 0) {
+				throw new Exception("Missing trackingInfo parameter");
+			}
+
+			if (eventName == null || eventName.length() == 0) {
+				throw new Exception("Missing eventName parameter");
+			}
+
+			final TrackingInfo trackingInfo = new Gson().fromJson(trackingInfoJsonString, TrackingInfo.class);
+
+			Log.d(TAG, "NITManager :: track event (" + eventName
+							+ ") with trackingInfo (" + trackingInfoJsonString + ")");
+
+			NearItManager.getInstance()
+							.sendTracking(trackingInfo, eventName);
+		}
 
     /*
      * NITManager
@@ -488,7 +506,8 @@ public class CDVNearIT extends CordovaPlugin
     {
 
 	    Log.d(TAG, "NITManager :: start");
-	    NearItManager.getInstance(mContext).startRadar();
+	    NearItManager.getInstance()
+							.startRadar();
 
         callbackContext.success();
     }
@@ -506,7 +525,8 @@ public class CDVNearIT extends CordovaPlugin
     {
 
 	    Log.d(TAG, "NITManager :: stop");
-	    NearItManager.getInstance(mContext).stopRadar();
+	    NearItManager.getInstance()
+							.stopRadar();
 
         callbackContext.success();
     }
@@ -542,7 +562,8 @@ public class CDVNearIT extends CordovaPlugin
     {
 
 	    Log.i(TAG, "NITManager :: refreshing recipes");
-	    NearItManager.getInstance(mContext).refreshConfigs(new RecipeRefreshListener() {
+	    NearItManager.getInstance()
+							.refreshConfigs(new RecipeRefreshListener() {
 
 		    @Override
 		    public void onRecipesRefresh() {

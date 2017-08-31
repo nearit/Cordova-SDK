@@ -49,6 +49,7 @@ import it.near.sdk.reactions.feedbackplugin.model.Feedback;
 import it.near.sdk.reactions.simplenotificationplugin.model.SimpleNotification;
 import it.near.sdk.recipes.RecipeRefreshListener;
 import it.near.sdk.recipes.models.Recipe;
+import it.near.sdk.trackings.TrackingInfo;
 import it.near.sdk.utils.CoreContentsListener;
 import it.near.sdk.utils.NearItIntentConstants;
 import it.near.sdk.utils.NearUtils;
@@ -95,7 +96,7 @@ public class MainActivity
 
             if (NITConfig.ENABLE_GEO) {
                 Log.i(TAG, "NITManager start");
-                NearItManager.getInstance(this).startRadar();
+                NearItManager.getInstance().startRadar();
             }
         }
     }
@@ -123,17 +124,8 @@ public class MainActivity
         mInstance = this;
 
         if (intent != null
-                && intent.getExtras() != null
-                && intent.hasExtra(NearItIntentConstants.RECIPE_ID)) {
-
-            if (NITConfig.AUTO_TRACK_ENGAGED_EVENT) {
-                // track it as engaged, since we tapped on it
-                NearItManager.getInstance(this).sendTracking(
-                    intent.getStringExtra(NearItIntentConstants.RECIPE_ID),
-                    Recipe.ENGAGED_STATUS
-                );
-            }
-
+                && NearUtils.carriesNearItContent(intent)
+        ) {
             // we got a NearIT intent
             // coming from a notification tap
             NearUtils.parseCoreContents(intent, this);
@@ -141,50 +133,52 @@ public class MainActivity
     }
 
     @Override
-    public void foregroundEvent(Parcelable content, Recipe recipe) {
+    public void foregroundEvent(Parcelable content, TrackingInfo trackingInfo) {
 
         if (NITConfig.AUTO_TRACK_ENGAGED_EVENT) {
             // track it as engaged, since we tapped on it
-            NearItManager.getInstance(this).sendTracking(
-                recipe.getId(),
-                Recipe.ENGAGED_STATUS
-            );
+            NearItManager.getInstance()
+                    .sendTracking(trackingInfo, Recipe.ENGAGED_STATUS);
         }
 
         // NearIT event came when app is in foreground
-        NearUtils.parseCoreContents(content, recipe, this);
+        NearUtils.parseCoreContents(content, trackingInfo, this);
     }
 
     @Override
-    public void gotContentNotification(@Nullable Intent intent, Content notification, String recipeId, String notificationMessage) {
+    public void gotContentNotification(Content notification, TrackingInfo trackingInfo) {
 //        Toast.makeText(this, "You received a notification with content", Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void gotCouponNotification(@Nullable Intent intent, Coupon notification, String recipeId, String notificationMessage) {
+    public void gotCouponNotification(Coupon notification, TrackingInfo trackingInfo) {
 //        Toast.makeText(this, "You received a coupon", Toast.LENGTH_SHORT).show();
 //        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 //        builder.setMessage(notification.getSerial()).create().show();
     }
 
     @Override
-    public void gotCustomJSONNotification(@Nullable Intent intent, CustomJSON notification, String recipeId, String notificationMessage) {
-        CDVNearIT.getInstance().fireWindowEvent(
-            CDVNearIT.CDVEventType.CDVNE_Event_CustomJSON,
-            notification.content
+    public void gotCustomJSONNotification(CustomJSON notification, TrackingInfo trackingInfo) {
+        CDVNearIT.getInstance()
+                .fireWindowEvent(
+                        CDVNearIT.CDVEventType.CDVNE_Event_CustomJSON,
+                        notification.content,
+                        trackingInfo
         );
     }
 
     @Override
-    public void gotSimpleNotification(@Nullable Intent intent, SimpleNotification s_notif, String recipeId, String notificationMessage) {
-        CDVNearIT.getInstance().fireWindowEvent(
-            CDVNearIT.CDVEventType.CDVNE_Event_Simple,
-            s_notif.getNotificationMessage()
-        );
+    public void gotSimpleNotification(SimpleNotification s_notif, TrackingInfo trackingInfo) {
+        CDVNearIT.getInstance()
+                .fireWindowEvent(
+                        CDVNearIT.CDVEventType.CDVNE_Event_Simple,
+                        s_notif.getNotificationMessage(),
+                        trackingInfo
+                );
     }
 
     @Override
-    public void gotFeedbackNotification(@Nullable Intent intent, Feedback s_notif, String recipeId, String notificationMessage) {
+    public void gotFeedbackNotification(Feedback s_notif, TrackingInfo trackingInfo) {
 //        Toast.makeText(this, "You received a feedback request", Toast.LENGTH_SHORT).show();
     }
 
