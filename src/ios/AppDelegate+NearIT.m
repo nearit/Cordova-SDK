@@ -123,15 +123,12 @@
 }
 
 // MARK: - Near Manager Delegate
-
-- (void)manager:(NITManager *)manager
-    handleEvent:(CDVEventType)event
-    withContent:(id)content
-         recipe:(NITRecipe *)recipe
-{
-
+- (void)manager:(NITManager* _Nonnull) manager
+        eventWithContent:(id _Nonnull) content
+        trackingInfo:(NITTrackingInfo* _Nonnull) trackingInfo {
+    
 #ifdef NEARIT_SHOULD_TRACK_ENGAGED_EVENT
-    [manager sendTrackingWithRecipeId:recipe.ID event:NITRecipeEngaged];
+    [manager sendTrackingWithTrackingInfo:trackingInfo event:NITRecipeEngaged];
 #endif
 
     if ([content isKindOfClass:[NITSimpleNotification class]]) {
@@ -144,11 +141,11 @@
             message = @"";
         }
 
-        NITLogI(TAG, @"simple message \"%@\" recipe %@", message, recipe);
+        NITLogI(TAG, @"simple message \"%@\" with trackingInfo %@", message, trackingInfo);
 
-        [[CDVNearIT instance] fireWindowEvent:(event == CDVNE_Null ? CDVNE_Event_Simple : event)
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Simple
                                 withArguments:[NSDictionary dictionaryWithObjectsAndKeys:
-                                               recipe, @"recipe",
+                                               trackingInfo, @"trackingInfo",
                                                message, @"message",
                                                nil]];
 
@@ -156,18 +153,17 @@
 
         // Custom JSON notification
         NITCustomJSON *custom = (NITCustomJSON*)content;
-        NITLogI(TAG, @"JSON message %@ recipe %@", [custom content], recipe);
+        NITLogI(TAG, @"JSON message %@ trackingInfo %@", [custom content], trackingInfo);
 
-        [[CDVNearIT instance] fireWindowEvent:(event == CDVNE_Null ? CDVNE_Event_CustomJSON : event)
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_CustomJSON
                                 withArguments:[NSDictionary dictionaryWithObjectsAndKeys:
-                                               recipe, @"recipe",
+                                               trackingInfo, @"trackingInfo",
                                                [custom content], @"data",
                                                nil]];
 
     } else {
         // unhandled content type
-
-        NSString* message = [NSString stringWithFormat:@"unknown content type %@ recipe %@", content, recipe];
+        NSString* message = [NSString stringWithFormat:@"unknown content type %@ trackingInfo %@", content, trackingInfo];
         NITLogW(TAG, message);
 
         [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error
@@ -176,26 +172,17 @@
     }
 }
 
-- (void)manager:(NITManager *)manager
-        eventWithContent:(id)content recipe:(NITRecipe *)recipe
-{
-
-    [self manager:manager handleEvent:CDVNE_Null withContent:content recipe:recipe];
-}
-
-- (void)manager:(NITManager *)manager
-        eventFailureWithError:(NSError *)error
-        recipe:(NITRecipe *)recipe
+- (void)manager:(NITManager* _Nonnull)manager eventFailureWithError:(NSError* _Nonnull)error
 {
     NITLogE(TAG, @"eventFailureWithError %@", error);
 
     [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error
                             withArguments:[NSDictionary dictionaryWithObjectsAndKeys:
-                                           recipe, @"recipe",
                                            [error description], @"message",
                                            nil]];
-
 }
+
+
 
 // MARK: - Push Notification handling
 
@@ -213,19 +200,16 @@
     NITLogV(TAG, @"didReceiveRemoteNotification");
 
     [[NITManager defaultManager] processRecipeWithUserInfo:userInfo
-                                     completion:^(id  _Nullable content, NITRecipe * _Nullable recipe, NSError * _Nullable error) {
+                                     completion:^(id  _Nullable content, NITTrackingInfo * _Nullable trackingInfo, NSError * _Nullable error) {
          // Handle push notification message
-         NITLogD(TAG, @"didReceiveRemoteNotification content=%@ recipe=%@ error=%@", content, recipe, error);
+         NITLogD(TAG, @"didReceiveRemoteNotification content=%@ trackingInfo=%@ error=%@", content, trackingInfo, error);
 
          if (error) {
-            [self manager:[NITManager defaultManager]
-                  eventFailureWithError:error
-                  recipe:recipe];
+             [self manager:[NITManager defaultManager] eventFailureWithError:error];
          } else {
-            [self manager:[NITManager defaultManager]
-                  handleEvent:CDVNE_PushNotification_Remote
-                  withContent:content
-                  recipe:recipe];
+             [self manager:[NITManager defaultManager]
+                eventWithContent:content
+                trackingInfo:trackingInfo];
          }
 
     }];
@@ -239,19 +223,16 @@
     NITLogV(TAG, @"didReceiveLocalNotification");
 
     [[NITManager defaultManager] processRecipeWithUserInfo:notification.userInfo
-        completion:^(id  _Nullable content, NITRecipe * _Nullable recipe, NSError * _Nullable error) {
+        completion:^(id _Nullable content, NITTrackingInfo * _Nullable trackingInfo, NSError * _Nullable error) {
             // Handle push notification message
-            NITLogD(TAG, @"didReceiveLocalNotification content=%@ recipe=%@ error=%@", content, recipe, error);
+            NITLogD(TAG, @"didReceiveLocalNotification content=%@ trackingInfo=%@ error=%@", content, trackingInfo, error);
 
             if (error) {
-                [self manager:[NITManager defaultManager]
-        eventFailureWithError:error
-                       recipe:recipe];
+                [self manager:[NITManager defaultManager] eventFailureWithError:error];
             } else {
                 [self manager:[NITManager defaultManager]
-                  handleEvent:CDVNE_PushNotification_Remote
-                  withContent:content
-                       recipe:recipe];
+                    eventWithContent:content
+                    trackingInfo:trackingInfo];
             }
 
         }];
@@ -264,19 +245,16 @@
     NITLogV(TAG, @"didReceiveNotificationResponse");
 
     [[NITManager defaultManager] processRecipeWithUserInfo:response.notification.request.content.userInfo
-        completion:^(id  _Nullable content, NITRecipe * _Nullable recipe, NSError * _Nullable error) {
+        completion:^(id  _Nullable content, NITTrackingInfo * _Nullable trackingInfo, NSError * _Nullable error) {
             // Handle push notification message
-            NITLogD(TAG, @"didReceiveNotification content=%@ recipe=%@ error=%@", content, recipe, error);
+            NITLogD(TAG, @"didReceiveNotification content=%@ trackingInfo=%@ error=%@", content, trackingInfo, error);
 
             if (error) {
-                [self manager:[NITManager defaultManager]
-        eventFailureWithError:error
-                       recipe:recipe];
+                [self manager:[NITManager defaultManager] eventFailureWithError:error];
             } else {
                 [self manager:[NITManager defaultManager]
-                  handleEvent:CDVNE_PushNotification_Remote
-                  withContent:content
-                       recipe:recipe];
+                        eventWithContent:content
+                        trackingInfo:trackingInfo];
             }
 
         }];

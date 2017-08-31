@@ -72,7 +72,6 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 #pragma mark - Profile Id
 
 - (void)resetProfile:( CDVInvokedUrlCommand* _Nonnull )command;
-
 - (void)getProfileId:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)setProfileId:( CDVInvokedUrlCommand* _Nonnull )command;
 
@@ -85,6 +84,7 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 - (void)sendTrackingWithRecipeIdForEventNotified:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)sendTrackingWithRecipeIdForEventEngaged:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)sendTrackingWithRecipeIdForCustomEvent:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)sendTrackingWithTrackingInfo:(NSString* _Nonnull) trackingInfoJsonString eventName: (NSString* _Nonnull) eventName;
 
 #pragma mark - NITManager
 
