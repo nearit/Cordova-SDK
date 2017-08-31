@@ -39,7 +39,7 @@ Minimum Requirements:
 To start using the SDK, add this plugin to your Cordova project
 
 ```bash
-$ cordova plugin add https://github.com/nearit/Cordova-SDK.git
+$ cordova plugin add cordova-plugin-nearit
 ```
 
 Set the API token inside your project `config.xml`

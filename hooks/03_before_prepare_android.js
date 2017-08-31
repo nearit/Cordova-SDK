@@ -40,12 +40,13 @@ var fs = require('fs'),
     assert = require('assert'),
     lib = require('./lib.js')
 
-var pluginname = "it.near.sdk.cordova";
+var pluginname = 'cordova-plugin-nearit'
+var pluginPackagePath = 'it.near.sdk.cordova'.split(".").join(path.sep)
 
 var rootdir = process.cwd();
 var platformDir = path.join(rootdir, 'platforms', 'android');
 var pluginDir = path.join(rootdir, 'plugins', pluginname, 'src', 'android');
-var pluginClassDir = path.join(platformDir, 'src', pluginname.split(".").join(path.sep), 'android');
+var pluginClassDir = path.join(platformDir, 'src', pluginPackagePath, 'android');
 var resourcesDir = path.join(rootdir, 'resources', 'android');
 var config = lib.parseElementtreeSync(path.join(rootdir, 'config.xml'));
 var packagename = config.getroot().get('id');

@@ -40,8 +40,6 @@ var fs = require('fs'),
   assert = require('assert'),
   lib = require('./lib.js')
 
-var pluginname = "it.near.sdk.cordova";
-
 var rootdir = process.cwd();
 var platformDir = path.join(rootdir, 'platforms', 'android');
 var resourcesDir = path.join(rootdir, 'resources', 'android');
