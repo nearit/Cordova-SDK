@@ -26,7 +26,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-nearit"
         name="NearIT"
-        version="2.2.0-alpha.3">
+        version="2.2.0-alpha.4">
 
     <name>NearIT SDK</name>
     <description>Cordova plugin for NearIT SDK</description>
