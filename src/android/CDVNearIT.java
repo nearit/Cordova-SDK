@@ -209,7 +209,7 @@ public class CDVNearIT extends CordovaPlugin {
 		final JSONObject jsonToSend = new JSONObject();
 
 		try {
-			jsonToSend.put("content", new JSONObject(arguments));
+			jsonToSend.put("data", new JSONObject(arguments));
 		} catch(JSONException err) {
 			Log.e(TAG, "error while fireWindowEvent with event " + event + " and message " + arguments, err);
 		}
