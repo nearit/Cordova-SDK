@@ -21,10 +21,19 @@ nearit.addEventListener(EventType, function(eventContent) {
 
 This table match every NearIT Recipe WHAT `Content Type` with the respective `EventType`
 
-|Content Type           | EventType                  |
+| Content Type          | EventType                  |
 |-----------------------|----------------------------|
 |Simple Notification    | `CDVNE_Event_Simple`       |
 |CustomJSON             | `CDVNE_Event_CustomJSON`   |
+
+The `eventContent` object will contain the following fields
+
+| Name                  | Description                |
+|-----------------------|----------------------------|
+| `trackingInfo`        | Contains a string required to `sendTracking` related to an event |
+| `message`             | Contains notification message in case of `CDVNE_Event_Simple` or error message in case of `CDVNE_Event_Error` |
+| `data`                | Contains Custom JSON data in case of `CDVNE_Event_CustomJSON` |
+
 
 
 <!--
@@ -50,11 +59,13 @@ Trackings are automatically sent by the NearIT Cordova SDK, but if you want to m
 ```
 
 <br>
-To manually track events use the following methods
+To manually track events use the following methods.
 ```js
-nearit.trackNotifiedEvent(recipeId, successCallback, errorCallback) // Track `Notified` Event
+nearit.trackNotifiedEvent(trackingInfo, successCallback, errorCallback) // Track `Notified` Event
 
-nearit.trackEngagedEvent(recipeId, successCallback, errorCallback) // Track `Engaged` Event
+nearit.trackEngagedEvent(trackingInfo, successCallback, errorCallback) // Track `Engaged` Event
 
-nearit.trackCustomEvent(recipeId, eventName, successCallback, errorCallback) // Track `eventName` Event
+nearit.trackCustomEvent(trackingInfo, eventName, successCallback, errorCallback) // Track `eventName` Event
 ```
+
+**N.B:** `trackingInfo` is required and can be retrieved from events
