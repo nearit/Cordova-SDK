@@ -86,13 +86,14 @@ __weak CDVNearIT *instance = nil;
 
 }
 
-- (void)fireWindowEvent:( CDVEventType )event withMessage:(NSString* _Nonnull)message {
+- (void)fireWindowEvent:( CDVEventType )event withMessage:(NSString* _Nonnull)message trackingInfo:(NITTrackingInfo* _Nullable)trackingInfo
+{
     NSDictionary* arguments = [NSDictionary dictionaryWithObject:(message != nil ? message : @"unknown")
                                                               forKey:@"message"];
-    [self fireWindowEvent:event withArguments:arguments];
+    [self fireWindowEvent:event withArguments:arguments trackingInfo:trackingInfo];
 }
 
-- (void)fireWindowEvent:( CDVEventType )event withArguments:(NSDictionary* _Nonnull)arguments trackingInfo: (NITTrackingInfo* _Nonnull)trackingInfo
+- (void)fireWindowEvent:( CDVEventType )event withArguments:(NSDictionary* _Nonnull)arguments trackingInfo: (NITTrackingInfo* _Nullable)trackingInfo
 {
     NSString* eventName = [self formatTypeToString:event];
 
@@ -105,10 +106,12 @@ __weak CDVNearIT *instance = nil;
         [eventContent setObject:[NSDictionary dictionary] forKey:@"data"];
     }
     
-    NSData* trackingInfoData = [NSKeyedArchiver archivedDataWithRootObject:trackingInfo];
-    NSString* trackingInfoB64 = [trackingInfoData base64EncodedStringWithOptions:0];
+    if (trackingInfo) {
+        NSData* trackingInfoData = [NSKeyedArchiver archivedDataWithRootObject:trackingInfo];
+        NSString* trackingInfoB64 = [trackingInfoData base64EncodedStringWithOptions:0];
     
-    [eventContent setObject:trackingInfoB64 forKey:@"trackingInfo"];
+        [eventContent setObject:trackingInfoB64 forKey:@"trackingInfo"];
+    }
     
     NSString* jsonString;
     NSError *error;
@@ -366,7 +369,7 @@ __weak CDVNearIT *instance = nil;
         NITLogD(TAG, @"NITManager :: track event (%@) with trackingInfo (%@)", eventName, trackingInfo);
         [[NITManager defaultManager] sendTrackingWithTrackingInfo:trackingInfo event:eventName];
     } else {
-        NITLogD(TAG, @"NITManager :: failed to send tracking for event (%@) with trackingInfo (%@)", eventName, trackingInfo, error);
+        NITLogD(TAG, @"NITManager :: failed to send tracking for event (%@) with trackingInfo (%@)", eventName, trackingInfo);
     }
 }
 

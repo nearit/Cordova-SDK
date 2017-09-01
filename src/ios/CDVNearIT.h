@@ -62,10 +62,10 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 #pragma mark - Events
 
-- ( NSString* _Nonnull )formatTypeToString:(CDVEventType)eventType;
+- (NSString* _Nonnull )formatTypeToString:(CDVEventType)eventType;
 - (void)fireWindowEvent:( CDVEventType )event;
-- (void)fireWindowEvent:( CDVEventType )event withMessage:(NSString* _Nonnull)message;
-- (void)fireWindowEvent:( CDVEventType )event withArguments:(NSDictionary* _Nonnull)arguments trackingInfo:(NITTrackingInfo* _Nonnull)trackingInfo;
+- (void)fireWindowEvent:( CDVEventType )event withMessage:(NSString* _Nonnull)message trackingInfo:(NITTrackingInfo* _Nullable)trackingInfo;
+- (void)fireWindowEvent:( CDVEventType )event withArguments:(NSDictionary* _Nonnull)arguments trackingInfo:(NITTrackingInfo* _Nullable)trackingInfo;
 
 - (void)fireEvent:( CDVInvokedUrlCommand* _Nonnull )command;
 

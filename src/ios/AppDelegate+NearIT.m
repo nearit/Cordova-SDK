@@ -156,7 +156,7 @@
         NSString* message = [NSString stringWithFormat:@"unknown content type %@ trackingInfo %@", content, trackingInfo];
         NITLogW(TAG, message);
 
-        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:message];
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:message trackingInfo:trackingInfo];
 
         return NO;
     }
@@ -182,7 +182,7 @@
 {
     NITLogE(TAG, @"eventFailureWithError %@", error);
 
-    [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:[error description]];
+    [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:[error description] trackingInfo:nil];
 }
 
 
@@ -313,7 +313,7 @@ static char key2;
              }
 
              if (error) {
-                 [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:[error description]];
+                 [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:[error description] trackingInfo:nil];
              }
         }];
         UNUserNotificationCenter.currentNotificationCenter.delegate = self;
