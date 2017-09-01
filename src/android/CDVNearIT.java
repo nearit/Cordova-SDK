@@ -24,13 +24,13 @@ package it.near.sdk.cordova.android;
     SOFTWARE.
  */
 
+import android.util.Base64;
 import android.util.Log;
 
 import com.google.gson.Gson;
 
-import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
-
+import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -194,12 +194,9 @@ public class CDVNearIT extends CordovaPlugin {
 		}
 
 		if (trackingInfo != null) {
-			// JSONify trackingInfo
-			final String trackingInfoJson = new Gson().toJson(trackingInfo);
-
 			try {
-				arguments.put("trackingInfo", trackingInfoJson);
-			} catch(JSONException err) {
+				arguments.put("trackingInfo", trackingInfoToBase64(trackingInfo));
+			} catch(Exception err) {
 				Log.e(TAG, "error while converting TrackingInfo fireWindowEvent with event " + event
 								+ " and message " + message, err);
 			}
@@ -218,12 +215,9 @@ public class CDVNearIT extends CordovaPlugin {
 		}
 
 		if (trackingInfo != null) {
-			// JSONify trackingInfo
-			final String trackingInfoJson = new Gson().toJson(trackingInfo);
-
 			try {
-				jsonToSend.put("trackingInfo", trackingInfoJson);
-			} catch(JSONException err) {
+				arguments.put("trackingInfo", trackingInfoToBase64(trackingInfo));
+			} catch(Exception err) {
 				Log.e(TAG, "error while converting TrackingInfo fireWindowEvent with event " + event
 								+ " and content " + arguments, err);
 			}
@@ -471,8 +465,8 @@ public class CDVNearIT extends CordovaPlugin {
 			callbackContext.success();
     }
 
-    private void sendTracking(final String trackingInfoJsonString, final String eventName) throws Exception {
-			if (trackingInfoJsonString == null || trackingInfoJsonString.length() == 0) {
+    private void sendTracking(final String trackingInfoBase64, final String eventName) throws Exception {
+			if (trackingInfoBase64 == null || trackingInfoBase64.length() == 0) {
 				throw new Exception("Missing trackingInfo parameter");
 			}
 
@@ -480,10 +474,9 @@ public class CDVNearIT extends CordovaPlugin {
 				throw new Exception("Missing eventName parameter");
 			}
 
-			final TrackingInfo trackingInfo = new Gson().fromJson(trackingInfoJsonString, TrackingInfo.class);
+			final TrackingInfo trackingInfo = trackingInfoFromBase64(trackingInfoBase64);
 
-			Log.d(TAG, "NITManager :: track event (" + eventName
-							+ ") with trackingInfo (" + trackingInfoJsonString + ")");
+			Log.d(TAG, "NITManager :: track event (" + eventName + ") with trackingInfo (" + trackingInfoBase64 + ")");
 
 			NearItManager.getInstance()
 							.sendTracking(trackingInfo, eventName);
@@ -577,5 +570,22 @@ public class CDVNearIT extends CordovaPlugin {
 
 	    });
     }
+
+    // Utils
+		static String trackingInfoToBase64(final TrackingInfo trackingInfo) throws Exception {
+			// JSONify trackingInfo
+			final String trackingInfoJson = new Gson().toJson(trackingInfo);
+
+			// Encode to base64
+			return Base64.encodeToString(trackingInfoJson.getBytes("UTF-8"), Base64.DEFAULT);
+		}
+
+		static TrackingInfo trackingInfoFromBase64(final String trackingInfoBase64) throws Exception {
+			// Decode from base64
+			final String trackingInfoJsonString = new String(Base64.decode(trackingInfoBase64, Base64.DEFAULT), "UTF-8");
+
+			// DeJSONify trackingInfo
+			return new Gson().fromJson(trackingInfoJsonString, TrackingInfo.class);
+		}
 
 }
