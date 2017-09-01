@@ -83,13 +83,12 @@
     <preference name="nearit-show-background-notification" value="true" />
     <preference name="nearit-auto-track-engaged-event" value="true" />
     <engine name="android" spec="^6.2.3" />
-    <engine name="browser" spec="^4.1.0" />
     <engine name="ios" spec="^4.4.0" />
-    <plugin name="cordova-plugin-console" spec="^1.0.5" />
-    <plugin name="cordova-plugin-device" spec="^1.1.4" />
+    <plugin name="cordova-plugin-console" spec="^1.0.7" />
+    <plugin name="cordova-plugin-device" spec="^1.1.6" />
+    <plugin name="cordova-plugin-nearit" spec="^2.2.0-alpha.6" />
     <plugin name="cordova-plugin-splashscreen" spec="^4.0.3" />
-    <plugin name="cordova-plugin-statusbar" spec="^2.2.1" />
-    <plugin name="cordova-plugin-whitelist" spec="^1.3.1" />
+    <plugin name="cordova-plugin-statusbar" spec="^2.2.3" />
+    <plugin name="cordova-plugin-whitelist" spec="^1.3.2" />
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
-    <plugin name="it.near.sdk.cordova" spec="^0.0.4" />
 </widget>
