@@ -279,9 +279,11 @@ static char key2;
     NITLogV(TAG, @"didChangeAuthorizationStatus status=%d", status);
 
     if (status == kCLAuthorizationStatusAuthorizedAlways) {
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Location_Granted];
         NITLogI(TAG, @"NITManager start");
         [[NITManager defaultManager] start];
     } else {
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Location_NotGranted];
         NITLogI(TAG, @"NITManager stop");
         [[NITManager defaultManager] stop];
     }
