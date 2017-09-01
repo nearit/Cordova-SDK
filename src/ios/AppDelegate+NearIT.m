@@ -143,11 +143,7 @@
 
         NITLogI(TAG, @"simple message \"%@\" with trackingInfo %@", message, trackingInfo);
 
-        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Simple
-                                withArguments:[NSDictionary dictionaryWithObjectsAndKeys:
-                                               trackingInfo, @"trackingInfo",
-                                               message, @"message",
-                                               nil]];
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Simple withArguments:[NSDictionary dictionaryWithObjectsAndKeys: message, @"message", nil] trackingInfo:trackingInfo];
 
     } else if ([content isKindOfClass:[NITCustomJSON class]]) {
 
@@ -156,18 +152,15 @@
         NITLogI(TAG, @"JSON message %@ trackingInfo %@", [custom content], trackingInfo);
 
         [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_CustomJSON
-                                withArguments:[NSDictionary dictionaryWithObjectsAndKeys:
-                                               trackingInfo, @"trackingInfo",
-                                               [custom content], @"data",
-                                               nil]];
+                                withArguments:[NSDictionary dictionaryWithObjectsAndKeys: [custom content], @"data", nil]
+                                trackingInfo:trackingInfo];
 
     } else {
         // unhandled content type
         NSString* message = [NSString stringWithFormat:@"unknown content type %@ trackingInfo %@", content, trackingInfo];
         NITLogW(TAG, message);
 
-        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error
-                                  withMessage:message];
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:message];
 
     }
 }
@@ -176,10 +169,7 @@
 {
     NITLogE(TAG, @"eventFailureWithError %@", error);
 
-    [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error
-                            withArguments:[NSDictionary dictionaryWithObjectsAndKeys:
-                                           [error description], @"message",
-                                           nil]];
+    [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:[error description]];
 }
 
 
@@ -199,17 +189,14 @@
 {
     NITLogV(TAG, @"didReceiveRemoteNotification");
 
-    [[NITManager defaultManager] processRecipeWithUserInfo:userInfo
-                                     completion:^(id  _Nullable content, NITTrackingInfo * _Nullable trackingInfo, NSError * _Nullable error) {
+    [[NITManager defaultManager] processRecipeWithUserInfo:userInfo completion:^(id  _Nullable content, NITTrackingInfo * _Nullable trackingInfo, NSError * _Nullable error) {
          // Handle push notification message
          NITLogD(TAG, @"didReceiveRemoteNotification content=%@ trackingInfo=%@ error=%@", content, trackingInfo, error);
 
          if (error) {
              [self manager:[NITManager defaultManager] eventFailureWithError:error];
          } else {
-             [self manager:[NITManager defaultManager]
-                eventWithContent:content
-                trackingInfo:trackingInfo];
+             [self manager:[NITManager defaultManager] eventWithContent:content trackingInfo:trackingInfo];
          }
 
     }];
@@ -230,9 +217,7 @@
             if (error) {
                 [self manager:[NITManager defaultManager] eventFailureWithError:error];
             } else {
-                [self manager:[NITManager defaultManager]
-                    eventWithContent:content
-                    trackingInfo:trackingInfo];
+                [self manager:[NITManager defaultManager] eventWithContent:content trackingInfo:trackingInfo];
             }
 
         }];
@@ -252,9 +237,7 @@
             if (error) {
                 [self manager:[NITManager defaultManager] eventFailureWithError:error];
             } else {
-                [self manager:[NITManager defaultManager]
-                        eventWithContent:content
-                        trackingInfo:trackingInfo];
+                [self manager:[NITManager defaultManager] eventWithContent:content trackingInfo:trackingInfo];
             }
 
         }];
