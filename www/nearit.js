@@ -139,33 +139,33 @@ NearIT.prototype.setUserData = function(key, value, successCallback, errorCallba
 
 /**
  * Track a "Notified" event related to this recipe
- * @param string     recipeId id of the recipe
+ * @param {string}   trackingInfo trackingInfo related to source event
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.trackNotifiedEvent = function(recipeId, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventNotified", [recipeId]);
+NearIT.prototype.trackNotifiedEvent = function(trackingInfo, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventNotified", [trackingInfo]);
 };
 
 /**
  * Track an "Engaged" event related to this recipe
- * @param string     recipeId id of the recipe
+ * @param {string}   trackingInfo trackingInfo related to source event
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.trackEngagedEvent = function(recipeId, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventEngaged", [recipeId]);
+NearIT.prototype.trackEngagedEvent = function(trackingInfo, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventEngaged", [trackingInfo]);
 };
 
 /**
  * Track a custom event related to this recipe
- * @param string     recipeId id of the recipe
- * @param string     eventName name of the custom event to track
+ * @param {string}   trackingInfo trackingInfo related to source event
+ * @param {string}   eventName name of the custom event to track
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.trackCustomEvent = function(recipeId, eventName, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForCustomEvent", [recipeId, eventName]);
+NearIT.prototype.trackCustomEvent = function(trackingInfo, eventName, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForCustomEvent", [trackingInfo, eventName]);
 };
 
 /*
