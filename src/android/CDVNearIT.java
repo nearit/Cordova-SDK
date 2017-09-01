@@ -114,7 +114,7 @@ public class CDVNearIT extends CordovaPlugin {
 					} else {
 						final String message = "unknown action " + action;
 						Log.e(TAG, message);
-						CDVNearIT.this.fireWindowEvent(CDVEventType.CDVNE_Event_Error, message);
+						CDVNearIT.this.fireWindowEvent(CDVEventType.CDVNE_Event_Error, message, false);
 					}
 				} catch (Exception err) {
 					// TODO: log this error
@@ -180,11 +180,11 @@ public class CDVNearIT extends CordovaPlugin {
 			");");
 	}
 
-	public void fireWindowEvent(CDVEventType event, String message) {
-			this.fireWindowEvent(event, message, null);
+	public void fireWindowEvent(CDVEventType event, String message, boolean fromUserAction) {
+			this.fireWindowEvent(event, message, null, fromUserAction);
 	}
 
-	public void fireWindowEvent(CDVEventType event, String message, TrackingInfo trackingInfo) {
+	public void fireWindowEvent(CDVEventType event, String message, TrackingInfo trackingInfo, boolean fromUserAction) {
 		final JSONObject arguments = new JSONObject();
 
 		try {
@@ -202,10 +202,17 @@ public class CDVNearIT extends CordovaPlugin {
 			}
 		}
 
+		try {
+			arguments.put("fromUserAction", fromUserAction);
+		} catch (Exception err) {
+			Log.e(TAG, "error while inserting isForeground into fireWindowEvent with event " + event
+							+ " and message " + message, err);
+		}
+
 		this.fireWindowEvent(event.toString(), arguments);
 	}
 
-	public void fireWindowEvent(CDVEventType event, Map<String, Object> arguments, TrackingInfo trackingInfo) {
+	public void fireWindowEvent(CDVEventType event, Map<String, Object> arguments, TrackingInfo trackingInfo, boolean fromUserAction) {
 		final JSONObject jsonToSend = new JSONObject();
 
 		try {
@@ -221,6 +228,13 @@ public class CDVNearIT extends CordovaPlugin {
 				Log.e(TAG, "error while converting TrackingInfo fireWindowEvent with event " + event
 								+ " and content " + arguments, err);
 			}
+		}
+
+		try {
+			arguments.put("fromUserAction", fromUserAction);
+		} catch (Exception err) {
+			Log.e(TAG, "error while inserting isForeground into fireWindowEvent with event " + event
+							+ " and content " + arguments, err);
 		}
 
 		this.fireWindowEvent(event.toString(), jsonToSend);

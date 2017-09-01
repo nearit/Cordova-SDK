@@ -33,6 +33,7 @@ The `eventContent` object will contain the following fields
 | `trackingInfo`        | Contains a string required to `sendTracking` related to an event |
 | `message`             | Contains notification message in case of `CDVNE_Event_Simple` or error message in case of `CDVNE_Event_Error` |
 | `data`                | Contains Custom JSON data in case of `CDVNE_Event_CustomJSON` |
+| `fromUserAction`      | A `boolean` indicating whichever the event was triggered by a user action (e.g. tap on a notification) |
 
 
 

@@ -122,15 +122,8 @@
     return [self customapplication:application didFinishLaunchingWithOptions:launchOptions];
 }
 
-// MARK: - Near Manager Delegate
-- (void)manager:(NITManager* _Nonnull) manager
-        eventWithContent:(id _Nonnull) content
-        trackingInfo:(NITTrackingInfo* _Nonnull) trackingInfo {
-    
-#ifdef NEARIT_SHOULD_TRACK_ENGAGED_EVENT
-    [manager sendTrackingWithTrackingInfo:trackingInfo event:NITRecipeEngaged];
-#endif
-
+- (BOOL)handleNearContent: (id _Nonnull) content trackingInfo: (NITTrackingInfo* _Nonnull) trackingInfo fromUserAction: (BOOL) fromUserAction
+{
     if ([content isKindOfClass:[NITSimpleNotification class]]) {
 
         // Simple notification
@@ -142,8 +135,10 @@
         }
 
         NITLogI(TAG, @"simple message \"%@\" with trackingInfo %@", message, trackingInfo);
+        
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Simple withArguments:[NSDictionary dictionaryWithObjectsAndKeys: message, @"message", fromUserAction, @"fromUserAction", nil] trackingInfo:trackingInfo];
 
-        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Simple withArguments:[NSDictionary dictionaryWithObjectsAndKeys: message, @"message", nil] trackingInfo:trackingInfo];
+        return YES;
 
     } else if ([content isKindOfClass:[NITCustomJSON class]]) {
 
@@ -152,9 +147,10 @@
         NITLogI(TAG, @"JSON message %@ trackingInfo %@", [custom content], trackingInfo);
 
         [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_CustomJSON
-                                withArguments:[NSDictionary dictionaryWithObjectsAndKeys: [custom content], @"data", nil]
-                                trackingInfo:trackingInfo];
+                                withArguments:[NSDictionary dictionaryWithObjectsAndKeys: [custom content], @"data", fromUserAction, @"fromUserAction", nil]
+                                 trackingInfo:trackingInfo];
 
+        return YES;
     } else {
         // unhandled content type
         NSString* message = [NSString stringWithFormat:@"unknown content type %@ trackingInfo %@", content, trackingInfo];
@@ -162,6 +158,23 @@
 
         [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:message];
 
+        return NO;
+    }
+}
+
+// MARK: - Near Manager Delegate
+- (void)manager:(NITManager* _Nonnull) manager
+        eventWithContent:(id _Nonnull) content
+        trackingInfo:(NITTrackingInfo* _Nonnull) trackingInfo
+{
+    BOOL handled = [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:YES];
+    
+    if (handled) {
+        [manager sendTrackingWithTrackingInfo:trackingInfo event:NITRecipeNotified];
+    
+        #ifdef NEARIT_SHOULD_TRACK_ENGAGED_EVENT
+            [manager sendTrackingWithTrackingInfo:trackingInfo event:NITRecipeEngaged];
+        #endif
     }
 }
 
@@ -196,7 +209,7 @@
          if (error) {
              [self manager:[NITManager defaultManager] eventFailureWithError:error];
          } else {
-             [self manager:[NITManager defaultManager] eventWithContent:content trackingInfo:trackingInfo];
+             [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:NO];
          }
 
     }];
@@ -217,7 +230,7 @@
             if (error) {
                 [self manager:[NITManager defaultManager] eventFailureWithError:error];
             } else {
-                [self manager:[NITManager defaultManager] eventWithContent:content trackingInfo:trackingInfo];
+                [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:NO];
             }
 
         }];
@@ -237,7 +250,7 @@
             if (error) {
                 [self manager:[NITManager defaultManager] eventFailureWithError:error];
             } else {
-                [self manager:[NITManager defaultManager] eventWithContent:content trackingInfo:trackingInfo];
+                [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:NO];
             }
 
         }];
