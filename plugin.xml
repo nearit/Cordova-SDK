@@ -147,7 +147,7 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <receiver android:exported="false" android:name="it.near.sdk.recipes.background.NearItBroadcastReceiver">
+            <receiver android:exported="false" android:name="it.near.sdk.cordova.android.CDVNearItBroadcastReceiver">
                 <intent-filter>
                     <action android:name="it.near.sdk.permission.GEO_MESSAGE" />
                     <category android:name="android.intent.category.DEFAULT" />
@@ -157,7 +157,10 @@
                     <category android:name="android.intent.category.DEFAULT" />
                 </intent-filter>
             </receiver>
-            
+
+            <service android:name="it.near.sdk.cordova.android.CDVNearITIntentService" android:exported="false">
+            </service>
+
             <activity android:name="it.near.sdk.cordova.android.PermissionsActivity"
                       android:theme="@style/NearDialogTheme" />
         </config-file>
@@ -166,6 +169,8 @@
         <source-file src="src/android/NITConfig.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearIT.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearITContentListener.java" target-dir="src/it/near/sdk/cordova/android" />
+        <source-file src="src/android/CDVNearItBroadcastReceiver.java" target-dir="src/it/near/sdk/cordova/android" />
+        <source-file src="src/android/CDVNearITIntentService.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/styles.xml" target-dir="res/values" />
 
         <framework src="src/android/nearit.gradle" custom="true" type="gradleReference" />
