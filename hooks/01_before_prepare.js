@@ -154,11 +154,6 @@ var preferenceMappingData = {
             value: 'true',
             destination: 'preference'
         },
-        'nearit-auto-track-engaged-event': {
-            target: 'config.xml',
-            value: 'true',
-            destination: 'preference'
-        },
     },
     'android': {
         'android-manifest-hardwareAccelerated': {
