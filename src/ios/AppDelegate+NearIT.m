@@ -136,7 +136,7 @@
 
         NITLogI(TAG, @"simple message \"%@\" with trackingInfo %@", message, trackingInfo);
         
-        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Simple withArguments:[NSDictionary dictionaryWithObjectsAndKeys: message, @"message", fromUserAction, @"fromUserAction", nil] trackingInfo:trackingInfo];
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Simple withArguments:[NSDictionary dictionaryWithObjectsAndKeys: message, @"message", [NSNumber numberWithBool:fromUserAction], @"fromUserAction", nil] trackingInfo:trackingInfo];
 
         return YES;
 
@@ -167,14 +167,10 @@
         eventWithContent:(id _Nonnull) content
         trackingInfo:(NITTrackingInfo* _Nonnull) trackingInfo
 {
-    BOOL handled = [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:YES];
+    BOOL handled = [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:NO];
     
     if (handled) {
         [manager sendTrackingWithTrackingInfo:trackingInfo event:NITRecipeNotified];
-    
-        #ifdef NEARIT_SHOULD_TRACK_ENGAGED_EVENT
-            [manager sendTrackingWithTrackingInfo:trackingInfo event:NITRecipeEngaged];
-        #endif
     }
 }
 
@@ -209,7 +205,7 @@
          if (error) {
              [self manager:[NITManager defaultManager] eventFailureWithError:error];
          } else {
-             [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:NO];
+             [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:YES];
          }
 
     }];
@@ -230,7 +226,7 @@
             if (error) {
                 [self manager:[NITManager defaultManager] eventFailureWithError:error];
             } else {
-                [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:NO];
+                [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:YES];
             }
 
         }];
@@ -250,7 +246,7 @@
             if (error) {
                 [self manager:[NITManager defaultManager] eventFailureWithError:error];
             } else {
-                [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:NO];
+                [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:YES];
             }
 
         }];
