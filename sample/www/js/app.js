@@ -87,18 +87,25 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             }
             
             var trckInfo = event.trackingInfo
+            if (trckInfo) {
+              toastr.info(eventType, evtMessage, { onclick: function() {
+                  // Send Tracking on Toast tap
+                  appendLog(`Send tracking...`)
+                  nearit.trackEngagedEvent(trckInfo, function(){
+                    appendLog(`Send tracking... DONE.`)
+                  }, function() {
+                    appendLog(`Error while sending tracking...`)
+                  })
+                }
+              });
 
-            toastr.info(eventType, evtMessage, { onclick: function() {
-                // Send Tracking on Toast tap
-                appendLog(`Send tracking...`)
-                nearit.trackEngagedEvent(trckInfo, function(){
-                  appendLog(`Send tracking... DONE.`)
-                }, function() {
-                  appendLog(`Error while sending tracking...`)
-                })
-              }
-            });
-            toastr.options.onclick = 
+              nearit.trackNotifiedEvent(trckInfo, function(){
+                appendLog(`Send NOTIFIED tracking... DONE.`)
+              }, function() {
+                appendLog(`Error while sending tracking...`)
+              })
+            }
+
             appendLog(`Event: '<b>${eventType}</b>' - Content: "${evtMessage}"`)
           });
           appendLog(`Add '<b>${event}</b>' listener... <b>DONE</b>.`)
@@ -106,18 +113,14 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 
         // ask user for permissions
         nearit.permissionRequest(function() {
-          console.log(arguments);
           appendLog(`Permissions requested`)
         }, function() {
-          console.log(arguments);
           appendLog(`Failed to request Permissions`)
         });
 
         // set user profile data
         nearit.setUserData("gender", "M", function() {
-          console.log(arguments);
         }, function() {
-          console.log(arguments);
         });
 
         appendLog('Start radar...')
