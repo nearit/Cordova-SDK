@@ -216,9 +216,6 @@ var preferenceMappingData = {
         'nearit-show-background-notification': {
             target: 'src/it/near/sdk/cordova/android/NITConfig.java'
         },
-        'nearit-auto-track-engaged-event': {
-            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
-        },
     },
     'ios': {
         'nearit-feature-geofencing': {
@@ -249,12 +246,6 @@ var preferenceMappingData = {
         'nearit-show-background-notification': {
             target: '*-Prefix.pch',
             content: '#define NEARIT_SHOW_BACKGROUND_NOTIFICATION',
-            parent: null,
-            type: "compile-flag"
-        },
-        'nearit-auto-track-engaged-event': {
-            target: '*-Prefix.pch',
-            content: '#define NEARIT_SHOULD_TRACK_ENGAGED_EVENT',
             parent: null,
             type: "compile-flag"
         },
