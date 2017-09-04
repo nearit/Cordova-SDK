@@ -167,11 +167,7 @@
         eventWithContent:(id _Nonnull) content
         trackingInfo:(NITTrackingInfo* _Nonnull) trackingInfo
 {
-    BOOL handled = [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:NO];
-    
-    if (handled) {
-        [manager sendTrackingWithTrackingInfo:trackingInfo event:NITRecipeNotified];
-    }
+    [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:NO];
 }
 
 - (void)manager:(NITManager* _Nonnull)manager eventFailureWithError:(NSError* _Nonnull)error
