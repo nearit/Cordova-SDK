@@ -48,9 +48,4 @@ public class NITConfig
      */
     public static final boolean SHOW_BACKGROUND_NOTIFICATION = true;
 
-    /**
-     * This field key is automatically mapped to preference {nearit-auto-track-engaged-event}
-     */
-    public static final boolean AUTO_TRACK_ENGAGED_EVENT = true;
-
 }

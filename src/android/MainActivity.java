@@ -122,13 +122,7 @@ public class MainActivity
 
     @Override
     public void foregroundEvent(Parcelable content, TrackingInfo trackingInfo) {
-
-        if (NITConfig.AUTO_TRACK_ENGAGED_EVENT) {
-            // track it as engaged, since we tapped on it
-            NearItManager.getInstance().sendTracking(trackingInfo, Recipe.ENGAGED_STATUS);
-        }
-
-        // NearIT event came when app is in foreground
+        // NearIT event came from proximity event
         NearUtils.parseCoreContents(content, trackingInfo, defaultContentListener);
     }
 
