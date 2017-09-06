@@ -1,13 +1,21 @@
 
 dependencies {
     compile "com.android.support:appcompat-v7:24.2.1"
-    compile "it.near.sdk:nearit:2.1.36"
+    compile "it.near.sdk:nearit:2.2.0"
 }
 
 buildscript {
+	repositories {
+            jcenter()
+			mavenLocal()
+    }
+    
     dependencies {
+        classpath 'com.android.tools.build:gradle:+'
         classpath 'com.google.gms:google-services:3.0.0'
     }
 }
 
-apply plugin: 'com.google.gms.google-services'
+// apply plugin: 'com.google.gms.google-services'
+// class must be used instead of id(string) to be able to apply plugin from non-root gradle file
+apply plugin: com.google.gms.googleservices.GoogleServicesPlugin

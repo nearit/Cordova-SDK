@@ -1,14 +1,24 @@
 <ion-view>
-  <ion-content class="padding">
+  <ion-content>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <div class="text-center padding">
+            <button class="button button-stable" ng-click="refresh()">REFRESH CONFIGURATION</button>
+          </div>
+        </ion-col>
+      </ion-row>
 
-    <div class="text-center">
-      <br>
-      <img class="img-responsive" src="img/logo.png" width="30%">
-      <br>
-      <br>
-      <br>
-      <button class="button button-stable" ng-click="refresh()">REFRESH CONFIGURATION</button>
-    </div>
+      <ion-row align-items-stretch>
+        <ion-col align-self-stretch>
+          <div class="no-margin">
+            <div id="js_logs"
+                      style="width: 100%;"
+            ></div>
+          </div>
+        </ion-col>
+      </ion-row>
+
 
   </ion-content>
 </ion-view>

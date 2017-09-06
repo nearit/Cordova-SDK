@@ -86,34 +86,36 @@ __weak CDVNearIT *instance = nil;
 
 }
 
-- (void)fireWindowEvent:( CDVEventType )event withMessage:(NSString* _Nonnull)message {
+- (void)fireWindowEvent:( CDVEventType )event withMessage:(NSString* _Nonnull)message trackingInfo:(NITTrackingInfo* _Nullable)trackingInfo
+{
     NSDictionary* arguments = [NSDictionary dictionaryWithObject:(message != nil ? message : @"unknown")
                                                               forKey:@"message"];
-    [self fireWindowEvent:event withArguments:arguments];
+    [self fireWindowEvent:event withArguments:arguments trackingInfo:trackingInfo];
 }
 
-- (void)fireWindowEvent:( CDVEventType )event withArguments:(NSDictionary* _Nonnull)arguments
+- (void)fireWindowEvent:( CDVEventType )event withArguments:(NSDictionary* _Nonnull)arguments trackingInfo: (NITTrackingInfo* _Nullable)trackingInfo
 {
     NSString* eventName = [self formatTypeToString:event];
 
-    NSMutableDictionary* arguments2 = [NSMutableDictionary dictionaryWithDictionary:arguments];
+    NSMutableDictionary* eventContent = [NSMutableDictionary dictionaryWithDictionary:arguments];
 
-    if ([arguments2 objectForKey:@"message"] == nil) {
-        [arguments2 setObject:@"" forKey:@"message"];
+    if ([eventContent objectForKey:@"message"] == nil) {
+        [eventContent setObject:@"" forKey:@"message"];
     }
-    if ([arguments2 objectForKey:@"data"] == nil) {
-        [arguments2 setObject:[NSDictionary dictionary] forKey:@"data"];
+    if ([eventContent objectForKey:@"data"] == nil) {
+        [eventContent setObject:[NSDictionary dictionary] forKey:@"data"];
     }
-    if ([arguments2 objectForKey:@"recipe"] != nil) {
-        NSMutableDictionary* recipeDict = [NSMutableDictionary dictionary];
-        NITRecipe* recipe = [arguments2 objectForKey:@"recipe"];
-        [recipeDict setObject:[recipe ID] forKey:@"ID"];
-        [arguments2 setObject:recipeDict forKey:@"recipe"];
+    
+    if (trackingInfo) {
+        NSData* trackingInfoData = [NSKeyedArchiver archivedDataWithRootObject:trackingInfo];
+        NSString* trackingInfoB64 = [trackingInfoData base64EncodedStringWithOptions:0];
+    
+        [eventContent setObject:trackingInfoB64 forKey:@"trackingInfo"];
     }
-
+    
     NSString* jsonString;
     NSError *error;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:arguments2
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventContent
                                                        options:0
                                                          error:&error];
 
@@ -124,7 +126,7 @@ __weak CDVNearIT *instance = nil;
         jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     }
 
-    NITLogI(TAG, @"fire window event %@ with arguments: %@", eventName, arguments2);
+    NITLogI(TAG, @"fire window event %@ with arguments: %@", eventName, eventContent);
     [self.commandDelegate evalJs:[NSString stringWithFormat:@"cordova.fireWindowEvent('%@', %@);", eventName, jsonString, nil]];
 
 }
@@ -280,49 +282,45 @@ __weak CDVNearIT *instance = nil;
 /**
  * Track an event of type "NITRecipeNotified"
  * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventNotified", [recipeId]);
+    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventNotified", [trackingInfo]);
 </pre></code>
  */
 - (void)sendTrackingWithRecipeIdForEventNotified:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 
-    NSString* recipeId = [[command arguments] objectAtIndex:0];
+    NSString* trackingInfoB64 = [[command arguments] objectAtIndex:0];
 
-    if (IS_EMPTY(recipeId)) {
+    if (IS_EMPTY(trackingInfoB64)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                         messageAsString:@"Missing recipeId parameter"];
+                                         messageAsString:@"Missing trackingInfo parameter"];
     } else {
-
-        NITLogD(TAG, @"NITManager :: track recipe (%@) event (%@)", recipeId, NITRecipeNotified);
-        [[NITManager defaultManager] sendTrackingWithRecipeId:recipeId event:NITRecipeNotified];
+        [self sendTrackingWithTrackingInfo:trackingInfoB64 eventName:NITRecipeNotified];
 
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
 
-    [[self commandDelegate] sendPluginResult:pluginResult
-                                  callbackId:[command callbackId]];
+    [[self commandDelegate] sendPluginResult:pluginResult callbackId:[command callbackId]];
 }
 
 /**
  * Track an event of type "NITRecipeEngaged"
  * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventEngaged", [recipeId]);
+    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventEngaged", [trackingInfo]);
 </pre></code>
  */
 - (void)sendTrackingWithRecipeIdForEventEngaged:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 
-    NSString* recipeId = [[command arguments] objectAtIndex:0];
+    NSString* trackingInfoJsonString = [[command arguments] objectAtIndex:0];
 
-    if (IS_EMPTY(recipeId)) {
+    if (IS_EMPTY(trackingInfoJsonString)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                         messageAsString:@"Missing recipeId parameter"];
+                                         messageAsString:@"Missing trackingInfo parameter"];
     } else {
-
-        NITLogD(TAG, @"NITManager :: track recipe (%@) event (%@)", recipeId, NITRecipeEngaged);
-        [[NITManager defaultManager] sendTrackingWithRecipeId:recipeId event:NITRecipeEngaged];
+        [self sendTrackingWithTrackingInfo:trackingInfoJsonString
+                                 eventName:NITRecipeEngaged];
 
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
@@ -334,32 +332,45 @@ __weak CDVNearIT *instance = nil;
 /**
  * Track a custom event
  * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForCustomEvent", [recipeId, eventName]);
+    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForCustomEvent", [trackingInfo, eventName]);
 </pre></code>
  */
 - (void)sendTrackingWithRecipeIdForCustomEvent:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 
-    NSString* recipeId = [[command arguments] objectAtIndex:0];
+    NSString* trackingInfoJsonString = [[command arguments] objectAtIndex:0];
     NSString* eventName = [[command arguments] objectAtIndex:1];
 
-    if (IS_EMPTY(recipeId)) {
+    if (IS_EMPTY(trackingInfoJsonString)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                         messageAsString:@"Missing recipeId parameter"];
+                                         messageAsString:@"Missing trackingInfoJsonString parameter"];
     } else if (IS_EMPTY(eventName)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                          messageAsString:@"Missing eventName parameter"];
     } else {
 
-        NITLogD(TAG, @"NITManager :: track recipe (%@) event (%@)", recipeId, eventName);
-        [[NITManager defaultManager] sendTrackingWithRecipeId:recipeId event:eventName];
+        [self sendTrackingWithTrackingInfo:trackingInfoJsonString eventName:eventName];
 
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
 
     [[self commandDelegate] sendPluginResult:pluginResult
                                   callbackId:[command callbackId]];
+}
+
+- (void)sendTrackingWithTrackingInfo:(NSString* _Nonnull) trackingInfoB64 eventName: (NSString* _Nonnull) eventName
+{
+    NSData* trackingInfoData = [[NSData alloc] initWithBase64EncodedString:trackingInfoB64 options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    
+    NITTrackingInfo *trackingInfo = [NSKeyedUnarchiver unarchiveObjectWithData:trackingInfoData];
+    
+    if (trackingInfo) {
+        NITLogD(TAG, @"NITManager :: track event (%@) with trackingInfo (%@)", eventName, trackingInfo);
+        [[NITManager defaultManager] sendTrackingWithTrackingInfo:trackingInfo event:eventName];
+    } else {
+        NITLogD(TAG, @"NITManager :: failed to send tracking for event (%@) with trackingInfo (%@)", eventName, trackingInfo);
+    }
 }
 
 #pragma mark - NITManager

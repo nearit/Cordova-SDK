@@ -24,28 +24,17 @@ package it.near.sdk.cordova.android;
     SOFTWARE.
  */
 
-public class NITConfig
-{
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.WakefulBroadcastReceiver;
 
-    /**
-     * This field key is automatically mapped to preference {nearit-feature-geofencing}
-     */
-    public static final boolean ENABLE_GEO = true;
+public class CDVNearItBroadcastReceiver extends WakefulBroadcastReceiver {
+  public CDVNearItBroadcastReceiver() {
+  }
 
-    /**
-     * This field key is automatically mapped to preference {nearit-feature-push}
-     */
-    public static final boolean ENABLE_PUSH = false;
-
-    /**
-     * This field key is automatically mapped to preference {nearit-api-key}
-     */
-    public static final String API_KEY = "Your.API.Key";
-
-    /**
-     * @unused on Android
-     * This field key is automatically mapped to preference {nearit-show-background-notification}
-     */
-    public static final boolean SHOW_BACKGROUND_NOTIFICATION = true;
-
+  public void onReceive(Context context, Intent intent) {
+    ComponentName comp = new ComponentName(context, CDVNearITIntentService.class);
+    startWakefulService(context, intent.setComponent(comp));
+  }
 }

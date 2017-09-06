@@ -24,40 +24,27 @@ package /* {package} */;
     SOFTWARE.
  */
 
-import android.app.AlertDialog;
-import android.os.Bundle;
-import org.apache.cordova.*;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+
+import org.apache.cordova.CordovaActivity;
 
 import it.near.sdk.NearItManager;
+import it.near.sdk.cordova.android.CDVNearITContentListener;
+import it.near.sdk.cordova.android.NITConfig;
+import it.near.sdk.cordova.android.PermissionsActivity;
 import it.near.sdk.geopolis.beacons.ranging.ProximityListener;
-import it.near.sdk.operation.UserDataNotifier;
-import it.near.sdk.reactions.contentplugin.model.Content;
-import it.near.sdk.reactions.couponplugin.model.Coupon;
-import it.near.sdk.reactions.customjsonplugin.model.CustomJSON;
-import it.near.sdk.reactions.feedbackplugin.model.Feedback;
-import it.near.sdk.reactions.simplenotificationplugin.model.SimpleNotification;
-import it.near.sdk.recipes.RecipeRefreshListener;
 import it.near.sdk.recipes.models.Recipe;
-import it.near.sdk.utils.CoreContentsListener;
-import it.near.sdk.utils.NearItIntentConstants;
+import it.near.sdk.trackings.TrackingInfo;
 import it.near.sdk.utils.NearUtils;
-
-import it.near.sdk.cordova.android.*;
 
 public class MainActivity
         extends CordovaActivity
-        implements ProximityListener, CoreContentsListener {
+        implements ProximityListener {
 
     private static final String TAG = "MainActivity";
 
@@ -66,6 +53,10 @@ public class MainActivity
     public static MainActivity getInstance() {
         return mInstance;
     }
+
+    private final CDVNearITContentListener defaultContentListener = new CDVNearITContentListener(false);
+    private final CDVNearITContentListener userContentListener = new CDVNearITContentListener(true);
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,7 +86,7 @@ public class MainActivity
 
             if (NITConfig.ENABLE_GEO) {
                 Log.i(TAG, "NITManager start");
-                NearItManager.getInstance(this).startRadar();
+                NearItManager.getInstance().startRadar();
             }
         }
     }
@@ -122,70 +113,17 @@ public class MainActivity
 
         mInstance = this;
 
-        if (intent != null
-                && intent.getExtras() != null
-                && intent.hasExtra(NearItIntentConstants.RECIPE_ID)) {
-
-            if (NITConfig.AUTO_TRACK_ENGAGED_EVENT) {
-                // track it as engaged, since we tapped on it
-                NearItManager.getInstance(this).sendTracking(
-                    intent.getStringExtra(NearItIntentConstants.RECIPE_ID),
-                    Recipe.ENGAGED_STATUS
-                );
-            }
-
+        if (intent != null && NearUtils.carriesNearItContent(intent)) {
             // we got a NearIT intent
             // coming from a notification tap
-            NearUtils.parseCoreContents(intent, this);
+            NearUtils.parseCoreContents(intent, userContentListener);
         }
     }
 
     @Override
-    public void foregroundEvent(Parcelable content, Recipe recipe) {
-
-        if (NITConfig.AUTO_TRACK_ENGAGED_EVENT) {
-            // track it as engaged, since we tapped on it
-            NearItManager.getInstance(this).sendTracking(
-                recipe.getId(),
-                Recipe.ENGAGED_STATUS
-            );
-        }
-
-        // NearIT event came when app is in foreground
-        NearUtils.parseCoreContents(content, recipe, this);
-    }
-
-    @Override
-    public void gotContentNotification(@Nullable Intent intent, Content notification, String recipeId, String notificationMessage) {
-//        Toast.makeText(this, "You received a notification with content", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void gotCouponNotification(@Nullable Intent intent, Coupon notification, String recipeId, String notificationMessage) {
-//        Toast.makeText(this, "You received a coupon", Toast.LENGTH_SHORT).show();
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setMessage(notification.getSerial()).create().show();
-    }
-
-    @Override
-    public void gotCustomJSONNotification(@Nullable Intent intent, CustomJSON notification, String recipeId, String notificationMessage) {
-        CDVNearIT.getInstance().fireWindowEvent(
-            CDVNearIT.CDVEventType.CDVNE_Event_CustomJSON,
-            notification.content
-        );
-    }
-
-    @Override
-    public void gotSimpleNotification(@Nullable Intent intent, SimpleNotification s_notif, String recipeId, String notificationMessage) {
-        CDVNearIT.getInstance().fireWindowEvent(
-            CDVNearIT.CDVEventType.CDVNE_Event_Simple,
-            s_notif.getNotificationMessage()
-        );
-    }
-
-    @Override
-    public void gotFeedbackNotification(@Nullable Intent intent, Feedback s_notif, String recipeId, String notificationMessage) {
-//        Toast.makeText(this, "You received a feedback request", Toast.LENGTH_SHORT).show();
+    public void foregroundEvent(Parcelable content, TrackingInfo trackingInfo) {
+        // NearIT event came from proximity event
+        NearUtils.parseCoreContents(content, trackingInfo, defaultContentListener);
     }
 
 }

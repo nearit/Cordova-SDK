@@ -43,31 +43,91 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 
     // nearit-cordova-sdk
     $ionicPlatform.ready(function() {
+      var appendLog = function() {
+        var args = Array.prototype.slice.call(arguments);
+        args = [new Date().toLocaleTimeString()].concat(args);
+        var logLine = args.join(' - ') + "<br/>\n";
+
+        var logDiv = document.getElementById("js_logs");
+        if (logDiv) {
+            logDiv.innerHTML = logLine + logDiv.innerHTML;
+        }
+
+        setTimeout(function() {
+          window.location = '#/tab/dash';
+        }, 1000);
+      }
+
       if (window.nearit) {
         // ensure that the plugin is initialized
+        appendLog('NearIT plugin is READY!')
 
         // add an event listener for those nearit events
+        var events = [
+          nearit.eventType.CDVNE_PushNotification_Granted,
+          nearit.eventType.CDVNE_PushNotification_NotGranted,
+          nearit.eventType.CDVNE_Location_Granted,
+          nearit.eventType.CDVNE_Location_NotGranted,
+          nearit.eventType.CDVNE_Event_Simple,
+          nearit.eventType.CDVNE_Event_CustomJSON,
+          nearit.eventType.CDVNE_Event_Error,
+        ]
 
-        nearit.addEventListener(nearit.eventType.CDVNE_Event_Simple, function(event) {
-          toastr.info("Simple notification", event.message);
-        });
+        events.forEach(function(event, index) {
+          appendLog(`Add <b>'${event}'</b> listener...`)
+          var eventType = event
+          nearit.addEventListener(event, function(event) {
+            var evtMessage = ''
+            if (event.message) {
+              evtMessage = event.message
+            } else if (event.data) {
+              evtMessage = event.data
+            } else if (event.error) {
+              evtMessage = event.error
+            }
+            
+            var trckInfo = event.trackingInfo
+            if (trckInfo) {
+              toastr.info(eventType, evtMessage, { onclick: function() {
+                  // Send Tracking on Toast tap
+                  appendLog(`Send tracking...`)
+                  nearit.trackEngagedEvent(trckInfo, function(){
+                    appendLog(`Send tracking... DONE.`)
+                  }, function() {
+                    appendLog(`Error while sending tracking...`)
+                  })
+                }
+              });
 
-        nearit.addEventListener(nearit.eventType.CDVNE_Event_CustomJSON, function(event) {
-          toastr.info("Custom JSON", JSON.stringify(event.data));
-        });
+              nearit.trackNotifiedEvent(trckInfo, function(){
+                appendLog(`Send NOTIFIED tracking... DONE.`)
+              }, function() {
+                appendLog(`Error while sending tracking...`)
+              })
+            }
+
+            appendLog(`Event: '<b>${eventType}</b>' - Content: "${evtMessage}"`)
+          });
+          appendLog(`Add '<b>${event}</b>' listener... <b>DONE</b>.`)
+        })
 
         // ask user for permissions
         nearit.permissionRequest(function() {
-          console.log(arguments);
+          appendLog(`Permissions requested`)
         }, function() {
-          console.log(arguments);
+          appendLog(`Failed to request Permissions`)
         });
 
         // set user profile data
         nearit.setUserData("gender", "M", function() {
-          console.log(arguments);
         }, function() {
-          console.log(arguments);
+        });
+
+        appendLog('Start radar...')
+        nearit.startRadar(function() {
+          appendLog('Start radar... DONE.')
+        }, function () {
+          appendLog('Start radar... FAILED.')
         });
 
         //

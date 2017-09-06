@@ -1,11 +1,21 @@
 {
-  "name": "@nearit/it.near.sdk.cordova",
-  "version": "0.0.5",
+  "name": "cordova-plugin-nearit",
+  "version": "2.2.0",
   "description": "Cordova plugin for NearIT SDK",
-  "author": "Fabio Cigliano <fabio.cigliano@gmail.com> (http://fabio.cigliano.name)",
+  "author": {
+    "name": "Fabio Cigliano",
+    "email": "fabio.cigliano@gmail.com",
+    "url": "http://fabio.cigliano.name"
+  },
+  "contributors": [
+    {
+      "name": "Mattia Panzeri",
+      "email": "mattia.panzeri93@gmail.com"
+    }
+  ],
   "license": "MIT",
   "cordova": {
-    "id": "it.near.sdk.cordova",
+    "id": "cordova-plugin-nearit",
     "platforms": [
       "ios",
       "android"

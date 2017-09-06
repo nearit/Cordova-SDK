@@ -8,6 +8,10 @@
   border-color: #604bff;
 }
 
+.bar.bar-stable .title {
+  color: #F2F2F2;
+}
+
 ion-content {
   background-color: #A3A2E4 !important;
 }

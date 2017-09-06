@@ -24,28 +24,26 @@ package it.near.sdk.cordova.android;
     SOFTWARE.
  */
 
-public class NITConfig
-{
+import android.content.Intent;
+import android.support.annotation.Nullable;
 
-    /**
-     * This field key is automatically mapped to preference {nearit-feature-geofencing}
-     */
-    public static final boolean ENABLE_GEO = true;
+import it.near.sdk.recipes.background.NearItBroadcastReceiver;
+import it.near.sdk.recipes.background.NearItIntentService;
+import it.near.sdk.utils.AppVisibilityDetector;
+import it.near.sdk.utils.NearUtils;
 
-    /**
-     * This field key is automatically mapped to preference {nearit-feature-push}
-     */
-    public static final boolean ENABLE_PUSH = false;
+public class CDVNearITIntentService extends NearItIntentService {
 
-    /**
-     * This field key is automatically mapped to preference {nearit-api-key}
-     */
-    public static final String API_KEY = "Your.API.Key";
-
-    /**
-     * @unused on Android
-     * This field key is automatically mapped to preference {nearit-show-background-notification}
-     */
-    public static final boolean SHOW_BACKGROUND_NOTIFICATION = true;
+  @Override
+  protected void onHandleIntent(@Nullable Intent intent) {
+    if (intent != null) {
+      if (AppVisibilityDetector.sIsForeground) {
+        NearUtils.parseCoreContents(intent, new CDVNearITContentListener(false));
+        NearItBroadcastReceiver.completeWakefulIntent(intent);
+      } else {
+        super.onHandleIntent(intent);
+      }
+    }
+  }
 
 }

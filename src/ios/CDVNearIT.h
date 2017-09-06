@@ -62,17 +62,16 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 #pragma mark - Events
 
-- ( NSString* _Nonnull )formatTypeToString:(CDVEventType)eventType;
+- (NSString* _Nonnull )formatTypeToString:(CDVEventType)eventType;
 - (void)fireWindowEvent:( CDVEventType )event;
-- (void)fireWindowEvent:( CDVEventType )event withMessage:(NSString* _Nonnull)message;
-- (void)fireWindowEvent:( CDVEventType )event withArguments:(NSDictionary* _Nonnull)arguments;
+- (void)fireWindowEvent:( CDVEventType )event withMessage:(NSString* _Nonnull)message trackingInfo:(NITTrackingInfo* _Nullable)trackingInfo;
+- (void)fireWindowEvent:( CDVEventType )event withArguments:(NSDictionary* _Nonnull)arguments trackingInfo:(NITTrackingInfo* _Nullable)trackingInfo;
 
 - (void)fireEvent:( CDVInvokedUrlCommand* _Nonnull )command;
 
 #pragma mark - Profile Id
 
 - (void)resetProfile:( CDVInvokedUrlCommand* _Nonnull )command;
-
 - (void)getProfileId:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)setProfileId:( CDVInvokedUrlCommand* _Nonnull )command;
 
@@ -85,6 +84,7 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 - (void)sendTrackingWithRecipeIdForEventNotified:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)sendTrackingWithRecipeIdForEventEngaged:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)sendTrackingWithRecipeIdForCustomEvent:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)sendTrackingWithTrackingInfo:(NSString* _Nonnull) trackingInfoJsonString eventName: (NSString* _Nonnull) eventName;
 
 #pragma mark - NITManager
 

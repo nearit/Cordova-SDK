@@ -3,6 +3,7 @@
 
 [![license](https://img.shields.io/github/license/nearit/Cordova-SDK.svg)](LICENSE)
 [![GitHub release](https://img.shields.io/github/release/nearit/Cordova-SDK.svg)](https://github.com/nearit/Cordova-SDK/releases)
+[![npm](https://img.shields.io/npm/v/cordova-plugin-nearit.svg)](https://www.npmjs.com/package/cordova-plugin-nearit)
 [![Documentation Status](https://readthedocs.org/projects/nearit-cordova-sdk/badge/?version=latest)](http://nearit-cordova-sdk.readthedocs.io/en/latest/?badge=latest)
 
 [![cordova](https://img.shields.io/badge/Cordova-6.0.0-green.svg)](https://cordova.apache.org/)
@@ -39,7 +40,7 @@ Minimum Requirements:
 To start using the SDK, add this plugin to your Cordova project
 
 ```bash
-$ cordova plugin add https://github.com/nearit/Cordova-SDK.git
+$ cordova plugin add cordova-plugin-nearit
 ```
 
 Set the API token inside your project `config.xml`
