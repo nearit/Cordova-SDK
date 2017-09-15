@@ -45,10 +45,10 @@ var platformDir = path.join(rootdir, 'platforms', 'android');
 var resourcesDir = path.join(rootdir, 'resources', 'android');
 var manifestFile = path.join(platformDir, 'AndroidManifest.xml')
 
-/*
-* Copy google-services.json file
-* from resources/android/google-services.json to platforms/android/google-services.json
-*/
+/**
+ * Copy google-services.json file
+ * from resources/android/google-services.json to platforms/android/google-services.json
+ */
 var sourceFile = path.join(resourcesDir, 'google-services.json');
 var targetFile = path.join(platformDir, 'google-services.json');
 
@@ -57,8 +57,8 @@ if (fs.existsSync(sourceFile)) {
 }
 
 /**
-* Inject `nearit-api-key` from Cordova `config.xml` into Android manifest
-*/
+ * Inject `nearit-api-key` from Cordova `config.xml` into Android manifest
+ */
 var apiKey = lib.searchPreferenceByName(rootdir, 'android', 'nearit-api-key')
 
 if (apiKey) {
