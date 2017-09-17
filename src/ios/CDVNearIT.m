@@ -68,6 +68,8 @@ __weak CDVNearIT *instance = nil;
 
         case CDVNE_Event_Simple:     result = @"eventSimple.nearit"; break;
         case CDVNE_Event_CustomJSON: result = @"eventJSON.nearit"; break;
+        case CDVNE_Event_Content:    result = @"eventContent.nearit"; break;
+        case CDVNE_Event_Feedback:   result = @"eventFeedback.nearit"; break;
         case CDVNE_Event_Error:      result = @"error.nearit"; break;
 
         default:
@@ -257,6 +259,64 @@ __weak CDVNearIT *instance = nil;
 
         NITLogD(TAG, @"NITManager :: setUserDataWithKey(%@, %@)", key, value);
         [[NITManager defaultManager] setUserDataWithKey:key value:value completionHandler:^(NSError* error) {
+            CDVPluginResult* pluginResult = nil;
+
+            if (error) {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                 messageAsString:[error description]];
+            } else {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            }
+
+            [[self commandDelegate] sendPluginResult:pluginResult
+                                          callbackId:[command callbackId]];
+        }];
+
+        return;
+    }
+
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                  callbackId:[command callbackId]];
+}
+
+
+
+#pragma mark - Feedback
+
+- (void)sendUserFeedback:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+
+    NSString* feedbackId = [[command arguments] objectAtIndex:0];
+    NSString* recipeId   = [[command arguments] objectAtIndex:1];
+    NSInteger rating     = [[command arguments] objectAtIndex:2];
+    NSString* comment    = [[command arguments] objectAtIndex:3];
+
+    if (IS_EMPTY(feedbackId)) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                         messageAsString:@"Missing feedbackId parameter"];
+    } else if(IS_EMPTY(recipeId)) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                         messageAsString:@"Missing recipeId parameter"];
+    } else if(rating < 0 || rating > 5) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                         messageAsString:@"Invalid rating parameter (must be an integer between 0 and 5)"];
+    } /*if(IS_EMPTY(comment)) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                         messageAsString:@"Invalid comment parameter"];
+    }*/ else {
+
+        NITFeedbackEvent* event = [[NITFeedbackEvent alloc] init];
+
+        event.ID       = feedbackId;
+        event.recipeId = recipeId;
+        event.rating   = rating;
+        event.comment  = comment;
+
+        NITLogD(TAG, @"NITManager :: sendEvent(%@, %@, %d, %@)", feedbackId, recipeId, rating, comment);
+        [[NITManager defaultManager] sendEventWithEvent:event
+                                      completionHandler:^(NSError * _Nullable error) {
+
             CDVPluginResult* pluginResult = nil;
 
             if (error) {

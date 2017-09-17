@@ -151,12 +151,100 @@
                                  trackingInfo:trackingInfo];
 
         return YES;
+    } else if ([content isKindOfClass:[NITContent class]]) {
+
+        // Rich Content notification
+        NITContent *rich = (NITContent*)content;
+        NITLogI(TAG, @"rich content message %@ trackingInfo %@", rich, trackingInfo);
+
+        NSMutableDictionary* arguments = [NSMutableDictionary dictionary];
+
+        // content - returns the text content, without processing the html
+        if ([rich content]) {
+            [arguments putObject:[rich content] forKey:@"content"];
+        } else {
+            [arguments putObject:false forKey:@"content"];
+        }
+
+        // videoLink - returns the video link
+        if ([rich videoLink]) {
+            [arguments putObject:[rich videoLink] forKey:@"videoLink"];
+        } else {
+            [arguments putObject:false forKey:@"videoLink"];
+        }
+
+        // images - returns a list of Image object containing the source links for the images
+        if ([rich images]) {
+            [arguments putObject:[[rich images] enumerateObjectsUsingBlock:
+                ^(id elem, NSUInteger index, BOOL *stop) {
+                    return [(NITImage*)elem image];
+                }];
+                          forKey:@"images"];
+        } else {
+            [arguments putObject:[NSArray array] forKey:@"images"];
+        }
+
+        // upload - returns an Upload object containing a link to a file uploaded on NearIT if any
+        if ([rich upload]) {
+            [arguments putObject:[(NITUpload*)[rich upload] url]
+                          forKey:@"upload"];
+        } else {
+            [arguments putObject:false forKey:@"upload"];
+        }
+
+        // audio - returns an Audio object containing a link to an audio file uploaded on NearIT if any
+        if ([rich audio]) {
+            [arguments putObject:[(NITAudio*)[rich audio] url]
+                          forKey:@"audio"];
+        } else {
+            [arguments putObject:false forKey:@"audio"];
+        }
+
+        [arguments putObject:fromUserAction forKey:@"fromUserAction"];
+
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Content
+                                withArguments:arguments
+                                 trackingInfo:trackingInfo];
+
+        return YES;
+    } else if ([content isKindOfClass:[NITFeedback class]]) {
+
+        // Feedback notification
+        NITFeedback *feedback = (NITFeedback*)content;
+        NITLogI(TAG, @"feedback notification %@ trackingInfo %@", [feedback question], trackingInfo);
+
+        if (![feedback recipeId] || ![feedback question]) {
+
+            // invalid feedback event received
+            NSString* message = [NSString stringWithFormat:@"invalid feedback content type %@ trackingInfo %@", [feedback question], trackingInfo];
+            NITLogW(TAG, message);
+
+            [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error
+                                      withMessage:message
+                                     trackingInfo:trackingInfo];
+           return NO;
+        }
+
+        NSMutableDictionary* arguments = [NSMutableDictionary dictionary];
+
+        [arguments putObject:[feedback ID]       forKey:@"feedbackId"];
+        [arguments putObject:[feedback recipeId] forKey:@"recipeId"];
+        [arguments putObject:[feedback question] forKey:@"question"];
+        [arguments putObject:fromUserAction      forKey:@"fromUserAction"];
+
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Feedback
+                                withArguments:arguments
+                                 trackingInfo:trackingInfo];
+        return YES;
     } else {
+
         // unhandled content type
         NSString* message = [NSString stringWithFormat:@"unknown content type %@ trackingInfo %@", content, trackingInfo];
         NITLogW(TAG, message);
 
-        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:message trackingInfo:trackingInfo];
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error
+                                  withMessage:message
+                                 trackingInfo:trackingInfo];
 
         return NO;
     }
