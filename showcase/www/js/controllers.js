@@ -56,12 +56,19 @@ angular.module('starter.controllers', [])
             var args2 = Array.prototype.slice.call(arguments);
 
             if($scope.action.result === 'alert') {
-              alert(args2[0]);
+              var msg = args2[0];
+
+              if (typeof(msg) === "object") {
+                msg = JSON.stringify(msg);
+              }
+
+              alert(msg);
             }
 
             args2 = ['demo :: <b>' + $scope.actionId + ' successCb</b>'].concat(args2);
             appendLog.apply(appendLog, args2);
           }); // successCb
+
           args.push(function() {
             var args2 = Array.prototype.slice.call(arguments);
             args2 = ['demo :: <b>' + $scope.actionId + ' errorCb</b>'].concat(args2);
