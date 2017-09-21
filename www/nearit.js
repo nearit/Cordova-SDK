@@ -52,8 +52,9 @@ function NearIT() {
         "CDVNE_Event_CustomJSON": "eventJSON.nearit",
         "CDVNE_Event_Content":    "eventContent.nearit",
         "CDVNE_Event_Feedback":   "eventFeedback.nearit",
+        "CDVNE_Event_Coupon":     "eventCoupon.nearit",
 
-        "CDVNE_Event_Error": "error"
+        "CDVNE_Event_Error": "error.nearit"
     };
 
     self.serviceName = "nearit";
@@ -148,7 +149,7 @@ NearIT.prototype.setUserData = function(key, value, successCallback, errorCallba
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.sendFeedback = function(feedbackId, recipeId, rating, successCallback, errorCallback) {
+NearIT.prototype.sendUserFeedback = function(feedbackId, recipeId, rating, successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackId, recipeId, rating]);
 };
 
@@ -161,8 +162,21 @@ NearIT.prototype.sendFeedback = function(feedbackId, recipeId, rating, successCa
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.sendFeedbackWithComment = function(feedbackId, recipeId, rating, comment, successCallback, errorCallback) {
+NearIT.prototype.sendUserFeedbackWithComment = function(feedbackId, recipeId, rating, comment, successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackId, recipeId, rating, comment]);
+};
+
+/*
+ * Coupon
+ */
+
+/**
+ * Retrieve NearIT coupon list
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.getCoupons = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "getCoupons", []);
 };
 
 /*

@@ -170,6 +170,22 @@ CDVNearIT.prototype.sendUserFeedback = function(successCallback, errorCallback, 
 };
 
 /*
+ * Coupon
+ */
+
+/**
+ * Get coupon list
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ * @param array opts method arguments
+ */
+CDVNearIT.prototype.getCoupons = function(successCallback, errorCallback, opts) {
+    opts = opts || [];
+
+    successCallback([]);
+};
+
+/*
  * Tracking
  */
 

@@ -58,19 +58,21 @@ __weak CDVNearIT *instance = nil;
 
     switch(eventType) {
 
-        case CDVNE_PushNotification_Granted:    result = @"pushGranted.nearit"; break;
-        case CDVNE_PushNotification_NotGranted: result = @"pushDenied.nearit"; break;
+        case CDVNE_PushNotification_Granted:    result =  @"pushGranted.nearit"; break;
+        case CDVNE_PushNotification_NotGranted: result =   @"pushDenied.nearit"; break;
         case CDVNE_PushNotification_Remote:     result = @"pushReceived.nearit"; break;
         case CDVNE_PushNotification_Local:      result = @"pushReceived.nearit"; break;
 
         case CDVNE_Location_Granted:    result = @"locationGranted.nearit"; break;
-        case CDVNE_Location_NotGranted: result = @"locationDenied.nearit"; break;
+        case CDVNE_Location_NotGranted: result =  @"locationDenied.nearit"; break;
 
-        case CDVNE_Event_Simple:     result = @"eventSimple.nearit"; break;
-        case CDVNE_Event_CustomJSON: result = @"eventJSON.nearit"; break;
-        case CDVNE_Event_Content:    result = @"eventContent.nearit"; break;
+        case CDVNE_Event_Simple:     result =   @"eventSimple.nearit"; break;
+        case CDVNE_Event_CustomJSON: result =     @"eventJSON.nearit"; break;
+        case CDVNE_Event_Content:    result =  @"eventContent.nearit"; break;
         case CDVNE_Event_Feedback:   result = @"eventFeedback.nearit"; break;
-        case CDVNE_Event_Error:      result = @"error.nearit"; break;
+        case CDVNE_Event_Coupon:     result =   @"eventCoupon.nearit"; break;
+
+        case CDVNE_Event_Error: result = @"error.nearit"; break;
 
         default:
             [NSException raise:NSGenericException format:@"Unexpected CDVEventType."];
@@ -279,18 +281,27 @@ __weak CDVNearIT *instance = nil;
                                   callbackId:[command callbackId]];
 }
 
-
-
 #pragma mark - Feedback
 
+/**
+ * Send user feedback
+ * <code><pre>
+    cordova.exec(successCb, errorCb, "nearit", "sendUserFeedback", [feedbackId, recipeId, rating, comment]);
+</pre></code>
+ */
 - (void)sendUserFeedback:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 
     NSString* feedbackId = [[command arguments] objectAtIndex:0];
     NSString* recipeId   = [[command arguments] objectAtIndex:1];
-    NSInteger rating     = [[command arguments] objectAtIndex:2];
+    id ratingObject      = [[command arguments] objectAtIndex:2];
+    NSInteger rating     = -1;
     NSString* comment    = [[command arguments] objectAtIndex:3];
+
+    if ([ratingObject isKindOfClass:[NSNumber class]]) {
+        rating = [ratingObject integerValue];
+    }
 
     if (IS_EMPTY(feedbackId)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
@@ -298,7 +309,7 @@ __weak CDVNearIT *instance = nil;
     } else if(IS_EMPTY(recipeId)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                          messageAsString:@"Missing recipeId parameter"];
-    } else if(rating < 0 || rating > 5) {
+    } else if(!ratingObject || rating < 0 || rating > 5) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                          messageAsString:@"Invalid rating parameter (must be an integer between 0 and 5)"];
     } /*if(IS_EMPTY(comment)) {
@@ -306,12 +317,12 @@ __weak CDVNearIT *instance = nil;
                                          messageAsString:@"Invalid comment parameter"];
     }*/ else {
 
-        NITFeedbackEvent* event = [[NITFeedbackEvent alloc] init];
+        NITFeedbackEvent* event = [[NITFeedbackEvent alloc] initWithFeedback:[[NITFeedback alloc] init]
+                                                                      rating:rating
+                                                                     comment:comment];
 
         event.ID       = feedbackId;
         event.recipeId = recipeId;
-        event.rating   = rating;
-        event.comment  = comment;
 
         NITLogD(TAG, @"NITManager :: sendEvent(%@, %@, %d, %@)", feedbackId, recipeId, rating, comment);
         [[NITManager defaultManager] sendEventWithEvent:event
@@ -335,6 +346,149 @@ __weak CDVNearIT *instance = nil;
 
     [[self commandDelegate] sendPluginResult:pluginResult
                                   callbackId:[command callbackId]];
+}
+
+
+#pragma mark - Coupon
+
+/**
+ * Request coupon list
+ * <code><pre>
+    cordova.exec(successCb, errorCb, "nearit", "getCoupons", []);
+</pre></code>
+ */
+- (void)getCoupons:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    [[NITManager defaultManager] couponsWithCompletionHandler:^(NSArray<NITCoupon *> * coupons, NSError * error) {
+        CDVPluginResult* pluginResult = nil;
+
+        if (error) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                             messageAsString:[error description]];
+        } else {
+            NSMutableArray* couponList = [NSMutableArray array];
+
+            // date formatter
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            NSLocale *enUSPOSIXLocale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+            [dateFormatter setLocale:enUSPOSIXLocale];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZZZ"];
+
+            for(NITCoupon* coupon in coupons) {
+
+                // retrieve exported fields
+                NSString* name              = [coupon name];
+                NSString* couponDescription = [coupon couponDescription];
+                NSString* value             = [coupon value];
+                NSString* expiresAt         = [coupon expiresAt];
+                NSString* redeemableFrom    = [coupon redeemableFrom];
+                NSMutableArray* claims      = [NSMutableArray array];
+                NSString* smallIcon         = [[[coupon icon] smallSizeURL] absoluteString];
+                NSString* icon              = [[[coupon icon] url] absoluteString];
+                NSDate* expiresDate         = [coupon expires];
+                NSString* expires           = nil;
+                NSDate* redeemableDate      = [coupon redeemable];
+                NSString* redeemable        = nil;
+
+                // check on null values
+                if (IS_EMPTY(name)) {
+                    name = @"";
+                }
+                if (IS_EMPTY(couponDescription)) {
+                    couponDescription = @"";
+                }
+                if (IS_EMPTY(value)) {
+                    value = @"";
+                }
+                if (IS_EMPTY(expiresAt)) {
+                    expiresAt = @"";
+                }
+                if (IS_EMPTY(redeemableFrom)) {
+                    redeemableFrom = @"";
+                }
+                for(NITClaim* claim in [coupon claims]) {
+                    NSMutableDictionary* claimDict = [NSMutableDictionary dictionary];
+
+                    NSString* serialNumber = [claim serialNumber];
+                    NSString* claimedAt    = [claim claimedAt];
+                    NSString* redeemedAt   = [claim redeemedAt];
+                    NSString* recipeId     = [claim recipeId];
+                    NSDate* claimedDate    = [claim claimed];
+                    NSString* claimed      = nil;
+                    NSDate* redeemedDate   = [claim redeemed];
+                    NSString* redeemed     = nil;
+
+                    if (IS_EMPTY(serialNumber)) {
+                        serialNumber = @"";
+                    }
+                    if (IS_EMPTY(claimedAt)) {
+                        claimedAt = @"";
+                    }
+                    if (IS_EMPTY(redeemedAt)) {
+                        redeemedAt = @"";
+                    }
+                    if (IS_EMPTY(recipeId)) {
+                        recipeId = @"";
+                    }
+                    if (!claimed) {
+                        claimed = @"";
+                    } else {
+                        claimed = [dateFormatter stringFromDate:claimedDate];
+                    }
+                    if (!redeemed) {
+                        redeemed = @"";
+                    } else {
+                        redeemed = [dateFormatter stringFromDate:redeemedDate];
+                    }
+
+                    [claimDict setObject:serialNumber forKey:@"serialNumber"];
+                    [claimDict setObject:claimedAt forKey:@"claimedAt"];
+                    [claimDict setObject:redeemedAt forKey:@"redeemedAt"];
+                    [claimDict setObject:recipeId forKey:@"recipeId"];
+                    [claimDict setObject:claimed forKey:@"claimed"];
+                    [claimDict setObject:redeemed forKey:@"redeemed"];
+
+                    [claims addObject:claimDict];
+                }
+                if (IS_EMPTY(smallIcon)) {
+                    smallIcon = @"";
+                }
+                if (IS_EMPTY(icon)) {
+                    icon = @"";
+                }
+                if (!expiresDate) {
+                    expires = @"";
+                } else {
+                    expires = [dateFormatter stringFromDate:expiresDate];
+                }
+                if (!redeemable) {
+                    redeemable = @"";
+                } else {
+                    redeemable = [dateFormatter stringFromDate:redeemableDate];
+                }
+
+                // fill exported object
+                NSMutableDictionary* couponDict = [NSMutableDictionary dictionary];
+                [couponDict setObject:name              forKey:@"name"];
+                [couponDict setObject:couponDescription forKey:@"description"];
+                [couponDict setObject:value             forKey:@"value"];
+                [couponDict setObject:expiresAt         forKey:@"expiresAt"];
+                [couponDict setObject:redeemableFrom    forKey:@"redeemableFrom"];
+                [couponDict setObject:claims            forKey:@"claims"];
+                [couponDict setObject:smallIcon         forKey:@"smallIcon"];
+                [couponDict setObject:icon              forKey:@"icon"];
+                [couponDict setObject:expires           forKey:@"expires"];
+                [couponDict setObject:redeemable        forKey:@"redeemable"];
+                NITLogI(TAG, @"coupon %@", couponDict);
+
+                [couponList addObject:couponDict];
+            }
+
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:couponList];
+        }
+
+        [[self commandDelegate] sendPluginResult:pluginResult callbackId:[command callbackId]];
+    }];
 }
 
 #pragma mark - Tracking

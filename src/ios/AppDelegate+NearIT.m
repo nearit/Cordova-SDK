@@ -124,30 +124,49 @@
 
 - (BOOL)handleNearContent: (id _Nonnull) content trackingInfo: (NITTrackingInfo* _Nonnull) trackingInfo fromUserAction: (BOOL) fromUserAction
 {
+    NSMutableDictionary* arguments = [NSMutableDictionary dictionary];
+
+    // notification message
+    if ([content isKindOfClass:[NITReactionBundle class]]) {
+        NSString* message = [(NITReactionBundle*)content notificationMessage];
+        if (IS_EMPTY(message)) {
+            message = @"";
+        }
+
+        [arguments setObject:message forKey:@"message"];
+    }
+
+    // fromUserAction boolean
+    [arguments setObject:@(fromUserAction) forKey:@"fromUserAction"];
+
+    // notification content depending on notification type
     if ([content isKindOfClass:[NITSimpleNotification class]]) {
 
         // Simple notification
         NITSimpleNotification *simple = (NITSimpleNotification*)content;
-
-        NSString* message = [simple message];
-        if (!message) {
-            message = @"";
-        }
-
-        NITLogI(TAG, @"simple message \"%@\" with trackingInfo %@", message, trackingInfo);
+        NITLogI(TAG, @"simple message \"%@\" with trackingInfo %@", [simple notificationMessage], trackingInfo);
         
-        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Simple withArguments:[NSDictionary dictionaryWithObjectsAndKeys: message, @"message", [NSNumber numberWithBool:fromUserAction], @"fromUserAction", nil] trackingInfo:trackingInfo];
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Simple
+                                withArguments:arguments
+                                 trackingInfo:trackingInfo];
 
         return YES;
-
     } else if ([content isKindOfClass:[NITCustomJSON class]]) {
 
         // Custom JSON notification
         NITCustomJSON *custom = (NITCustomJSON*)content;
-        NITLogI(TAG, @"JSON message %@ trackingInfo %@", [custom content], trackingInfo);
+
+        NSDictionary *content = [custom content];
+        if (!content) {
+            content = [NSDictionary dictionary];
+        }
+
+        NITLogI(TAG, @"JSON message %@ trackingInfo %@", content, trackingInfo);
+
+        [arguments setObject:content forKey:@"data"];
 
         [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_CustomJSON
-                                withArguments:[NSDictionary dictionaryWithObjectsAndKeys: [custom content], @"data", fromUserAction, @"fromUserAction", nil]
+                                withArguments:arguments
                                  trackingInfo:trackingInfo];
 
         return YES;
@@ -155,52 +174,49 @@
 
         // Rich Content notification
         NITContent *rich = (NITContent*)content;
+
         NITLogI(TAG, @"rich content message %@ trackingInfo %@", rich, trackingInfo);
 
-        NSMutableDictionary* arguments = [NSMutableDictionary dictionary];
-
         // content - returns the text content, without processing the html
-        if ([rich content]) {
-            [arguments putObject:[rich content] forKey:@"content"];
+        if (IS_EMPTY([rich content])) {
+            [arguments setObject:[rich content] forKey:@"content"];
         } else {
-            [arguments putObject:false forKey:@"content"];
+            [arguments setObject:@(FALSE) forKey:@"content"];
         }
 
         // videoLink - returns the video link
-        if ([rich videoLink]) {
-            [arguments putObject:[rich videoLink] forKey:@"videoLink"];
+        if (IS_EMPTY([rich videoLink])) {
+            [arguments setObject:[rich videoLink] forKey:@"videoLink"];
         } else {
-            [arguments putObject:false forKey:@"videoLink"];
+            [arguments setObject:@(FALSE) forKey:@"videoLink"];
         }
 
         // images - returns a list of Image object containing the source links for the images
         if ([rich images]) {
-            [arguments putObject:[[rich images] enumerateObjectsUsingBlock:
-                ^(id elem, NSUInteger index, BOOL *stop) {
-                    return [(NITImage*)elem image];
-                }];
-                          forKey:@"images"];
+            NSMutableArray* images = [NSMutableArray array];
+            [[rich images] enumerateObjectsUsingBlock:^(NITImage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                 [images addObject:[(NITImage*)obj image]];
+            }];
+            [arguments setObject:images forKey:@"images"];
         } else {
-            [arguments putObject:[NSArray array] forKey:@"images"];
+            [arguments setObject:[NSArray array] forKey:@"images"];
         }
 
         // upload - returns an Upload object containing a link to a file uploaded on NearIT if any
         if ([rich upload]) {
-            [arguments putObject:[(NITUpload*)[rich upload] url]
+            [arguments setObject:[(NITUpload*)[rich upload] url]
                           forKey:@"upload"];
         } else {
-            [arguments putObject:false forKey:@"upload"];
+            [arguments setObject:@(FALSE) forKey:@"upload"];
         }
 
         // audio - returns an Audio object containing a link to an audio file uploaded on NearIT if any
         if ([rich audio]) {
-            [arguments putObject:[(NITAudio*)[rich audio] url]
+            [arguments setObject:[(NITAudio*)[rich audio] url]
                           forKey:@"audio"];
         } else {
-            [arguments putObject:false forKey:@"audio"];
+            [arguments setObject:@(FALSE) forKey:@"audio"];
         }
-
-        [arguments putObject:fromUserAction forKey:@"fromUserAction"];
 
         [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Content
                                 withArguments:arguments
@@ -211,12 +227,15 @@
 
         // Feedback notification
         NITFeedback *feedback = (NITFeedback*)content;
-        NITLogI(TAG, @"feedback notification %@ trackingInfo %@", [feedback question], trackingInfo);
 
-        if (![feedback recipeId] || ![feedback question]) {
+        NSString* question = [feedback question];
+
+        NITLogI(TAG, @"feedback notification %@ trackingInfo %@", question, trackingInfo);
+
+        if (IS_EMPTY([feedback recipeId]) || IS_EMPTY([feedback question]) || IS_EMPTY([feedback ID])) {
 
             // invalid feedback event received
-            NSString* message = [NSString stringWithFormat:@"invalid feedback content type %@ trackingInfo %@", [feedback question], trackingInfo];
+            NSString* message = [NSString stringWithFormat:@"invalid feedback content type %@ trackingInfo %@", question, trackingInfo];
             NITLogW(TAG, message);
 
             [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error
@@ -225,16 +244,138 @@
            return NO;
         }
 
-        NSMutableDictionary* arguments = [NSMutableDictionary dictionary];
-
-        [arguments putObject:[feedback ID]       forKey:@"feedbackId"];
-        [arguments putObject:[feedback recipeId] forKey:@"recipeId"];
-        [arguments putObject:[feedback question] forKey:@"question"];
-        [arguments putObject:fromUserAction      forKey:@"fromUserAction"];
+        [arguments setObject:[feedback ID]       forKey:@"feedbackId"];
+        [arguments setObject:[feedback recipeId] forKey:@"recipeId"];
+        [arguments setObject:[feedback question] forKey:@"question"];
 
         [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Feedback
                                 withArguments:arguments
                                  trackingInfo:trackingInfo];
+
+        return YES;
+    } else if ([content isKindOfClass:[NITCoupon class]]) {
+
+        // Coupon notification
+        NITCoupon *coupon = (NITCoupon*)content;
+
+        // retrieve exported fields
+        NSString* name              = [coupon name];
+        NSString* couponDescription = [coupon couponDescription];
+        NSString* value             = [coupon value];
+        NSString* expiresAt         = [coupon expiresAt];
+        NSString* redeemableFrom    = [coupon redeemableFrom];
+        NSMutableArray* claims      = [NSMutableArray array];
+        NSString* smallIcon         = [[[coupon icon] smallSizeURL] absoluteString];
+        NSString* icon              = [[[coupon icon] url] absoluteString];
+        NSDate* expiresDate         = [coupon expires];
+        NSString* expires           = nil;
+        NSDate* redeemableDate      = [coupon redeemable];
+        NSString* redeemable        = nil;
+
+        // date formatter
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        NSLocale *enUSPOSIXLocale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+        [dateFormatter setLocale:enUSPOSIXLocale];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZZZ"];
+
+        // check on null values
+        if (IS_EMPTY(name)) {
+            name = @"";
+        }
+        if (IS_EMPTY(couponDescription)) {
+            couponDescription = @"";
+        }
+        if (IS_EMPTY(value)) {
+            value = @"";
+        }
+        if (IS_EMPTY(expiresAt)) {
+            expiresAt = @"";
+        }
+        if (IS_EMPTY(redeemableFrom)) {
+            redeemableFrom = @"";
+        }
+        for(NITClaim* claim in [coupon claims]) {
+            NSMutableDictionary* claimDict = [NSMutableDictionary dictionary];
+
+            NSString* serialNumber = [claim serialNumber];
+            NSString* claimedAt    = [claim claimedAt];
+            NSString* redeemedAt   = [claim redeemedAt];
+            NSString* recipeId     = [claim recipeId];
+            NSDate* claimedDate    = [claim claimed];
+            NSString* claimed      = nil;
+            NSDate* redeemedDate   = [claim redeemed];
+            NSString* redeemed     = nil;
+
+            if (IS_EMPTY(serialNumber)) {
+                serialNumber = @"";
+            }
+            if (IS_EMPTY(claimedAt)) {
+                claimedAt = @"";
+            }
+            if (IS_EMPTY(redeemedAt)) {
+                redeemedAt = @"";
+            }
+            if (IS_EMPTY(recipeId)) {
+                recipeId = @"";
+            }
+            if (!claimed) {
+                claimed = @"";
+            } else {
+                claimed = [dateFormatter stringFromDate:claimedDate];
+            }
+            if (!redeemed) {
+                redeemed = @"";
+            } else {
+                redeemed = [dateFormatter stringFromDate:redeemedDate];
+            }
+
+            [claimDict setObject:serialNumber forKey:@"serialNumber"];
+            [claimDict setObject:claimedAt forKey:@"claimedAt"];
+            [claimDict setObject:redeemedAt forKey:@"redeemedAt"];
+            [claimDict setObject:recipeId forKey:@"recipeId"];
+            [claimDict setObject:claimed forKey:@"claimed"];
+            [claimDict setObject:redeemed forKey:@"redeemed"];
+
+            [claims addObject:claimDict];
+        }
+        if (IS_EMPTY(smallIcon)) {
+            smallIcon = @"";
+        }
+        if (IS_EMPTY(icon)) {
+            icon = @"";
+        }
+        if (!expiresDate) {
+            expires = @"";
+        } else {
+            expires = [dateFormatter stringFromDate:expiresDate];
+        }
+        if (!redeemable) {
+            redeemable = @"";
+        } else {
+            redeemable = [dateFormatter stringFromDate:redeemableDate];
+        }
+
+        // fill exported object
+        NSMutableDictionary* couponDict = [NSMutableDictionary dictionary];
+        [couponDict setObject:name              forKey:@"name"];
+        [couponDict setObject:couponDescription forKey:@"description"];
+        [couponDict setObject:value             forKey:@"value"];
+        [couponDict setObject:expiresAt         forKey:@"expiresAt"];
+        [couponDict setObject:redeemableFrom    forKey:@"redeemableFrom"];
+        [couponDict setObject:claims            forKey:@"claims"];
+        [couponDict setObject:smallIcon         forKey:@"smallIcon"];
+        [couponDict setObject:icon              forKey:@"icon"];
+        [couponDict setObject:expires           forKey:@"expires"];
+        [couponDict setObject:redeemable        forKey:@"redeemable"];
+        
+        [arguments setObject:couponDict forKey:@"coupon"];
+
+        NITLogI(TAG, @"coupon notification %@ trackingInfo %@", couponDict, trackingInfo);
+
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Coupon
+                                withArguments:arguments
+                                 trackingInfo:trackingInfo];
+
         return YES;
     } else {
 
