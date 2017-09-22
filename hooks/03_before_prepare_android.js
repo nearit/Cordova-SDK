@@ -66,6 +66,12 @@ assert(fs.existsSync(cordovaClassDir), 'unable to find ' + cordovaClassDir + ": 
 
 var sourceFile = path.join(pluginDir, 'MainActivity.java');
 var targetFile = path.join(cordovaClassDir,  'MainActivity.java');
+var bakFile = targetFile + ".bak";
+
+// add a bak file
+if (!fs.existsSync(bakFile)) {
+    fs.writeFileSync(bakFile, fs.readFileSync(targetFile).toString());
+}
 lib.replaceClassname(packagename, sourceFile, targetFile);
 
 /*

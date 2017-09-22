@@ -180,6 +180,7 @@
         -->
         <hook type="before_prepare" src="hooks/03_before_prepare_android.js"/>
         <hook type="after_prepare" src="hooks/04_after_prepare_android.js"/>
+        <hook type="before_plugin_uninstall" src="hooks/05_before_plugin_uninstall.js"/>
 
     </platform>
 

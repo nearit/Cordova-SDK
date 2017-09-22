@@ -24,28 +24,11 @@
     SOFTWARE.
  */
 
-/**
- * @author "Mirco Cipriani"
- * @author "Fabio Cigliano"
- * @created 24/07/17
- * Original version took from:
- * @link https://raw.githubusercontent.com/mircoc/cordova-plugin-settings-hook/master/src/index.js
- */
-
-String.prototype.format = String.prototype.format || function (map) {
-    var formatted = this;
-    Object.keys(map).forEach(function (key) {
-        var value = map[key];
-        var regexp = new RegExp('\\{' + key + '\\}', 'gi');
-        formatted = formatted.replace(regexp, value);
-    });
-    return formatted;
-};
-
 var fs = require("fs"),
     path = require("path"),
     et = require('elementtree'),
-    lib = require('./lib.js')
+    lib = require('./lib.js'),
+    extend = require('util')._extend;
 
 /**
  * This hook updates platform configuration files based on preferences and config-file data defined in config.xml.
@@ -122,133 +105,96 @@ var fs = require("fs"),
  * with any plugin elements/keys to compare against custom elements to remove.
  *
  */
+var preferenceMappingData = require('./config').preferenceMappingData;
 
-/**
- * Global object that defines the available custom preferences for each platform.
- * Maps a config.xml preference to a specific target file, parent element, and destination attribute or element
- */
-var preferenceMappingData = {
-    'generic': {
-        'nearit-feature-geofencing': {
-            target: 'config.xml',
-            value: 'true',
-            destination: 'preference'
-        },
-        'nearit-feature-push': {
-            target: 'config.xml',
-            value: 'false',
-            destination: 'preference'
-        },
-        /*'nearit-feature-proximity': {
-            target: 'config.xml',
-            value: 'false',
-            destination: 'preference'
-        },*/
-        'nearit-api-key': {
-            target: 'config.xml',
-            value: 'Your.API.Key',
-            destination: 'preference'
-        },
-        'nearit-show-background-notification': {
-            target: 'config.xml',
-            value: 'true',
-            destination: 'preference'
-        },
-    },
-    'android': {
-        'android-manifest-hardwareAccelerated': {
-            target: 'AndroidManifest.xml',
-            parent: './',
-            destination: 'android:hardwareAccelerated'
-        },
-        'android-installLocation': {
-            target: 'AndroidManifest.xml',
-            parent: './',
-            destination: 'android:installLocation'
-        },
-        'android-activity-hardwareAccelerated': {
-            target: 'AndroidManifest.xml',
-            parent: 'application',
-            destination: 'android:hardwareAccelerated'
-        },
-        'android-configChanges': {
-            target: 'AndroidManifest.xml',
-            parent: "__cordovaMainActivity__",
-            destination: 'android:configChanges'
-        },
-        'android-launchMode': {
-            target: 'AndroidManifest.xml',
-            parent: "__cordovaMainActivity__",
-            destination: 'android:launchMode'
-        },
-        'android-theme': {
-            target: 'AndroidManifest.xml',
-            parent: "__cordovaMainActivity__",
-            destination: 'android:theme'
-        },
-        'android-windowSoftInputMode': {
-            target: 'AndroidManifest.xml',
-            parent: "__cordovaMainActivity__",
-            destination: 'android:windowSoftInputMode'
-        },
-        'android-applicationName': {
-            target: 'AndroidManifest.xml',
-            parent: 'application',
-            destination: 'android:name'
-        },
-        'nearit-feature-geofencing': {
-            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
-        },
-        'nearit-feature-push': {
-            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
-        },
-        /*'nearit-feature-proximity': {
-            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
-        },*/
-        'nearit-api-key': {
-            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
-        },
-        'nearit-show-background-notification': {
-            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
-        },
-    },
-    'ios': {
-        'nearit-feature-geofencing': {
-            target: '*-Prefix.pch',
-            content: '#define NEARIT_GEO',
-            parent: null,
-            type: "compile-flag"
-        },
-        'nearit-feature-push': {
-            target: '*-Prefix.pch',
-            content: '#define NEARIT_PUSH',
-            parent: null,
-            type: "compile-flag"
-        },
-        /*'nearit-feature-proximity': {
-            target: '*-Prefix.pch',
-            content: '#define NEARIT_PROXIMITY',
-            parent: null,
-            type: "compile-flag"
-        },*/
-        'nearit-api-key': {
-            target: '*-Prefix.pch',
-            content: '#define NEARIT_APIKEY @"{value}"',
-            parent: null,
-            format: true,
-            type: "constant"
-        },
-        'nearit-show-background-notification': {
-            target: '*-Prefix.pch',
-            content: '#define NEARIT_SHOW_BACKGROUND_NOTIFICATION',
-            parent: null,
-            type: "compile-flag"
-        },
-    }
-};
+lib = extend(lib, {
 
-var rootdir = process.cwd(),
-    platforms = [];
+    /**
+     * Customize main app config.xml to add some custom preferences
+     */
+    updateAppConfig: function (rootdir, preferenceMappingData) {
+        var configData = lib.parseConfigXml(rootdir, null, preferenceMappingData);
+        var changes = [];
+
+        Object.keys(preferenceMappingData.generic)
+            .forEach(function (preferenceName) {
+                var defaults = preferenceMappingData.generic[preferenceName];
+
+                var found = false;
+                Object.keys(configData['config.xml'] || [])
+                    .forEach(function (key) {
+                        var existingPreference = configData['config.xml'][key];
+
+                        if (existingPreference.data.attrib.name === preferenceName) {
+                            console.log("* preference " + preferenceName + " found");
+                            found = true;
+                        }
+                    });
+
+                if (!found) {
+                    console.log("* adding preference " + preferenceName);
+
+                    var newchildEl = new et.Element(defaults.destination);
+                    newchildEl.attrib['name'] = preferenceName;
+                    newchildEl.attrib['value'] = defaults.value;
+
+                    changes.push(newchildEl);
+                }
+
+            });
+
+        // if there are any changes, update config.xml
+        if (changes.length) {
+            var targetFile = path.join(rootdir, 'config.xml');
+            var tempConfig = lib.parseElementtreeSync(targetFile),
+                root = tempConfig.getroot();
+
+            for (var i in changes) {
+                root.append(changes[i]);
+            }
+
+            fs.writeFileSync(targetFile, tempConfig.write({ indent: 4 }), 'utf-8');
+            console.log("Wrote app config.xml");
+        }
+
+    },
+
+    /**
+     * Parses config.xml data, and update each target file for a specified platform
+     * @param platform
+     */
+    updatePlatformConfig: function (rootdir, platform, preferenceMappingData) {
+        var configData = lib.parseConfigXml(rootdir, platform, preferenceMappingData),
+            platformPath = path.join(rootdir, 'platforms', platform),
+            projectName = lib.getConfigXml(rootdir).findtext('name'),
+            targetFile;
+
+        for (var targetFileName in configData) {
+            if (configData.hasOwnProperty(targetFileName)) {
+                var configItems = configData[targetFileName];
+
+                if (platform === 'ios') {
+                    if (targetFileName.indexOf("Info.plist") > -1) {
+                        targetFile = path.join(platformPath, projectName, projectName + '-Info.plist');
+                        lib.updateIosPlist(targetFile, configItems);
+                    } else if (targetFileName.indexOf("-Prefix.pch") > -1) {
+                        targetFile = path.join(platformPath, projectName, projectName + '-Prefix.pch');
+                        lib.updatePrefixPch(targetFile, configItems);
+                    }
+                } else if (platform === 'android') {
+                    if (targetFileName === 'AndroidManifest.xml') {
+                        targetFile = path.join(platformPath, targetFileName);
+                        lib.updateAndroidManifest(targetFile, configItems);
+                    } else if (targetFileName.indexOf('.java') > -1) {
+                        targetFile = path.join(platformPath, targetFileName);
+                        lib.updateAndroidClass(targetFile, configItems);
+                    }
+                }
+            }
+        }
+    },
+
+});
 
 function main(rootdir) {
     if (rootdir && fs.existsSync(rootdir)) {
@@ -271,12 +217,19 @@ function main(rootdir) {
         }
 
         // go through each of the platform directories that have been prepared
-        fs.readdirSync('platforms')
-            .forEach(function (file) {
-                if (fs.statSync(path.resolve('platforms', file)).isDirectory()) {
-                    platforms.push(file);
-                }
-            });
+        var platforms = [];
+        var platformDir = path.join(rootdir, 'platforms');
+
+        if (fs.existsSync(platformDir)) {
+            fs.readdirSync(platformDir)
+                .forEach(function (file) {
+                    if (fs.statSync(path.resolve(platformDir, file)).isDirectory()) {
+                        platforms.push(file);
+                    }
+                });
+        } else {
+            console.warn("! unable to find platform dir " + platformDir);
+        }
 
         platforms.forEach(function (platform) {
             try {
@@ -292,11 +245,11 @@ function main(rootdir) {
     }
 }
 
+
 if (require.main === module) {
-    //console.log('called directly');
+    var rootdir = process.cwd()
     main(rootdir);
 } else {
-    //console.log('required as a module');
     module.exports = function (context) {
         var cordova_util = context.requireCordovaModule("../cordova/util"),
             rootdir = cordova_util.isCordova();

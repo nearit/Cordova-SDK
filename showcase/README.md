@@ -1,4 +1,4 @@
-NearIT Ionic Demo App
+NearIT Ionic Showcase App
 =====================
 
 A starting project for Ionic that shows all the available plugin features.
@@ -12,8 +12,8 @@ $ npm install -g ionic cordova
 ```
 
 ### Install project dependencies
-Inside `./sample` folder run:
 ```bash
+$ cd showcase/
 $ ionic cordova prepare
 ```
 
