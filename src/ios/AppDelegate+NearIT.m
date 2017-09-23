@@ -267,16 +267,6 @@
         NSMutableArray* claims      = [NSMutableArray array];
         NSString* smallIcon         = [[[coupon icon] smallSizeURL] absoluteString];
         NSString* icon              = [[[coupon icon] url] absoluteString];
-        NSDate* expiresDate         = [coupon expires];
-        NSString* expires           = nil;
-        NSDate* redeemableDate      = [coupon redeemable];
-        NSString* redeemable        = nil;
-
-        // date formatter
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        NSLocale *enUSPOSIXLocale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
-        [dateFormatter setLocale:enUSPOSIXLocale];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZZZ"];
 
         // check on null values
         if (IS_EMPTY(name)) {
@@ -301,10 +291,6 @@
             NSString* claimedAt    = [claim claimedAt];
             NSString* redeemedAt   = [claim redeemedAt];
             NSString* recipeId     = [claim recipeId];
-            NSDate* claimedDate    = [claim claimed];
-            NSString* claimed      = nil;
-            NSDate* redeemedDate   = [claim redeemed];
-            NSString* redeemed     = nil;
 
             if (IS_EMPTY(serialNumber)) {
                 serialNumber = @"";
@@ -318,23 +304,11 @@
             if (IS_EMPTY(recipeId)) {
                 recipeId = @"";
             }
-            if (!claimed) {
-                claimed = @"";
-            } else {
-                claimed = [dateFormatter stringFromDate:claimedDate];
-            }
-            if (!redeemed) {
-                redeemed = @"";
-            } else {
-                redeemed = [dateFormatter stringFromDate:redeemedDate];
-            }
 
             [claimDict setObject:serialNumber forKey:@"serialNumber"];
             [claimDict setObject:claimedAt forKey:@"claimedAt"];
             [claimDict setObject:redeemedAt forKey:@"redeemedAt"];
             [claimDict setObject:recipeId forKey:@"recipeId"];
-            [claimDict setObject:claimed forKey:@"claimed"];
-            [claimDict setObject:redeemed forKey:@"redeemed"];
 
             [claims addObject:claimDict];
         }
@@ -343,16 +317,6 @@
         }
         if (IS_EMPTY(icon)) {
             icon = @"";
-        }
-        if (!expiresDate) {
-            expires = @"";
-        } else {
-            expires = [dateFormatter stringFromDate:expiresDate];
-        }
-        if (!redeemable) {
-            redeemable = @"";
-        } else {
-            redeemable = [dateFormatter stringFromDate:redeemableDate];
         }
 
         // fill exported object
@@ -365,9 +329,7 @@
         [couponDict setObject:claims            forKey:@"claims"];
         [couponDict setObject:smallIcon         forKey:@"smallIcon"];
         [couponDict setObject:icon              forKey:@"icon"];
-        [couponDict setObject:expires           forKey:@"expires"];
-        [couponDict setObject:redeemable        forKey:@"redeemable"];
-        
+
         [arguments setObject:couponDict forKey:@"coupon"];
 
         NITLogI(TAG, @"coupon notification %@ trackingInfo %@", couponDict, trackingInfo);
