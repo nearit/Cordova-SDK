@@ -53,6 +53,7 @@ var sourceFile = path.join(resourcesDir, 'google-services.json');
 var targetFile = path.join(platformDir, 'google-services.json');
 
 if (fs.existsSync(sourceFile)) {
+  console.log("* copying google-services.json");
   lib.copyIfChanged(sourceFile, targetFile);
 }
 
@@ -69,7 +70,7 @@ if (apiKey) {
   if (nearApiKeyElm) {
     nearApiKeyElm.attrib['android:value'] = apiKey
   } else {
-    console.log(`'near_api_key' meta not found. Will try to add`)
+    console.log(`* 'near_api_key' meta not found. Will try to add`)
     try {
       var apiKeyMeta = et.Element('meta-data', {
         'android:name': 'near_api_key',
@@ -79,7 +80,7 @@ if (apiKey) {
       root.find('application')
         .append(apiKeyMeta)
     } catch (e) {
-      throw new Error("Missing `near_api_key` meta inside Android manifest.xml.")
+      throw new Error("! missing `near_api_key` meta inside Android manifest.xml.")
     }
   }
 
