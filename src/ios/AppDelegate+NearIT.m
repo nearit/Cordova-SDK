@@ -179,43 +179,48 @@
 
         // content - returns the text content, without processing the html
         if (IS_EMPTY([rich content])) {
-            [arguments setObject:[rich content] forKey:@"content"];
+            [arguments setObject:[rich content] forKey:@"text"];
         } else {
-            [arguments setObject:@(FALSE) forKey:@"content"];
+            [arguments setObject:@(FALSE) forKey:@"text"];
         }
 
         // videoLink - returns the video link
         if (IS_EMPTY([rich videoLink])) {
-            [arguments setObject:[rich videoLink] forKey:@"videoLink"];
+            [arguments setObject:@[[rich videoLink]] forKey:@"video"];
         } else {
-            [arguments setObject:@(FALSE) forKey:@"videoLink"];
+            [arguments setObject:@[] forKey:@"video"];
         }
 
         // images - returns a list of Image object containing the source links for the images
         if ([rich images]) {
             NSMutableArray* images = [NSMutableArray array];
             [[rich images] enumerateObjectsUsingBlock:^(NITImage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                 [images addObject:[(NITImage*)obj image]];
+                NSMutableDictionary* imageDict = [NSMutableDictionary dictionary];
+
+                [imageDict setObject:[[obj smallSizeURL] absoluteString] forKey:@"small"];
+                [imageDict setObject:[[obj url] absoluteString]          forKey:@"full"];
+
+                [images addObject:imageDict];
             }];
-            [arguments setObject:images forKey:@"images"];
+            [arguments setObject:images forKey:@"image"];
         } else {
-            [arguments setObject:[NSArray array] forKey:@"images"];
+            [arguments setObject:@[] forKey:@"image"];
         }
 
         // upload - returns an Upload object containing a link to a file uploaded on NearIT if any
         if ([rich upload]) {
-            [arguments setObject:[(NITUpload*)[rich upload] url]
+            [arguments setObject:@[[(NITUpload*)[rich upload] url]]
                           forKey:@"upload"];
         } else {
-            [arguments setObject:@(FALSE) forKey:@"upload"];
+            [arguments setObject:@[] forKey:@"upload"];
         }
 
         // audio - returns an Audio object containing a link to an audio file uploaded on NearIT if any
         if ([rich audio]) {
-            [arguments setObject:[(NITAudio*)[rich audio] url]
+            [arguments setObject:@[[(NITAudio*)[rich audio] url]]
                           forKey:@"audio"];
         } else {
-            [arguments setObject:@(FALSE) forKey:@"audio"];
+            [arguments setObject:@[] forKey:@"audio"];
         }
 
         [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Content
