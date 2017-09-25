@@ -24,7 +24,14 @@ package it.near.sdk.cordova.android;
     SOFTWARE.
  */
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import it.near.sdk.reactions.contentplugin.model.Content;
+import it.near.sdk.reactions.contentplugin.model.Image;
+import it.near.sdk.reactions.contentplugin.model.ImageSet;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.reactions.customjsonplugin.model.CustomJSON;
 import it.near.sdk.reactions.feedbackplugin.model.Feedback;
@@ -37,46 +44,133 @@ public class CDVNearITContentListener implements CoreContentsListener {
 
   private boolean fromUserActions = false;
 
-  public CDVNearITContentListener(boolean fromUserActions) {
+  public CDVNearITContentListener(boolean fromUserActions)
+  {
     this.fromUserActions = fromUserActions;
   }
 
-  @Override
-  public void gotContentNotification(Content notification, TrackingInfo trackingInfo) {
-//        Toast.makeText(this, "You received a notification with content", Toast.LENGTH_SHORT).show();
+  private void forwardEvent(CDVNearIT.CDVEventType eventType, Map<String, Object> args, TrackingInfo trackingInfo, String notificationMessage)
+  {
+    CDVNearIT.getInstance().fireWindowEvent(
+            eventType,
+            args,
+            trackingInfo,
+            notificationMessage,
+            fromUserActions
+    );
   }
 
   @Override
-  public void gotCouponNotification(Coupon notification, TrackingInfo trackingInfo) {
-//        Toast.makeText(this, "You received a coupon", Toast.LENGTH_SHORT).show();
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setMessage(notification.getSerial()).create().show();
+  public void gotContentNotification(Content notification, TrackingInfo trackingInfo)
+  {
+    Map<String, Object> args = new HashMap<String, Object>();
+
+    args.put("text", notification.contentString);
+
+    List<String> video = new ArrayList<String>();
+    if (notification.video_link != null) {
+      video.add(notification.video_link);
+    }
+    args.put("video", video);
+
+    List<Map<String, Object>> images = new ArrayList<Map<String, Object>>();
+    if (notification.images != null) {
+      for(Image image : notification.images) {
+        ImageSet imageSet;
+
+        try {
+          imageSet = image.toImageSet();
+        } catch(Image.MissingImageException err) {
+          continue;
+        }
+
+        Map<String, Object> imageDict = new HashMap<String, Object>();
+
+        imageDict.put("small", imageSet.getSmallSize());
+        imageDict.put("full", imageSet.getFullSize());
+
+        images.add(imageDict);
+      }
+    }
+    args.put("image", images);
+
+    List<String> upload = new ArrayList<String>();
+    if (notification.upload != null) {
+      upload.add(notification.upload.getUrl());
+    }
+    args.put("upload", upload);
+
+    List<String> audio = new ArrayList<String>();
+    if (notification.audio != null) {
+      upload.add(notification.audio.getUrl());
+    }
+    args.put("audio", audio);
+
+    forwardEvent(
+            CDVNearIT.CDVEventType.CDVNE_Event_Content,
+            args,
+            trackingInfo,
+            notification.notificationMessage
+    );
   }
 
   @Override
-  public void gotCustomJSONNotification(CustomJSON notification, TrackingInfo trackingInfo) {
-    CDVNearIT.getInstance()
-            .fireWindowEvent(
-                    CDVNearIT.CDVEventType.CDVNE_Event_CustomJSON,
-                    notification.content,
-                    trackingInfo,
-                    this.fromUserActions
-            );
+  public void gotCouponNotification(Coupon notification, TrackingInfo trackingInfo)
+  {
+    Map<String, Object> args = new HashMap<String, Object>();
+
+    args.put("coupon", NITHelper.couponToMap(notification));
+
+    forwardEvent(
+            CDVNearIT.CDVEventType.CDVNE_Event_Coupon,
+            args,
+            trackingInfo,
+            notification.notificationMessage
+    );
   }
 
   @Override
-  public void gotSimpleNotification(SimpleNotification s_notif, TrackingInfo trackingInfo) {
-    CDVNearIT.getInstance()
-            .fireWindowEvent(
-                    CDVNearIT.CDVEventType.CDVNE_Event_Simple,
-                    s_notif.getNotificationMessage(),
-                    trackingInfo,
-                    this.fromUserActions
-            );
+  public void gotCustomJSONNotification(CustomJSON notification, TrackingInfo trackingInfo)
+  {
+    Map<String, Object> args = new HashMap<String, Object>();
+
+    args.put("data", notification.content);
+
+    forwardEvent(
+            CDVNearIT.CDVEventType.CDVNE_Event_CustomJSON,
+            args,
+            trackingInfo,
+            notification.notificationMessage
+    );
   }
 
   @Override
-  public void gotFeedbackNotification(Feedback s_notif, TrackingInfo trackingInfo) {
-//        Toast.makeText(this, "You received a feedback request", Toast.LENGTH_SHORT).show();
+  public void gotSimpleNotification(SimpleNotification notification, TrackingInfo trackingInfo)
+  {
+    Map<String, Object> args = new HashMap<String, Object>();
+
+    forwardEvent(
+            CDVNearIT.CDVEventType.CDVNE_Event_Simple,
+            args,
+            trackingInfo,
+            notification.getNotificationMessage()
+    );
+  }
+
+  @Override
+  public void gotFeedbackNotification(Feedback notification, TrackingInfo trackingInfo)
+  {
+    Map<String, Object> args = new HashMap<String, Object>();
+
+    args.put("feedbackId", notification.getId());
+    args.put("recipeId",   notification.getRecipeId());
+    args.put("question",   notification.question);
+
+    forwardEvent(
+            CDVNearIT.CDVEventType.CDVNE_Event_Feedback,
+            args,
+            trackingInfo,
+            notification.notificationMessage
+    );
   }
 }

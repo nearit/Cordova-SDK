@@ -6,6 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import it.near.sdk.reactions.couponplugin.model.Claim;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.reactions.feedbackplugin.model.Feedback;
@@ -38,7 +43,17 @@ public class NITHelper {
 	 * @throws JSONException
 	 */
 	public static JSONObject couponToJson(Coupon item) throws JSONException {
-		JSONObject coupon = new JSONObject();
+		JSONObject coupon = new JSONObject(couponToMap(item));
+
+		return coupon;
+	}
+
+	/**
+	 * @param item Coupon item
+	 * @return Map<String, Object> result
+	 */
+	public static Map<String, Object> couponToMap(Coupon item) {
+		Map<String, Object> coupon = new HashMap<String, Object>();
 
 		coupon.put("name", item.name);
 		coupon.put("description", item.description);
@@ -46,16 +61,16 @@ public class NITHelper {
 		coupon.put("expiresAt", item.expires_at);
 		coupon.put("redeemableFrom", item.redeemable_from);
 
-		JSONArray claims = new JSONArray();
+		List<Map<String, Object>> claims = new ArrayList<Map<String, Object>>();
 		for(Claim item2 : item.claims) {
-			JSONObject claim = new JSONObject();
+			Map<String, Object> claim = new HashMap<String, Object>();
 
 			claim.put("serialNumber", item2.serial_number);
 			claim.put("claimedAt", item2.claimed_at);
 			claim.put("redeemedAt", item2.redeemed_at);
 			claim.put("recipeId", item2.recipe_id);
 
-			claims.put(claim);
+			claims.add(claim);
 		}
 		coupon.put("claims", claims);
 

@@ -36,6 +36,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -124,7 +125,7 @@ public class CDVNearIT extends CordovaPlugin {
 					} else {
 						final String message = "unknown action " + action;
 						Log.e(TAG, message);
-						CDVNearIT.this.fireWindowEvent(CDVEventType.CDVNE_Event_Error, message, false);
+						CDVNearIT.this.fireWindowEvent(CDVEventType.CDVNE_Event_Error, message);
 					}
 				} catch (Exception err) {
 					// TODO: log this error
@@ -176,9 +177,8 @@ public class CDVNearIT extends CordovaPlugin {
 	    }
     };
 
-	public void fireWindowEvent(String event, JSONObject arguments)
+	private void fireWindowEvent(String event, JSONObject arguments)
 	{
-
 		Log.i(TAG, "fire custom window event of type " + event
 				+ " with message " + arguments);
 
@@ -190,64 +190,36 @@ public class CDVNearIT extends CordovaPlugin {
 			");");
 	}
 
-	public void fireWindowEvent(CDVEventType event, String message, boolean fromUserAction) {
-			this.fireWindowEvent(event, message, null, fromUserAction);
+	public void fireWindowEvent(CDVEventType event, Map<String, Object> args) {
+		JSONObject arguments = new JSONObject(args);
+
+		fireWindowEvent(event.toString(), arguments);
 	}
 
-	public void fireWindowEvent(CDVEventType event, String message, TrackingInfo trackingInfo, boolean fromUserAction) {
-		final JSONObject arguments = new JSONObject();
+	public void fireWindowEvent(CDVEventType event, Map<String, Object> args, TrackingInfo trackingInfo) {
+		args.put("trackingInfo", trackingInfo);
 
-		try {
-			arguments.put("message", message);
-		} catch(JSONException err) {
-			Log.e(TAG, "error while fireWindowEvent with event " + event + " and message " + message, err);
-		}
-
-		if (trackingInfo != null) {
-			try {
-				arguments.put("trackingInfo", trackingInfoToBase64(trackingInfo));
-			} catch(Exception err) {
-				Log.e(TAG, "error while converting TrackingInfo fireWindowEvent with event " + event
-								+ " and message " + message, err);
-			}
-		}
-
-		try {
-			arguments.put("fromUserAction", fromUserAction);
-		} catch (Exception err) {
-			Log.e(TAG, "error while inserting isForeground into fireWindowEvent with event " + event
-							+ " and message " + message, err);
-		}
-
-		this.fireWindowEvent(event.toString(), arguments);
+		fireWindowEvent(event, args);
 	}
 
-	public void fireWindowEvent(CDVEventType event, Map<String, Object> arguments, TrackingInfo trackingInfo, boolean fromUserAction) {
-		final JSONObject jsonToSend = new JSONObject();
+	public void fireWindowEvent(CDVEventType event, Map<String, Object> args, TrackingInfo trackingInfo, String message) {
+		args.put("message", message);
 
-		try {
-			jsonToSend.put("data", new JSONObject(arguments));
-		} catch(JSONException err) {
-			Log.e(TAG, "error while fireWindowEvent with event " + event + " and message " + arguments, err);
-		}
+		fireWindowEvent(event, args, trackingInfo);
+	}
 
-		if (trackingInfo != null) {
-			try {
-				arguments.put("trackingInfo", trackingInfoToBase64(trackingInfo));
-			} catch(Exception err) {
-				Log.e(TAG, "error while converting TrackingInfo fireWindowEvent with event " + event
-								+ " and content " + arguments, err);
-			}
-		}
+	public void fireWindowEvent(CDVEventType event, Map<String, Object> args, TrackingInfo trackingInfo, String message, boolean fromUserAction) {
+		args.put("fromUserAction", fromUserAction);
 
-		try {
-			arguments.put("fromUserAction", fromUserAction);
-		} catch (Exception err) {
-			Log.e(TAG, "error while inserting isForeground into fireWindowEvent with event " + event
-							+ " and content " + arguments, err);
-		}
+		fireWindowEvent(event, args, trackingInfo, message);
+	}
 
-		this.fireWindowEvent(event.toString(), jsonToSend);
+	public void fireWindowEvent(CDVEventType event, String message) {
+		Map<String, Object> args = new HashMap<String, Object>();
+
+		args.put("message", message);
+
+		fireWindowEvent(event, args);
 	}
 
 	/**
@@ -266,7 +238,7 @@ public class CDVNearIT extends CordovaPlugin {
 	    String eventType = NITHelper.validateStringArgument(args, 0, "eventType");
 
 	    Log.i(TAG, "fire custom window event (from js) of type " + eventType);
-	    this.fireWindowEvent(eventType, new JSONObject());
+	    fireWindowEvent(eventType, new JSONObject("{\"message\": \"custom event from cordova app\"}"));
 
 	    callbackContext.success();
     }
@@ -615,7 +587,7 @@ public class CDVNearIT extends CordovaPlugin {
     {
         Log.d(TAG, "NITManager :: request permission to the user");
 
-        PermissionsActivity.run(/* {package} */.MainActivity.getInstance());
+        PermissionsActivity.run(/* {package} */it.near.sdk.cordova.mysample.MainActivity.getInstance());
 
         callbackContext.success();
     }
