@@ -27,27 +27,40 @@
 # first install Ionic =)
 # http://ionicframework.com/docs/v1/guide/installation.html
 
+echo "Working dir $(pwd)"
+
+PLUGIN_NAME=cordova-plugin-nearit
+PLATFORM=browser
+APP_NAME=sample
+
+# for debug
+BASEDIR=$(dirname $0)
+BASEDIR=$(dirname ${BASEDIR})
+PLUGIN_NAME=${BASEDIR}
+
 # create a sample Ionic app
-ionic start sample tabs --type ionic1 --no-git --skip-link
+ionic start ${APP_NAME} tabs --type ionic1 --no-git --skip-link
 
 # move to app folder
-cd ./sample
+cd ./${APP_NAME}
 
 # change package name, default one can create problem
 # with provisioning profiles on ios
-sed -i -e 's/io.ionic.starter/it.near.sdk.cordova.mysample/g' config.xml
+sed -i -e "s/io.ionic.starter/it.near.sdk.cordova.${APP_NAME}/g" config.xml
+
+# copy sample app files
+cp -Rfvp ${BASEDIR}/${APP_NAME}/ $(pwd)
 
 # add the desired platform
-ionic cordova platform add browser ios android
+ionic cordova platform add ${PLATFORM}
 
 # add NearIT Cordova SDK (plugin)
 #ionic cordova plugin add https://github.com/nearit/Cordova-SDK.git
-ionic cordova plugin add cordova-plugin-nearit
+#ionic cordova plugin add cordova-plugin-nearit
+ionic cordova plugin add ${PLUGIN_NAME}
 
 # prepare platform projects
-cordova prepare browser ios android
+cordova prepare ${PLATFORM}
 
 # run the desired platform
-#ionic cordova run browser -scl
-#ionic cordova run ios -scl
-#ionic cordova run android -scl
+ionic cordova run ${PLATFORM} -scl

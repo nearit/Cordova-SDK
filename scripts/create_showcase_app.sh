@@ -30,7 +30,8 @@
 echo "Working dir $(pwd)"
 
 PLUGIN_NAME=cordova-plugin-nearit
-PLATFORM="browser ios android"
+#PLATFORM="browser ios android"
+PLATFORM=browser
 APP_NAME=showcase
 
 # for debug
@@ -52,9 +53,7 @@ sed -i -e "s/io.ionic.starter/it.near.sdk.cordova.${APP_NAME}/g" config.xml
 cp -Rfvp ${BASEDIR}/${APP_NAME}/ $(pwd)
 
 # add the desired platform
-ionic cordova platform add browser
-ionic cordova platform add ios
-ionic cordova platform add android
+ionic cordova platform add ${PLATFORM}
 
 # add NearIT Cordova SDK (plugin)
 #ionic cordova plugin add https://github.com/nearit/Cordova-SDK.git
@@ -62,9 +61,7 @@ ionic cordova platform add android
 ionic cordova plugin add ${PLUGIN_NAME}
 
 # prepare platform projects
-cordova prepare browser ios android
+cordova prepare ${PLATFORM}
 
 # run the desired platform
-#ionic cordova run browser -scl
-#ionic cordova run ios -scl
-#ionic cordova run android -scl
+ionic cordova run ${PLATFORM} -scl
