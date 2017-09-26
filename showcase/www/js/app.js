@@ -19,7 +19,9 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         appendLog("demo :: attaching event listener for " + eventType);
         nearit.addEventListener(eventType, function(event) {
           try {
-            event = JSON.stringify(event);
+            event = event.detail || {};
+            event = JSON.stringify(event, null, "     ");
+            event = "<pre>" + event + "</pre>";
           } catch(err) {
             // doing nothing
           }
@@ -33,6 +35,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       nearit.addEventListener(nearit.eventType.CDVNE_Event_Feedback, function(event) {
 
         // retain feedback information
+        event = event.detail || {};
         var recipeId = event.recipeId;
         var feedbackId = event.feedbackId;
         var question = event.question;
@@ -45,13 +48,13 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         // reply feedback request
         if (rating && comment) {
           appendLog("demo :: calling nearit.sendFeedbackWithComment (", [feedbackId, recipeId, rating, comment], ")");
-          nearit.sendFeedbackWithComment(feedbackId, recipeId, rating, comment, function() {
+          nearit.sendUserFeedbackWithComment(feedbackId, recipeId, rating, comment, function() {
             var args2 = Array.prototype.slice.call(arguments);
-            args2 = ['demo :: <b>sendFeedbackWithComment successCb</b>'].concat(args2);
+            args2 = ['demo :: <b>sendUserFeedbackWithComment successCb</b>'].concat(args2);
             appendLog.apply(appendLog, args2);
           }, function() {
             var args2 = Array.prototype.slice.call(arguments);
-            args2 = ['demo :: <b>sendFeedbackWithComment errorCb</b>'].concat(args2);
+            args2 = ['demo :: <b>sendUserFeedbackWithComment errorCb</b>'].concat(args2);
             appendLog.apply(appendLog, args2);
           });
         }
@@ -121,23 +124,44 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   })
 
   .state('tab.action', {
-      url: '/action',
-      views: {
-        'tab-action': {
-          templateUrl: 'templates/tab-action.html',
-          controller: 'ActionCtrl'
-        }
+    url: '/action',
+    views: {
+      'tab-action': {
+        templateUrl: 'templates/tab-action.html',
+        controller: 'ActionCtrl'
       }
-    })
-    .state('tab.chat-detail', {
-      url: '/action/:actionId',
-      views: {
-        'tab-action': {
-          templateUrl: 'templates/run-action.html',
-          controller: 'ActionRunCtrl'
-        }
+    }
+  })
+
+  .state('tab.chat-detail', {
+    url: '/action/:actionId',
+    views: {
+      'tab-action': {
+        templateUrl: 'templates/run-action.html',
+        controller: 'ActionRunCtrl'
       }
-    })
+    }
+  })
+
+  .state('tab.event', {
+    url: '/event',
+    views: {
+      'tab-event': {
+        templateUrl: 'templates/tab-event.html',
+        controller: 'EventCtrl'
+      }
+    }
+  })
+
+  .state('tab.event-detail', {
+    url: '/event/:eventId',
+    views: {
+      'tab-event': {
+        templateUrl: 'templates/run-event.html',
+        controller: 'EventRunCtrl'
+      }
+    }
+  })
 
   .state('tab.account', {
     url: '/account',

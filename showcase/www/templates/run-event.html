@@ -1,0 +1,18 @@
+<ion-view view-title="{{event.id}}">
+  <ion-content class="padding">
+    <p>
+      <b>{{event.id}}</b>
+      <br>
+      <p>{{event.name}}</p>
+      <br>
+      <b>payload:</b>
+      <pre>{{event.data | json}}</pre>
+      <br>
+      <center>
+        <button class="button button-positive" ng-click="fireEvent()">
+          trigger event
+        </button>
+      </center>
+    </p>
+  </ion-content>
+</ion-view>

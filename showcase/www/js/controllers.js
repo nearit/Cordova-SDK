@@ -55,14 +55,13 @@ angular.module('starter.controllers', [])
           args.push(function() {
             var args2 = Array.prototype.slice.call(arguments);
 
+            var event = args2[0];
+            event = JSON.stringify(event, null, "     ");
+            event = "<pre>" + event + "</pre>";
+            args2[0] = event;
+
             if($scope.action.result === 'alert') {
-              var msg = args2[0];
-
-              if (typeof(msg) === "object") {
-                msg = JSON.stringify(msg);
-              }
-
-              alert(msg);
+              alert(event);
             }
 
             args2 = ['demo :: <b>' + $scope.actionId + ' successCb</b>'].concat(args2);
@@ -130,4 +129,61 @@ angular.module('starter.controllers', [])
     // @end nearit-cordova-sdk
 
   };
-});
+})
+
+.controller('EventCtrl', function($scope, Events) {
+  $scope.events = Events.all();
+})
+
+.controller('EventRunCtrl', function($scope, $stateParams, Events, $ionicPopup, $ionicPlatform, $ionicHistory) {
+  var event = Events.get($stateParams.eventId);
+
+  var fireEvent = function() {
+
+    var args = [event.id, event.data];
+
+    $ionicHistory.goBack();
+
+    // nearit-cordova-sdk
+    $ionicPlatform.ready(function() {
+      if (window.nearit) {
+        // ensure that the plugin is initialized
+
+        // call the requested method
+        // (just for demo)
+        appendLog("demo :: forwarding nearit event " + $scope.eventId + " (", args, ")");
+
+        // append custom callback methods
+        args.push(function() {
+          /*
+          var args2 = Array.prototype.slice.call(arguments);
+          args2 = ['demo :: <b>' + $scope.eventId + ' successCb</b>'].concat(args2);
+          appendLog.apply(appendLog, args2);
+          */
+        }); // successCb
+
+        args.push(function() {
+          /*
+          var args2 = Array.prototype.slice.call(arguments);
+          args2 = ['demo :: <b>' + $scope.eventId + ' errorCb</b>'].concat(args2);
+          appendLog.apply(appendLog, args2);
+          */
+        }); // errorCb
+
+        nearit.fireEventWithArguments.apply(nearit, args);
+
+      }
+    }).catch(function(err) {
+      appendLog(err);
+    });
+    // @end nearit-cordova-sdk
+
+  };
+
+  $scope.eventId   = event.id;
+  $scope.event     = event;
+  $scope.fireEvent = fireEvent;
+
+})
+
+;
