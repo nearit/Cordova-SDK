@@ -43,6 +43,11 @@ var fs = require('fs'),
     path = require('path');
 
 var xcconfigFile = 'platforms/ios/cordova/build.xcconfig';
+
+if (!fs.existsSync(xcconfigFile)) {
+    return;
+}
+
 var text = fs.readFileSync(xcconfigFile, 'utf-8');
 
 var idx1 = text.search(/^\s?CODE_SIGN_ENTITLEMENTS/gm);
