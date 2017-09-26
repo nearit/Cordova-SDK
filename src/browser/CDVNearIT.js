@@ -1,3 +1,6 @@
+
+//cordova.define("cordova-plugin-nearit.CDVNearIT", function(require, exports, module) {
+
 /**
  * @author "Fabio Cigliano"
  * @created 21/07/17
@@ -46,12 +49,12 @@ function CDVNearIT() {
 
 /**
  * Fire NearIT event (just for testing)
- * @param string     eventType see NearIT.eventTYpe
+ * @param string     eventType see NearIT.eventType
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  * @param array opts method arguments
  */
-CDVNearIT.prototype.fireEvent = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.fireEvent = function (successCallback, errorCallback, opts) {
     try {
 
         console.log("CDVNearIT :: fireEvent", opts);
@@ -61,7 +64,32 @@ CDVNearIT.prototype.fireEvent = function(successCallback, errorCallback, opts) {
         }));
 
         successCallback();
-    } catch(err) {
+    } catch (err) {
+        console.error(err);
+        errorCallback(err);
+    }
+};
+
+/**
+ * Fire NearIT event with arguments (just for testing)
+ * @param string     eventType see NearIT.eventType
+ * @param object     args event arguments
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ * @param array opts method arguments
+ */
+CDVNearIT.prototype.fireEvent = function (successCallback, errorCallback, opts) {
+    try {
+
+        console.log("CDVNearIT :: fireEvent", opts);
+        var eventType = opts[0];
+        var args = opts[1] || {};
+        window.dispatchEvent(new CustomEvent(eventType, {
+            detail: args
+        }));
+
+        successCallback();
+    } catch (err) {
         console.error(err);
         errorCallback(err);
     }
@@ -79,7 +107,7 @@ var _profileId = 'N34R1TF4K31D1234';
  * @param {Function} errorCallback The function to call when there is an error
  * @param array opts method arguments
  */
-CDVNearIT.prototype.resetProfile = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.resetProfile = function (successCallback, errorCallback, opts) {
     _profileId = null;
     successCallback();
 };
@@ -90,7 +118,7 @@ CDVNearIT.prototype.resetProfile = function(successCallback, errorCallback, opts
  * @param {Function} errorCallback The function to call when there is an error
  * @param array opts method arguments
  */
-CDVNearIT.prototype.getProfileId = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.getProfileId = function (successCallback, errorCallback, opts) {
     successCallback(_profileId);
 };
 
@@ -100,12 +128,12 @@ CDVNearIT.prototype.getProfileId = function(successCallback, errorCallback, opts
  * @param {Function} errorCallback The function to call when there is an error
  * @param array opts method arguments
  */
-CDVNearIT.prototype.setProfileId = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.setProfileId = function (successCallback, errorCallback, opts) {
     opts = opts || [];
 
     if (opts.length != 1) {
         errorCallback("missing profileId argument");
-    } else if((""+opts[0]).length == 0) {
+    } else if (("" + opts[0]).length == 0) {
         errorCallback("missing profileId argument");
     } else {
         _profileId = opts[0];
@@ -123,14 +151,14 @@ CDVNearIT.prototype.setProfileId = function(successCallback, errorCallback, opts
  * @param {Function} errorCallback The function to call when there is an error
  * @param array opts method arguments
  */
-CDVNearIT.prototype.setUserData = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.setUserData = function (successCallback, errorCallback, opts) {
     opts = opts || [];
 
     if (opts.length != 2) {
         errorCallback("missing key argument");
-    } else if((""+opts[0]).length == 0) {
+    } else if (("" + opts[0]).length == 0) {
         errorCallback("missing key argument");
-    } else if((""+opts[1]).length == 0) {
+    } else if (("" + opts[1]).length == 0) {
         errorCallback("missing value argument");
     } else {
         successCallback();
@@ -147,16 +175,16 @@ CDVNearIT.prototype.setUserData = function(successCallback, errorCallback, opts)
  * @param {Function} errorCallback The function to call when there is an error
  * @param array opts method arguments
  */
-CDVNearIT.prototype.sendUserFeedback = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.sendUserFeedback = function (successCallback, errorCallback, opts) {
     opts = opts || [];
 
     if (opts.length != 3 && opts.length != 4) {
         errorCallback("invalid number of arguments");
-    } else if((""+opts[0]).length == 0) {
+    } else if (("" + opts[0]).length == 0) {
         errorCallback("missing feedbackId argument");
-    } else if((""+opts[1]).length == 0) {
+    } else if (("" + opts[1]).length == 0) {
         errorCallback("missing recipeId argument");
-    } else if((""+opts[2]).length == 0) {
+    } else if (("" + opts[2]).length == 0) {
         errorCallback("missing rating argument");
     } else {
         var rating = parseInt(opts[2]);
@@ -165,7 +193,8 @@ CDVNearIT.prototype.sendUserFeedback = function(successCallback, errorCallback, 
             errorCallback("invalid rating argument");
         } else {
             successCallback();
-        });
+        }
+        ;
     }
 };
 
@@ -179,10 +208,30 @@ CDVNearIT.prototype.sendUserFeedback = function(successCallback, errorCallback, 
  * @param {Function} errorCallback The function to call when there is an error
  * @param array opts method arguments
  */
-CDVNearIT.prototype.getCoupons = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.getCoupons = function (successCallback, errorCallback, opts) {
     opts = opts || [];
 
-    successCallback([]);
+    var sampleCoupon = {
+        name: "test coupon",
+        description: "description",
+        value: "120",
+        expiresAt: "2018-12-21 09:00:00",
+        redeemableFrom: "2017-09-21 09:00:00",
+        claims: [
+            {
+                serialNumber: "123456",
+                claimedAt: "2017-09-28 09:00:00",
+                redeemedAt: "2017-09-28 16:00:00",
+                recipeId: "15"
+            }
+        ],
+        smallIcon: "http://via.placeholder.com/350x150",
+        icon: "http://via.placeholder.com/720x350"
+    };
+
+    successCallback([
+        sampleCoupon
+    ]);
 };
 
 /*
@@ -195,12 +244,12 @@ CDVNearIT.prototype.getCoupons = function(successCallback, errorCallback, opts) 
  * @param {Function} errorCallback The function to call when there is an error
  * @param array opts method arguments
  */
-CDVNearIT.prototype.sendTrackingWithRecipeIdForEventNotified = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.sendTrackingWithRecipeIdForEventNotified = function (successCallback, errorCallback, opts) {
     opts = opts || [];
 
     if (opts.length != 1) {
         errorCallback("missing recipeId argument");
-    } else if((""+opts[0]).length == 0) {
+    } else if (("" + opts[0]).length == 0) {
         errorCallback("missing recipeId argument");
     } else {
         successCallback();
@@ -213,12 +262,12 @@ CDVNearIT.prototype.sendTrackingWithRecipeIdForEventNotified = function(successC
  * @param {Function} errorCallback The function to call when there is an error
  * @param array opts method arguments
  */
-CDVNearIT.prototype.sendTrackingWithRecipeIdForEventEngaged = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.sendTrackingWithRecipeIdForEventEngaged = function (successCallback, errorCallback, opts) {
     opts = opts || [];
 
     if (opts.length != 1) {
         errorCallback("missing recipeId argument");
-    } else if((""+opts[0]).length == 0) {
+    } else if (("" + opts[0]).length == 0) {
         errorCallback("missing recipeId argument");
     } else {
         successCallback();
@@ -231,12 +280,12 @@ CDVNearIT.prototype.sendTrackingWithRecipeIdForEventEngaged = function(successCa
  * @param {Function} errorCallback The function to call when there is an error
  * @param array opts method arguments
  */
-CDVNearIT.prototype.sendTrackingWithRecipeIdForCustomEvent = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.sendTrackingWithRecipeIdForCustomEvent = function (successCallback, errorCallback, opts) {
     opts = opts || [];
 
     if (opts.length != 1) {
         errorCallback("missing recipeId argument");
-    } else if((""+opts[0]).length == 0) {
+    } else if (("" + opts[0]).length == 0) {
         errorCallback("missing recipeId argument");
     } else {
         successCallback();
@@ -253,7 +302,7 @@ CDVNearIT.prototype.sendTrackingWithRecipeIdForCustomEvent = function(successCal
  * @param errorCallback
  * @param opts
  */
-CDVNearIT.prototype.startRadar = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.startRadar = function (successCallback, errorCallback, opts) {
     successCallback();
 };
 
@@ -263,7 +312,7 @@ CDVNearIT.prototype.startRadar = function(successCallback, errorCallback, opts) 
  * @param errorCallback
  * @param opts
  */
-CDVNearIT.prototype.stopRadar = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.stopRadar = function (successCallback, errorCallback, opts) {
     successCallback();
 };
 
@@ -273,7 +322,7 @@ CDVNearIT.prototype.stopRadar = function(successCallback, errorCallback, opts) {
  * @param errorCallback
  * @param opts
  */
-CDVNearIT.prototype.permissionRequest = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.permissionRequest = function (successCallback, errorCallback, opts) {
     successCallback();
 };
 
@@ -283,7 +332,7 @@ CDVNearIT.prototype.permissionRequest = function(successCallback, errorCallback,
  * @param errorCallback
  * @param opts
  */
-CDVNearIT.prototype.refreshRecipes = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.refreshRecipes = function (successCallback, errorCallback, opts) {
     successCallback();
 };
 
@@ -294,3 +343,5 @@ CDVNearIT.prototype.refreshRecipes = function(successCallback, errorCallback, op
 module.exports = new CDVNearIT();
 
 require('cordova/exec/proxy').add('nearit', module.exports);
+
+//});
