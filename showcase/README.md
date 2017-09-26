@@ -1,7 +1,7 @@
 NearIT Ionic Showcase App
 =====================
 
-A starting project for Ionic that shows all the available plugin features.
+A starting project for Ionic that shows all the available features of the NearIT cordova plugin.
 
 ## Setup
 
@@ -11,11 +11,11 @@ You need to install ionic and cordova cli with:
 $ npm install -g ionic cordova
 ```
 
-### Install project dependencies
+### Create a Ionic project
 
 ```bash
-$ cd showcase/
-$ ionic cordova prepare
+$ cd ~/Desktop
+$ <PATH-TO_CORDOVA_SDK>/scripts/create_showcase_app.sh
 ```
 
 ### Insert NearIT API Key

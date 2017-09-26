@@ -1,6 +1,6 @@
 {
-  "name": "NearIT Cordova showcase app",
-  "short_name": "Nearit Showcase",
+  "name": "NearIT Cordova sample app",
+  "short_name": "Nearit Sample",
   "start_url": "index.html",
   "display": "standalone",
   "icons": [{
