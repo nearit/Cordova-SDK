@@ -26,7 +26,7 @@ Inside Xcode, navigate to the “**Capabilities**” tab of your app. You will n
 
 ## 2) Get the Certificate
 
-2.1 Open [developer.apple.com](https://developer.apple.com/account/ios/identifier/bundle), select your app and press “**Edit**”.
+2.1 Open <a href="https://developer.apple.com/account/ios/identifier/bundle" target="_blank">**developer.apple.com**</a>, select your app and press “**Edit**”.
 
 ![edit_app](push_help/pushtutorial02.gif "")
 
@@ -57,6 +57,6 @@ Inside Xcode, navigate to the “**Capabilities**” tab of your app. You will n
 ![export_p12](push_help/pushtutorial08.png "")
 
 
-3.3 Open [NearIT](https://go.nearit.com), select your app and navigate to “**Settings> Push Settings**”. Upload your .p12 under the “**Setup iOS push notifications**” block. You will be prompted to enter the password you have chosen previously (chapter 3.2)
+3.3 Open <a href="https://go.nearit.com/" target="_blank">**NearIT**</a>, select your app and navigate to “**Settings> Push Settings**”. Upload your .p12 under the “**Setup iOS push notifications**” block. You will be prompted to enter the password you have chosen previously (chapter 3.2)
 
 ![export_p12](push_help/09.gif "")
