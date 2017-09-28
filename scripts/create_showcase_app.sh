@@ -31,7 +31,7 @@ echo "Working dir $(pwd)"
 
 PLUGIN_NAME=cordova-plugin-nearit
 #PLATFORM="browser ios android"
-PLATFORM=browser
+PLATFORM=android
 APP_NAME=showcase
 
 # for debug
