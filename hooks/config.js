@@ -15,11 +15,11 @@ var preferenceMappingData = {
             value: 'false',
             destination: 'preference'
         },
-        /*'nearit-feature-proximity': {
+        'nearit-feature-proximity': {
             target: 'config.xml',
             value: 'false',
             destination: 'preference'
-        },*/
+        },
         'nearit-api-key': {
             target: 'config.xml',
             value: 'Your.API.Key',
@@ -78,9 +78,9 @@ var preferenceMappingData = {
         'nearit-feature-push': {
             target: 'src/it/near/sdk/cordova/android/NITConfig.java'
         },
-        /*'nearit-feature-proximity': {
+        'nearit-feature-proximity': {
             target: 'src/it/near/sdk/cordova/android/NITConfig.java'
-        },*/
+        },
         'nearit-api-key': {
             target: 'src/it/near/sdk/cordova/android/NITConfig.java'
         },
@@ -101,12 +101,12 @@ var preferenceMappingData = {
             parent: null,
             type: "compile-flag"
         },
-        /*'nearit-feature-proximity': {
+        'nearit-feature-proximity': {
             target: '*-Prefix.pch',
             content: '#define NEARIT_PROXIMITY',
             parent: null,
             type: "compile-flag"
-        },*/
+        },
         'nearit-api-key': {
             target: '*-Prefix.pch',
             content: '#define NEARIT_APIKEY @"{value}"',

@@ -373,8 +373,6 @@
     [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:[error description] trackingInfo:nil];
 }
 
-
-
 // MARK: - Push Notification handling
 
 - (void)application:(UIApplication *)application

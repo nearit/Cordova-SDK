@@ -73,10 +73,10 @@ public class PermissionsActivity
     }
 
     public boolean allPermissionGranted() {
-        boolean anyLocationProv = NITConfig.ENABLE_GEO;
+        boolean anyLocationProv = true;
         boolean bluetoothOn = true;
 
-        if (!anyLocationProv) {
+        if (NITConfig.ENABLE_GEO) {
 
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -89,7 +89,7 @@ public class PermissionsActivity
 
         }
 
-        if (!bluetoothOn) {
+        if (NITConfig.ENABLE_PROXIMITY) {
 
             BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             bluetoothOn = mBluetoothAdapter != null && mBluetoothAdapter.isEnabled();
