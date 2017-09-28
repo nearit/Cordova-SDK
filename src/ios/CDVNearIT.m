@@ -86,7 +86,7 @@ __weak CDVNearIT *instance = nil;
     NSString* eventName = [self formatTypeToString:event];
     NITLogI(TAG, @"fire window event %@", eventName);
 
-    [self.commandDelegate evalJs:[NSString stringWithFormat:@"cordova.fireWindowEvent('%@', {});", eventName, nil]];
+    [self.commandDelegate evalJs:[NSString stringWithFormat:@"window.dispatchEvent(new CustomEvent('%@', {detail: {}}));", eventName, nil]];
 
 }
 
@@ -131,7 +131,7 @@ __weak CDVNearIT *instance = nil;
     }
 
     NITLogI(TAG, @"fire window event %@ with arguments: %@", eventName, eventContent);
-    [self.commandDelegate evalJs:[NSString stringWithFormat:@"cordova.fireWindowEvent('%@', %@);", eventName, jsonString, nil]];
+    [self.commandDelegate evalJs:[NSString stringWithFormat:@"window.dispatchEvent(new CustomEvent('%@', {detail: %@}));", eventName, jsonString, nil]];
 
 }
 
@@ -149,7 +149,24 @@ __weak CDVNearIT *instance = nil;
 
     if (!IS_EMPTY(eventType)) {
 
-        [self.commandDelegate evalJs:[NSString stringWithFormat:@"cordova.fireWindowEvent('%@', {});", eventType, nil]];
+        NSDictionary* jsonDict = [[command arguments] objectAtIndex:1];
+        NSString* jsonString = @"{}";
+        if(jsonDict) {
+            NSError *error;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDict
+                                                               options:0
+                                                                 error:&error];
+
+            if (!jsonData) {
+                NITLogE(TAG, @"Error while serializing event JSON due to %@", error);
+                jsonString = @"{}";
+            } else {
+                jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            }
+
+        }
+
+        [self.commandDelegate evalJs:[NSString stringWithFormat:@"window.dispatchEvent(new CustomEvent('%@', {detail: %@}));", eventType, jsonString, nil]];
 
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     } else {

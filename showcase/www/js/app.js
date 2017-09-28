@@ -19,7 +19,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         appendLog("demo :: attaching event listener for " + eventType);
         nearit.addEventListener(eventType, function(event) {
           try {
-            event = event.detail || event;
             event = JSON.stringify(event, null, "     ");
             event = "<pre>" + event + "</pre>";
           } catch(err) {
@@ -35,7 +34,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       nearit.addEventListener(nearit.eventType.CDVNE_Event_Feedback, function(event) {
 
         // retain feedback information
-        event = event.detail || event;
         var recipeId = event.recipeId;
         var feedbackId = event.feedbackId;
         var question = event.question;

@@ -57,8 +57,7 @@ angular.module('starter.controllers', [])
 
             var event = args2[0];
             event = JSON.stringify(event, null, "     ");
-            event = "<pre>" + event + "</pre>";
-            args2[0] = event;
+            args2[0] = "<pre>" + event + "</pre>";
 
             if($scope.action.result === 'alert') {
               alert(event);

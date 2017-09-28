@@ -183,11 +183,16 @@ public class CDVNearIT extends CordovaPlugin {
 				+ " with message " + arguments);
 
 		// https://issues.apache.org/jira/browse/CB-6851
-		webView.sendJavascript("" +
-			"cordova.fireWindowEvent(" +
-				"'" + event + "', " +
-				arguments.toString() +
-			");");
+        webView.sendJavascript("" +
+            "window.dispatchEvent(new CustomEvent('" + event + "', {"
+                + "detail: " + arguments.toString()
+            + "}));");
+            /*
+            "cordova.fireWindowEvent(" +
+                "'" + event + "', " +
+                arguments.toString() +
+            ");");
+            */
 	}
 
 	public void fireWindowEvent(CDVEventType event, Map<String, Object> args) {
@@ -233,14 +238,17 @@ public class CDVNearIT extends CordovaPlugin {
 	 */
 	public void fireEvent(JSONArray args, CallbackContext callbackContext) throws Exception
     {
-	    NITHelper.validateArgsCount(args, 1);
+	    Log.i(TAG, "request to fire custom window event " + args);
+        NITHelper.validateArgsCount(args, 2);
 
-	    String eventType = NITHelper.validateStringArgument(args, 0, "eventType");
+        String eventType = NITHelper.validateStringArgument(args, 0, "eventType");
+        String argument = NITHelper.validateStringArgument(args, 1, "argument");
 
-	    Log.i(TAG, "fire custom window event (from js) of type " + eventType);
-	    fireWindowEvent(eventType, new JSONObject("{\"message\": \"custom event from cordova app\"}"));
+        Log.i(TAG, "fire custom window event (from js) of type " + eventType);
+        //fireWindowEvent(eventType, new JSONObject("{\"message\": \"custom event from cordova app\"}"));
+        fireWindowEvent(eventType, new JSONObject(argument));
 
-	    callbackContext.success();
+        callbackContext.success();
     }
 
     /*

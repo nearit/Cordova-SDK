@@ -81,7 +81,7 @@ NearIT.prototype.addEventListener = function (eventType, eventCallback) {
         console.log("NearIT :: event " + eventType + " triggered ", event);
 
         if (eventCallback && typeof(eventCallback) === 'function') {
-            eventCallback(event);
+            eventCallback(event.detail);
         }
     });
 }
