@@ -30,7 +30,7 @@ Inside Xcode, navigate to the “**Capabilities**” tab of your app. You will n
 
 ![edit_app](push_help/pushtutorial02.gif "")
 
-2.2 Scroll down the page and enable Push Notifications. Press “**Create Certificate**”.
+2.2 Scroll down the page and enable Push Notifications. Press “**Create Certificate**” (Usually you would want to create a *production* certificate).
 
 ![enable_push](push_help/pushtutorial03.gif "")
 
