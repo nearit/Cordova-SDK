@@ -78,27 +78,35 @@ if (fs.existsSync(gradleDir)) {
 
       var regexp = new RegExp('(.*classpath \'com.google.gms.*)', 'gi');
       var line1 = regexp.exec(content);
+      var changed = false;
 
       if (line1) {
-        if (pushEnabled) {
+        if (pushEnabled && line1[0].indexOf("//") != -1) {
             content = content.replace(line1[0], line1[0].replace("//", ""));
+            changed = true;
         } else if(line1[0].indexOf("//") == -1) {
-              content = content.replace(line1[0], "//" + line1[0]);
-          }
+            content = content.replace(line1[0], "//" + line1[0]);
+            changed = true;
+        }
       }
 
       var regexp2 = new RegExp('(.*apply plugin: com.google.gms.googleservices.*)', 'gi');
       var line2 = regexp2.exec(content);
 
       if (line2) {
-          if (pushEnabled) {
+          if (pushEnabled && line2[0].indexOf("//") != -1) {
               content = content.replace(line2[0], line2[0].replace("//", ""));
+              changed = true;
           } else if(line2[0].indexOf("//") == -1) {
               content = content.replace(line2[0], "//" + line2[0]);
+              changed = true;
           }
       }
 
-      console.log(content);
+      if (changed) {
+          console.log("* wrote " + path.basename(gradleFile));
+          fs.writeFileSync(gradleFile, content, 'utf-8');
+      }
   }
 }
 
