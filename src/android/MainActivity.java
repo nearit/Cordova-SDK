@@ -70,7 +70,7 @@ public class MainActivity
 
         if (NITConfig.ENABLE_PROXIMITY) {
             Log.i(TAG, "NITManager proximity listener start");
-            NearItManager.getInstance(this).addProximityListener(this);
+            NearItManager.getInstance().addProximityListener(this);
         }
 
         // Set by <content src="index.html" /> in config.xml
@@ -97,7 +97,7 @@ public class MainActivity
 
         if (NITConfig.ENABLE_PROXIMITY) {
             Log.i(TAG, "NITManager proximity listener stop");
-            NearItManager.getInstance(this).removeProximityListener(this);
+            NearItManager.getInstance().removeProximityListener(this);
         }
     }
 

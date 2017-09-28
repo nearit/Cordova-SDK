@@ -58,13 +58,59 @@ if (fs.existsSync(sourceFile)) {
 }
 
 /**
+ * Disable GMS within .gradle file
+ * when config.xml preference "nearit-feature-push" is "false"
+ */
+
+var pushEnabled = lib.searchPreferenceByName(rootdir, 'android', 'nearit-feature-push') == "true";
+var gradleDir = path.join(platformDir, 'cordova-plugin-nearit');
+var gradleFile = false;
+
+if (fs.existsSync(gradleDir)) {
+
+  fs.readdirSync(gradleDir)
+      .forEach(function (file) {
+          gradleFile = path.join(gradleDir, file);
+      });
+
+  if (fs.existsSync(gradleFile)) {
+      var content = fs.readFileSync(gradleFile, 'utf-8');
+
+      var regexp = new RegExp('(.*classpath \'com.google.gms.*)', 'gi');
+      var line1 = regexp.exec(content);
+
+      if (line1) {
+        if (pushEnabled) {
+            content = content.replace(line1[0], line1[0].replace("//", ""));
+        } else if(line1[0].indexOf("//") == -1) {
+              content = content.replace(line1[0], "//" + line1[0]);
+          }
+      }
+
+      var regexp2 = new RegExp('(.*apply plugin: com.google.gms.googleservices.*)', 'gi');
+      var line2 = regexp2.exec(content);
+
+      if (line2) {
+          if (pushEnabled) {
+              content = content.replace(line2[0], line2[0].replace("//", ""));
+          } else if(line2[0].indexOf("//") == -1) {
+              content = content.replace(line2[0], "//" + line2[0]);
+          }
+      }
+
+      console.log(content);
+  }
+}
+
+
+/**
  * Inject `nearit-api-key` from Cordova `config.xml` into Android manifest
  */
-var apiKey = lib.searchPreferenceByName(rootdir, 'android', 'nearit-api-key')
+var apiKey = lib.searchPreferenceByName(rootdir, 'android', 'nearit-api-key');
 
 if (apiKey) {
-  var tempManifest = lib.parseElementtreeSync(manifestFile)
-  var root = tempManifest.getroot()
+  var tempManifest = lib.parseElementtreeSync(manifestFile);
+  var root = tempManifest.getroot();
 
   var nearApiKeyElm = root.find("application/meta-data[@android:name='near_api_key']")
   if (nearApiKeyElm) {
