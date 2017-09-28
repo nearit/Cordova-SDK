@@ -468,6 +468,10 @@ static char key2;
         [[CDVNearIT instance] fireWindowEvent:CDVNE_Location_Granted];
         NITLogI(TAG, @"NITManager start");
         [[NITManager defaultManager] start];
+    } else if (status == kCLAuthorizationStatusAuthorizedWhenInUse) {
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Location_Granted];
+        NITLogI(TAG, @"NITManager start");
+        [[NITManager defaultManager] start];
     } else {
         [[CDVNearIT instance] fireWindowEvent:CDVNE_Location_NotGranted];
         NITLogI(TAG, @"NITManager stop");

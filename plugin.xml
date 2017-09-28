@@ -86,6 +86,14 @@
             </feature>
         </config-file>
 
+        <config-file platform="ios" target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
+            <string>I need your location</string>
+        </config-file>
+
+        <config-file platform="ios" target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
+            <string>I need your location</string>
+        </config-file>
+
         <config-file platform="ios" target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
             <string>I need your location</string>
         </config-file>
