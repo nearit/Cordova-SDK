@@ -50,9 +50,13 @@ The method will also return already redeemed coupons so you get to decide to fil
 
 ## Trackings
 
-NearIT analytics on recipes are built from trackings describing the status of user engagement with a recipe. The two recipe states are "Notified" and "Engaged" to represent a recipe delivered to the user and a recipe that the user responded to.
+NearIT allows to track user engagement events on recipes. Any recipe has at least two default events:
 
-Trackings are automatically sent by the NearIT Cordova SDK for **Background** events, but you **NEED** to manually track the status for **Foreground** events when required by your application flow.
+  - **Notified**: the user *received* a notification
+  - **Engaged**: the user *tapped* on the notification
+
+Usually the SDK tracks those events automatically, but if you write custom code to show notification or content (i.e. for **Foreground** events) please make sure that at least the "**notified**" event is tracked.
+<br>**Warning:** Failing in tracking this event cause some NearIT features to not work.
 
 You should track ***Notified*** status after showing a Toast or a Snackbar (or any kind of visible notification) to the user, and the ***Engaged*** status when the user interacts with it (or with a related action).
 
@@ -65,5 +69,5 @@ nearit.trackEngagedEvent(trackingInfo, successCallback, errorCallback) // Track 
 
 nearit.trackCustomEvent(trackingInfo, eventName, successCallback, errorCallback) // Track `eventName` Event
 ```
+**N.B.**`trackingInfo` is required and can be retrieved from events (inside the `eventContent` object).
 
-**N.B:** `trackingInfo` is required and can be retrieved from events (inside the `eventContent` object).
