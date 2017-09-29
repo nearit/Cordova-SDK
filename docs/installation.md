@@ -16,7 +16,7 @@ Set the API token inside your project `config.xml`
 ```xml
 <preference name="nearit-api-key" value="Your.Api.Key" />
 ```
-You can find the API key on [NearIT web interface](https://go.nearit.com/), under the "SDK Integration" section.
+You can find the API key on <a href="https://go.nearit.com/" target="_blank">**NearIT web interface**</a>, under the "SDK Integration" section.
 
 A new `nearit` object will be added to the global scope (as `window.nearit`)
 ```javascript
