@@ -58,9 +58,7 @@ NearIT allows to track user engagement events on recipes. Any recipe has at leas
 Usually the SDK tracks those events automatically, but if you write custom code to show notification or content (i.e. for **Foreground** events) please make sure that at least the "**notified**" event is tracked.
 <br>**Warning:** Failing in tracking this event cause some NearIT features to not work.
 
-You should track ***Notified*** status after showing a Toast or a Snackbar (or any kind of visible notification) to the user, and the ***Engaged*** status when the user interacts with it (or with a related action).
-
- To manually track events use the following methods:
+To manually track events use the following methods:
 
 ```js
 nearit.trackNotifiedEvent(trackingInfo, successCallback, errorCallback) // Track `Notified` Event
