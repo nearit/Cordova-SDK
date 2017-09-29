@@ -178,16 +178,14 @@ CDVNearIT.prototype.setUserData = function (successCallback, errorCallback, opts
 CDVNearIT.prototype.sendUserFeedback = function (successCallback, errorCallback, opts) {
     opts = opts || [];
 
-    if (opts.length != 3 && opts.length != 4) {
+    if (opts.length != 2 && opts.length != 3) {
         errorCallback("invalid number of arguments");
     } else if (("" + opts[0]).length == 0) {
-        errorCallback("missing feedbackId argument");
+        errorCallback("missing feedbackInfo argument");
     } else if (("" + opts[1]).length == 0) {
-        errorCallback("missing recipeId argument");
-    } else if (("" + opts[2]).length == 0) {
         errorCallback("missing rating argument");
     } else {
-        var rating = parseInt(opts[2]);
+        var rating = parseInt(opts[1]);
 
         if (isNaN(rating) || rating < 0 || rating > 5) {
             errorCallback("invalid rating argument");

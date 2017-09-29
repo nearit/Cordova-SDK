@@ -371,7 +371,7 @@ public class CDVNearIT extends CordovaPlugin {
     /**
      * Send user feedback
      * <code><pre>
-        cordova.exec(successCb, errorCb, "nearit", "sendUserFeedback", [feedbackId, recipeId, rating, comment]);
+        cordova.exec(successCb, errorCb, "nearit", "sendUserFeedback", [feedbackTracking, rating, comment]);
      </pre></code>
      * @param args Cordova exec arguments
      * @param callbackContext Cordova callback context
@@ -380,31 +380,30 @@ public class CDVNearIT extends CordovaPlugin {
     public void sendUserFeedback(JSONArray args, final CallbackContext callbackContext) throws Exception
     {
 
-        if (args.length() < 3) {
+        if (args.length() < 2) {
+            throw new Exception("Wrong number of arguments! expected 2");
+        }
+
+        if (args.length() > 3) {
             throw new Exception("Wrong number of arguments! expected 3");
         }
 
-        if (args.length() > 4) {
-            throw new Exception("Wrong number of arguments! expected 4");
-        }
+        String feedbackTracking = NITHelper.validateStringArgument(args, 0, "feedbackInfo");
 
-        String feedbackId = NITHelper.validateStringArgument(args, 0, "feedbackId");
-        String recipeId   = NITHelper.validateStringArgument(args, 1, "recipeId");
-
-        int rating        = args.getInt(2);
+        int rating = args.getInt(1);
 
         if (rating < 0 || rating > 5) {
             throw new Exception("Invalid rating parameter (must be an integer between 0 and 5)");
         }
 
-	    String comment    = "";
-	    if (args.length() == 4) {
-		    comment       = args.getString(3);
+	    String comment = "";
+	    if (args.length() == 3) {
+		    comment  = args.getString(2);
 	    }
 
-	    Log.d(TAG, "NITManager :: sendUserFeedback(" + feedbackId + ", " + recipeId + ", " + rating + ", " + comment + ")");
+	    Log.d(TAG, "NITManager :: sendUserFeedback(" + feedbackTracking + ", " + rating + ", " + comment + ")");
 
-	    Feedback feedback = NITHelper.feedbackFromData(recipeId, feedbackId);
+	    Feedback feedback = NITHelper.feedbackFromBase64(feedbackTracking);
 	    FeedbackEvent event = new FeedbackEvent(feedback, rating, comment);
 
         NearItManager.getInstance().sendEvent(event, new NearITEventHandler() {

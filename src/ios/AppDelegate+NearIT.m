@@ -249,8 +249,10 @@
            return NO;
         }
 
-        [arguments setObject:[feedback ID]       forKey:@"feedbackId"];
-        [arguments setObject:[feedback recipeId] forKey:@"recipeId"];
+        NSData* feedbackInfoData = [NSKeyedArchiver archivedDataWithRootObject:feedback];
+        NSString* feedbackInfoB64 = [feedbackInfoData base64EncodedStringWithOptions:0];
+
+        [arguments setObject:feedbackInfoB64     forKey:@"feedbackInfo"];
         [arguments setObject:[feedback question] forKey:@"question"];
 
         [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Feedback

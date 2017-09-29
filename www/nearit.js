@@ -168,27 +168,25 @@ NearIT.prototype.setUserData = function (key, value, successCallback, errorCallb
 
 /**
  * Send NearIT user feedback with rating
- * @param string     feedbacId identifier received with feedback event notification
- * @param string     recipeId identifier received with feedback event notification
+ * @param {string}   feedbackInfo feedbackInfo related to source feedback event
  * @param integer    rating must be an integer between 0 and 5
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.sendUserFeedback = function (feedbackId, recipeId, rating, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackId, recipeId, rating]);
+NearIT.prototype.sendUserFeedback = function (feedbackInfo, rating, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackInfo, rating]);
 };
 
 /**
  * Send NearIT user feedback with rating and comment
- * @param string     feedbacId identifier received with feedback event notification
- * @param string     recipeId identifier received with feedback event notification
+ * @param {string}   feedbackInfo feedbackInfo related to source feedback event
  * @param integer    rating must be an integer between 0 and 5
  * @param string     comment
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.sendUserFeedbackWithComment = function (feedbackId, recipeId, rating, comment, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackId, recipeId, rating, comment]);
+NearIT.prototype.sendUserFeedbackWithComment = function (feedbackInfo, rating, comment, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackInfo, rating, comment]);
 };
 
 /*

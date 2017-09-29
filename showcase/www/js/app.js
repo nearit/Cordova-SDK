@@ -34,8 +34,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       nearit.addEventListener(nearit.eventType.CDVNE_Event_Feedback, function(event) {
 
         // retain feedback information
-        var recipeId = event.recipeId;
-        var feedbackId = event.feedbackId;
+        var feedbackInfo = event.feedbackInfo;
         var question = event.question;
 
         // ask for user feedback
@@ -44,17 +43,33 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         appendLog('demo :: feedback replied with ' + rating + ' ' + comment);
 
         // reply feedback request
-        if (rating && comment) {
-          appendLog("demo :: calling nearit.sendFeedbackWithComment (", [feedbackId, recipeId, rating, comment], ")");
-          nearit.sendUserFeedbackWithComment(feedbackId, recipeId, rating, comment, function() {
-            var args2 = Array.prototype.slice.call(arguments);
-            args2 = ['demo :: <b>sendUserFeedbackWithComment successCb</b>'].concat(args2);
-            appendLog.apply(appendLog, args2);
-          }, function() {
-            var args2 = Array.prototype.slice.call(arguments);
-            args2 = ['demo :: <b>sendUserFeedbackWithComment errorCb</b>'].concat(args2);
-            appendLog.apply(appendLog, args2);
-          });
+        if (rating) {
+
+          if (comment) {
+            appendLog("demo :: calling nearit.sendUserFeedbackWithComment (", [feedbackInfo, rating, comment], ")");
+            nearit.sendUserFeedbackWithComment(feedbackInfo, rating, comment, function() {
+              var args2 = Array.prototype.slice.call(arguments);
+              args2 = ['demo :: <b>sendUserFeedbackWithComment successCb</b>'].concat(args2);
+              appendLog.apply(appendLog, args2);
+            }, function() {
+              var args2 = Array.prototype.slice.call(arguments);
+              args2 = ['demo :: <b>sendUserFeedbackWithComment errorCb</b>'].concat(args2);
+              appendLog.apply(appendLog, args2);
+            });
+          } else {
+            appendLog("demo :: calling nearit.sendUserFeedback (", [feedbackInfo, rating], ")");
+            nearit.sendUserFeedback(feedbackInfo, rating, function() {
+              var args2 = Array.prototype.slice.call(arguments);
+              args2 = ['demo :: <b>sendUserFeedback successCb</b>'].concat(args2);
+              appendLog.apply(appendLog, args2);
+            }, function() {
+              var args2 = Array.prototype.slice.call(arguments);
+              args2 = ['demo :: <b>sendUserFeedback errorCb</b>'].concat(args2);
+              appendLog.apply(appendLog, args2);
+            });
+          }
+
+
         }
 
       });

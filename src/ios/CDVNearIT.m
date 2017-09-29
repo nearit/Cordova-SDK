@@ -303,45 +303,43 @@ __weak CDVNearIT *instance = nil;
 /**
  * Send user feedback
  * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "sendUserFeedback", [feedbackId, recipeId, rating, comment]);
+    cordova.exec(successCb, errorCb, "nearit", "sendUserFeedback", [feedbackInfo, rating, comment]);
 </pre></code>
  */
 - (void)sendUserFeedback:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 
-    NSString* feedbackId = [[command arguments] objectAtIndex:0];
-    NSString* recipeId   = [[command arguments] objectAtIndex:1];
-    id ratingObject      = [[command arguments] objectAtIndex:2];
-    NSInteger rating     = -1;
-    NSString* comment    = [[command arguments] objectAtIndex:3];
+    NSString* feedbackInfoB64 = [[command arguments] objectAtIndex:0];
+    NSString* ratingObject    = [[command arguments] objectAtIndex:1];
+    NSInteger rating          = -1;
+    NSString* comment         = nil;
 
-    if ([ratingObject isKindOfClass:[NSNumber class]]) {
+    if ([ratingObject isKindOfClass:[NSString class]]) {
         rating = [ratingObject integerValue];
     }
 
-    if (IS_EMPTY(feedbackId)) {
+    if ([[command arguments] count] >= 3) {
+        comment = [[command arguments] objectAtIndex:2];
+    }
+
+    if (IS_EMPTY(feedbackInfoB64)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                         messageAsString:@"Missing feedbackId parameter"];
-    } else if(IS_EMPTY(recipeId)) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                         messageAsString:@"Missing recipeId parameter"];
+                                         messageAsString:@"Missing feedbackInfo parameter"];
     } else if(!ratingObject || rating < 0 || rating > 5) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                          messageAsString:@"Invalid rating parameter (must be an integer between 0 and 5)"];
-    } /*if(IS_EMPTY(comment)) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                         messageAsString:@"Invalid comment parameter"];
-    }*/ else {
+    } else {
 
-        NITFeedbackEvent* event = [[NITFeedbackEvent alloc] initWithFeedback:[[NITFeedback alloc] init]
+        NSData* feedbackInfoData = [[NSData alloc] initWithBase64EncodedString:feedbackInfoB64 options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
+        NITFeedback* feedback = [NSKeyedUnarchiver unarchiveObjectWithData:feedbackInfoData];
+
+        NITFeedbackEvent* event = [[NITFeedbackEvent alloc] initWithFeedback:feedback
                                                                       rating:rating
                                                                      comment:comment];
 
-        event.ID       = feedbackId;
-        event.recipeId = recipeId;
-
-        NITLogD(TAG, @"NITManager :: sendEvent(%@, %@, %d, %@)", feedbackId, recipeId, rating, comment);
+        NITLogD(TAG, @"NITManager :: sendEvent(%@, %d, %@)", feedbackInfoB64, rating, comment);
         [[NITManager defaultManager] sendEventWithEvent:event
                                       completionHandler:^(NSError * _Nullable error) {
 

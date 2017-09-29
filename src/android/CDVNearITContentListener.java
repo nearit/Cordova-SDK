@@ -24,6 +24,8 @@ package it.near.sdk.cordova.android;
     SOFTWARE.
  */
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +44,7 @@ import it.near.sdk.utils.CoreContentsListener;
 
 public class CDVNearITContentListener implements CoreContentsListener {
 
+  private final String TAG = "CDVNearITContentListener";
   private boolean fromUserActions = false;
 
   public CDVNearITContentListener(boolean fromUserActions)
@@ -162,9 +165,13 @@ public class CDVNearITContentListener implements CoreContentsListener {
   {
     Map<String, Object> args = new HashMap<String, Object>();
 
-    args.put("feedbackId", notification.getId());
-    args.put("recipeId",   notification.getRecipeId());
-    args.put("question",   notification.question);
+    try {
+      args.put("feedbackInfo", NITHelper.feedbackToBase64(notification));
+    } catch(Exception err) {
+      Log.e(TAG, "error while serializing feedback", err);
+    }
+
+    args.put("question",     notification.question);
 
     forwardEvent(
             CDVNearIT.CDVEventType.CDVNE_Event_Feedback,

@@ -1,5 +1,6 @@
 package it.near.sdk.cordova.android;
 
+import android.util.Base64;
 import android.os.Parcel;
 
 import org.json.JSONArray;
@@ -98,5 +99,40 @@ public class NITHelper {
 
 		return feedback;
 	}
+
+    public static String feedbackToBase64(final Feedback feedback) throws Exception {
+        // serialize feedback
+        Map<String, Object> feedbackDict = new HashMap<String, Object>();
+	    feedbackDict.put("notificationMessage", feedback.notificationMessage);
+	    feedbackDict.put("feedbackId", feedback.getId());
+	    feedbackDict.put("recipeId",   feedback.getRecipeId());
+	    feedbackDict.put("question",   feedback.question);
+
+        JSONObject feedbackJson = new JSONObject(feedbackDict);
+
+        final String feedbackString = feedbackJson.toString();
+
+        // Encode to base64
+        return Base64.encodeToString(feedbackString.getBytes("UTF-8"), Base64.DEFAULT);
+    }
+
+    public static Feedback feedbackFromBase64(final String feedbackBase64) throws Exception {
+        // Decode from base64
+        final String feedbackString = new String(Base64.decode(feedbackBase64, Base64.DEFAULT), "UTF-8");
+
+        // DeJSONify Feedback
+        JSONObject feedbackJson = new JSONObject(feedbackString);
+
+        Parcel parcel = Parcel.obtain();
+        parcel.writeString(feedbackJson.getString("notificationMessage"));
+        parcel.writeString(feedbackJson.getString("question"));
+        parcel.writeString(feedbackJson.getString("recipeId"));
+        parcel.writeString(feedbackJson.getString("feedbackId"));
+
+        Feedback feedback = Feedback.CREATOR.createFromParcel(parcel);
+        parcel.recycle();
+
+        return feedback;
+    }
 
 }
