@@ -1,8 +1,6 @@
 # Handle recipe content
 
-NearIT takes care of delivering content at the right time, you will just need to handle content inside your app. 
-
-<br>
+NearIT takes care of delivering content at the right time, you will just need to handle content inside your app.
 
 ## Notifications
 Notifications are automatically managed by NearIT Cordova SDK, if you want to use your own logic to display them, edit your Cordova project `config.xml`
