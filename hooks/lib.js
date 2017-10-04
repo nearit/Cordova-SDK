@@ -456,7 +456,7 @@ var lib = {
         }
 
         if (destinationText !== text) {
-            console.log("Wrote Android " + path.basename(targetFile));
+            console.log("* wrote Android " + path.basename(targetFile));
             fs.writeFileSync(targetFile, text, 'utf-8');
         }
     },

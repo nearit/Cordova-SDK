@@ -15,7 +15,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       // ensure that the plugin is initialized
 
       // add an event listener for every nearit event
-      // (just for demo)
       Object.keys(nearit.eventType).forEach(function(eventType) {
         appendLog("demo :: attaching event listener for " + eventType);
         nearit.addEventListener(eventType, function(event) {
@@ -29,6 +28,48 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         });
       });
       //
+
+      // demo listener for a feedback event
+      nearit.addEventListener(nearit.eventType.CDVNE_Event_Feedback, function(event) {
+
+        // retain feedback information
+        var recipeId = event.recipeId;
+        var feedbackId = event.feedbackId;
+        var question = event.question;
+
+        // ask for user feedback
+        var rating = prompt(question + "? [rating da 1 a 5]", "5");
+        var comment = prompt("Vuoi lasciare un commento?");
+        appendLog('demo :: feedback replied with ' + rating + ' ' + comment);
+
+        // reply feedback request
+        if (rating && comment) {
+          appendLog("demo :: calling nearit.sendFeedbackWithComment (", [feedbackId, recipeId, rating, comment], ")");
+          nearit.sendFeedbackWithComment(feedbackId, recipeId, rating, comment, function() {
+            var args2 = Array.prototype.slice.call(arguments);
+            args2 = ['demo :: <b>sendFeedbackWithComment successCb</b>'].concat(args2);
+            appendLog.apply(appendLog, args2);
+          }, function() {
+            var args2 = Array.prototype.slice.call(arguments);
+            args2 = ['demo :: <b>sendFeedbackWithComment errorCb</b>'].concat(args2);
+            appendLog.apply(appendLog, args2);
+          });
+        }
+
+      });
+
+      // at startup always check permissions
+      appendLog("demo :: calling nearit.permissionRequest ()");
+      nearit.permissionRequest(function() {
+        var args2 = Array.prototype.slice.call(arguments);
+        args2 = ['demo :: <b>permissionRequest successCb</b>'].concat(args2);
+        appendLog.apply(appendLog, args2);
+      }, function() {
+        var args2 = Array.prototype.slice.call(arguments);
+        args2 = ['demo :: <b>permissionRequest errorCb</b>'].concat(args2);
+        appendLog.apply(appendLog, args2);
+      });
+
     }
   });
   // @end nearit-cordova-sdk

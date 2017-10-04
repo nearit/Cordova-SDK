@@ -1,7 +1,7 @@
 
 dependencies {
     compile "com.android.support:appcompat-v7:24.2.1"
-    compile "it.near.sdk:nearit:2.2.0"
+    compile "it.near.sdk:nearit:2.2.1"
 }
 
 buildscript {

@@ -124,39 +124,235 @@
 
 - (BOOL)handleNearContent: (id _Nonnull) content trackingInfo: (NITTrackingInfo* _Nonnull) trackingInfo fromUserAction: (BOOL) fromUserAction
 {
+    NSMutableDictionary* arguments = [NSMutableDictionary dictionary];
+
+    // notification message
+    if ([content isKindOfClass:[NITReactionBundle class]]) {
+        NSString* message = [(NITReactionBundle*)content notificationMessage];
+        if (IS_EMPTY(message)) {
+            message = @"";
+        }
+
+        [arguments setObject:message forKey:@"message"];
+    }
+
+    // fromUserAction boolean
+    [arguments setObject:@(fromUserAction) forKey:@"fromUserAction"];
+
+    // notification content depending on notification type
     if ([content isKindOfClass:[NITSimpleNotification class]]) {
 
         // Simple notification
         NITSimpleNotification *simple = (NITSimpleNotification*)content;
-
-        NSString* message = [simple message];
-        if (!message) {
-            message = @"";
-        }
-
-        NITLogI(TAG, @"simple message \"%@\" with trackingInfo %@", message, trackingInfo);
+        NITLogI(TAG, @"simple message \"%@\" with trackingInfo %@", [simple notificationMessage], trackingInfo);
         
-        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Simple withArguments:[NSDictionary dictionaryWithObjectsAndKeys: message, @"message", [NSNumber numberWithBool:fromUserAction], @"fromUserAction", nil] trackingInfo:trackingInfo];
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Simple
+                                withArguments:arguments
+                                 trackingInfo:trackingInfo];
 
         return YES;
-
     } else if ([content isKindOfClass:[NITCustomJSON class]]) {
 
         // Custom JSON notification
         NITCustomJSON *custom = (NITCustomJSON*)content;
-        NITLogI(TAG, @"JSON message %@ trackingInfo %@", [custom content], trackingInfo);
+
+        NSDictionary *content = [custom content];
+        if (!content) {
+            content = [NSDictionary dictionary];
+        }
+
+        NITLogI(TAG, @"JSON message %@ trackingInfo %@", content, trackingInfo);
+
+        [arguments setObject:content forKey:@"data"];
 
         [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_CustomJSON
-                                withArguments:[NSDictionary dictionaryWithObjectsAndKeys: [custom content], @"data", fromUserAction, @"fromUserAction", nil]
+                                withArguments:arguments
+                                 trackingInfo:trackingInfo];
+
+        return YES;
+    } else if ([content isKindOfClass:[NITContent class]]) {
+
+        // Rich Content notification
+        NITContent *rich = (NITContent*)content;
+
+        NITLogI(TAG, @"rich content message %@ trackingInfo %@", rich, trackingInfo);
+
+        // content - returns the text content, without processing the html
+        if (IS_EMPTY([rich content])) {
+            [arguments setObject:[rich content] forKey:@"text"];
+        } else {
+            [arguments setObject:@(FALSE) forKey:@"text"];
+        }
+
+        // videoLink - returns the video link
+        if (IS_EMPTY([rich videoLink])) {
+            [arguments setObject:@[[rich videoLink]] forKey:@"video"];
+        } else {
+            [arguments setObject:@[] forKey:@"video"];
+        }
+
+        // images - returns a list of Image object containing the source links for the images
+        if ([rich images]) {
+            NSMutableArray* images = [NSMutableArray array];
+            [[rich images] enumerateObjectsUsingBlock:^(NITImage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                NSMutableDictionary* imageDict = [NSMutableDictionary dictionary];
+
+                [imageDict setObject:[[obj smallSizeURL] absoluteString] forKey:@"small"];
+                [imageDict setObject:[[obj url] absoluteString]          forKey:@"full"];
+
+                [images addObject:imageDict];
+            }];
+            [arguments setObject:images forKey:@"image"];
+        } else {
+            [arguments setObject:@[] forKey:@"image"];
+        }
+
+        // upload - returns an Upload object containing a link to a file uploaded on NearIT if any
+        if ([rich upload]) {
+            [arguments setObject:@[[(NITUpload*)[rich upload] url]]
+                          forKey:@"upload"];
+        } else {
+            [arguments setObject:@[] forKey:@"upload"];
+        }
+
+        // audio - returns an Audio object containing a link to an audio file uploaded on NearIT if any
+        if ([rich audio]) {
+            [arguments setObject:@[[(NITAudio*)[rich audio] url]]
+                          forKey:@"audio"];
+        } else {
+            [arguments setObject:@[] forKey:@"audio"];
+        }
+
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Content
+                                withArguments:arguments
+                                 trackingInfo:trackingInfo];
+
+        return YES;
+    } else if ([content isKindOfClass:[NITFeedback class]]) {
+
+        // Feedback notification
+        NITFeedback *feedback = (NITFeedback*)content;
+
+        NSString* question = [feedback question];
+
+        NITLogI(TAG, @"feedback notification %@ trackingInfo %@", question, trackingInfo);
+
+        if (IS_EMPTY([feedback recipeId]) || IS_EMPTY([feedback question]) || IS_EMPTY([feedback ID])) {
+
+            // invalid feedback event received
+            NSString* message = [NSString stringWithFormat:@"invalid feedback content type %@ trackingInfo %@", question, trackingInfo];
+            NITLogW(TAG, message);
+
+            [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error
+                                      withMessage:message
+                                     trackingInfo:trackingInfo];
+           return NO;
+        }
+
+        [arguments setObject:[feedback ID]       forKey:@"feedbackId"];
+        [arguments setObject:[feedback recipeId] forKey:@"recipeId"];
+        [arguments setObject:[feedback question] forKey:@"question"];
+
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Feedback
+                                withArguments:arguments
+                                 trackingInfo:trackingInfo];
+
+        return YES;
+    } else if ([content isKindOfClass:[NITCoupon class]]) {
+
+        // Coupon notification
+        NITCoupon *coupon = (NITCoupon*)content;
+
+        // retrieve exported fields
+        NSString* name              = [coupon name];
+        NSString* couponDescription = [coupon couponDescription];
+        NSString* value             = [coupon value];
+        NSString* expiresAt         = [coupon expiresAt];
+        NSString* redeemableFrom    = [coupon redeemableFrom];
+        NSMutableArray* claims      = [NSMutableArray array];
+        NSString* smallIcon         = [[[coupon icon] smallSizeURL] absoluteString];
+        NSString* icon              = [[[coupon icon] url] absoluteString];
+
+        // check on null values
+        if (IS_EMPTY(name)) {
+            name = @"";
+        }
+        if (IS_EMPTY(couponDescription)) {
+            couponDescription = @"";
+        }
+        if (IS_EMPTY(value)) {
+            value = @"";
+        }
+        if (IS_EMPTY(expiresAt)) {
+            expiresAt = @"";
+        }
+        if (IS_EMPTY(redeemableFrom)) {
+            redeemableFrom = @"";
+        }
+        for(NITClaim* claim in [coupon claims]) {
+            NSMutableDictionary* claimDict = [NSMutableDictionary dictionary];
+
+            NSString* serialNumber = [claim serialNumber];
+            NSString* claimedAt    = [claim claimedAt];
+            NSString* redeemedAt   = [claim redeemedAt];
+            NSString* recipeId     = [claim recipeId];
+
+            if (IS_EMPTY(serialNumber)) {
+                serialNumber = @"";
+            }
+            if (IS_EMPTY(claimedAt)) {
+                claimedAt = @"";
+            }
+            if (IS_EMPTY(redeemedAt)) {
+                redeemedAt = @"";
+            }
+            if (IS_EMPTY(recipeId)) {
+                recipeId = @"";
+            }
+
+            [claimDict setObject:serialNumber forKey:@"serialNumber"];
+            [claimDict setObject:claimedAt forKey:@"claimedAt"];
+            [claimDict setObject:redeemedAt forKey:@"redeemedAt"];
+            [claimDict setObject:recipeId forKey:@"recipeId"];
+
+            [claims addObject:claimDict];
+        }
+        if (IS_EMPTY(smallIcon)) {
+            smallIcon = @"";
+        }
+        if (IS_EMPTY(icon)) {
+            icon = @"";
+        }
+
+        // fill exported object
+        NSMutableDictionary* couponDict = [NSMutableDictionary dictionary];
+        [couponDict setObject:name              forKey:@"name"];
+        [couponDict setObject:couponDescription forKey:@"description"];
+        [couponDict setObject:value             forKey:@"value"];
+        [couponDict setObject:expiresAt         forKey:@"expiresAt"];
+        [couponDict setObject:redeemableFrom    forKey:@"redeemableFrom"];
+        [couponDict setObject:claims            forKey:@"claims"];
+        [couponDict setObject:smallIcon         forKey:@"smallIcon"];
+        [couponDict setObject:icon              forKey:@"icon"];
+
+        [arguments setObject:couponDict forKey:@"coupon"];
+
+        NITLogI(TAG, @"coupon notification %@ trackingInfo %@", couponDict, trackingInfo);
+
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Coupon
+                                withArguments:arguments
                                  trackingInfo:trackingInfo];
 
         return YES;
     } else {
+
         // unhandled content type
         NSString* message = [NSString stringWithFormat:@"unknown content type %@ trackingInfo %@", content, trackingInfo];
         NITLogW(TAG, message);
 
-        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:message trackingInfo:trackingInfo];
+        [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error
+                                  withMessage:message
+                                 trackingInfo:trackingInfo];
 
         return NO;
     }
