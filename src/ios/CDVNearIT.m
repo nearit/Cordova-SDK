@@ -371,7 +371,7 @@ __weak CDVNearIT *instance = nil;
             for(NITCoupon* coupon in coupons) {
 
                 // retrieve exported fields
-                NSString* name              = [coupon name];
+                NSString* name              = [coupon title];
                 NSString* couponDescription = [coupon couponDescription];
                 NSString* value             = [coupon value];
                 NSString* expiresAt         = [coupon expiresAt];
@@ -433,7 +433,7 @@ __weak CDVNearIT *instance = nil;
 
                 // fill exported object
                 NSMutableDictionary* couponDict = [NSMutableDictionary dictionary];
-                [couponDict setObject:name              forKey:@"name"];
+                [couponDict setObject:name              forKey:@"title"];
                 [couponDict setObject:couponDescription forKey:@"description"];
                 [couponDict setObject:value             forKey:@"value"];
                 [couponDict setObject:expiresAt         forKey:@"expiresAt"];

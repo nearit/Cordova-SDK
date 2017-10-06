@@ -177,6 +177,13 @@
 
         NITLogI(TAG, @"rich content message %@ trackingInfo %@", rich, trackingInfo);
 
+        // title - returns the content title
+        if (IS_EMPTY([rich title])) {
+            [arguments setObject:@[[rich title]] forKey:@"title"];
+        } else {
+            [arguments setObject:@[] forKey:@"title"];
+        }
+
         // content - returns the text content, without processing the html
         if (IS_EMPTY([rich content])) {
             [arguments setObject:[rich content] forKey:@"text"];
@@ -184,43 +191,28 @@
             [arguments setObject:@(FALSE) forKey:@"text"];
         }
 
-        // videoLink - returns the video link
-        if (IS_EMPTY([rich videoLink])) {
-            [arguments setObject:@[[rich videoLink]] forKey:@"video"];
-        } else {
-            [arguments setObject:@[] forKey:@"video"];
-        }
+        // images - returns the Image object containing the source links for the image
+        if ([rich image]) {
+            NSMutableDictionary* imageDict = [NSMutableDictionary dictionary];
 
-        // images - returns a list of Image object containing the source links for the images
-        if ([rich images]) {
-            NSMutableArray* images = [NSMutableArray array];
-            [[rich images] enumerateObjectsUsingBlock:^(NITImage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                NSMutableDictionary* imageDict = [NSMutableDictionary dictionary];
+            [imageDict setObject:[[[rich image] smallSizeURL] absoluteString] forKey:@"small"];
+            [imageDict setObject:[[[rich image] url] absoluteString]          forKey:@"full"];
 
-                [imageDict setObject:[[obj smallSizeURL] absoluteString] forKey:@"small"];
-                [imageDict setObject:[[obj url] absoluteString]          forKey:@"full"];
-
-                [images addObject:imageDict];
-            }];
-            [arguments setObject:images forKey:@"image"];
+            [arguments setObject:imageDict forKey:@"image"];
         } else {
             [arguments setObject:@[] forKey:@"image"];
         }
 
-        // upload - returns an Upload object containing a link to a file uploaded on NearIT if any
-        if ([rich upload]) {
-            [arguments setObject:@[[(NITUpload*)[rich upload] url]]
-                          forKey:@"upload"];
+        // cta - returns an ContentLink object containing a cta label and its url
+        if ([rich link]) {
+            NSMutableDictionary* ctaDict = [NSMutableDictionary dictionary];
+            
+            [ctaDict setObject:[[rich link] label] forKey:@"label"];
+            [ctaDict setObject:[[rich link] url]   forKey:@"url"];
+            
+            [arguments setObject:ctaDict forKey:@"cta"];
         } else {
-            [arguments setObject:@[] forKey:@"upload"];
-        }
-
-        // audio - returns an Audio object containing a link to an audio file uploaded on NearIT if any
-        if ([rich audio]) {
-            [arguments setObject:@[[(NITAudio*)[rich audio] url]]
-                          forKey:@"audio"];
-        } else {
-            [arguments setObject:@[] forKey:@"audio"];
+            [arguments setObject:@[] forKey:@"cta"];
         }
 
         [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Content
@@ -264,7 +256,7 @@
         NITCoupon *coupon = (NITCoupon*)content;
 
         // retrieve exported fields
-        NSString* name              = [coupon name];
+        NSString* name              = [coupon title];
         NSString* couponDescription = [coupon couponDescription];
         NSString* value             = [coupon value];
         NSString* expiresAt         = [coupon expiresAt];
@@ -326,7 +318,7 @@
 
         // fill exported object
         NSMutableDictionary* couponDict = [NSMutableDictionary dictionary];
-        [couponDict setObject:name              forKey:@"name"];
+        [couponDict setObject:name              forKey:@"title"];
         [couponDict setObject:couponDescription forKey:@"description"];
         [couponDict setObject:value             forKey:@"value"];
         [couponDict setObject:expiresAt         forKey:@"expiresAt"];
