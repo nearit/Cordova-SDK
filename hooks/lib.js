@@ -4,7 +4,27 @@ var fs = require("fs"),
     assert = require('assert'),
     et = require('elementtree');
 
-module.exports = {
+var preferenceMappingData = require('./config').preferenceMappingData;
+
+/**
+ * @author "Mirco Cipriani"
+ * @author "Fabio Cigliano"
+ * @created 24/07/17
+ * Original version took from:
+ * @link https://raw.githubusercontent.com/mircoc/cordova-plugin-settings-hook/master/src/index.js
+ */
+String.prototype.format = String.prototype.format || function (map) {
+    var formatted = this;
+    Object.keys(map).forEach(function (key) {
+        var value = map[key];
+        var regexp = new RegExp('\\{' + key + '\\}', 'gi');
+        formatted = formatted.replace(regexp, value);
+    });
+    return formatted;
+};
+
+var lib = {
+
     /**
      * Parses a given file into an elementtree object
      */
@@ -31,7 +51,7 @@ module.exports = {
             el += data.text.trim();
         } else {
             data.getchildren().forEach(function (child) {
-                el += this.eltreeToXmlString(child);
+                el += lib.eltreeToXmlString(child);
             });
         }
 
@@ -45,7 +65,7 @@ module.exports = {
      * @returns {*}
      */
     getConfigXml: function (rootdir) {
-        return this.parseElementtreeSync(path.join(rootdir, 'config.xml'));
+        return lib.parseElementtreeSync(path.join(rootdir, 'config.xml'));
     },
 
     /**
@@ -55,7 +75,7 @@ module.exports = {
      * will be returned, otherwise just common prefs are returned.
      */
     getPreferences: function (rootdir, platform) {
-        var configXml = this.getConfigXml(rootdir);
+        var configXml = lib.getConfigXml(rootdir);
 
         //init common config.xml prefs if we haven't already
         var preferencesData = {
@@ -74,7 +94,7 @@ module.exports = {
     },
 
     searchPreferenceByName: function (rootdir, platform, searchedPreference) {
-        var preferences = this.getPreferences(rootdir, platform)
+        var preferences = lib.getPreferences(rootdir, platform)
 
         var prefValue
         preferences.forEach(function (p) {
@@ -94,7 +114,7 @@ module.exports = {
      * the last config-file element is used.
      */
     getConfigFilesByTargetAndParent: function (rootdir, platform) {
-        var configFileData = this.getConfigXml(rootdir)
+        var configFileData = lib.getConfigXml(rootdir)
             .findall('platform[@name=\'' + platform + '\']/config-file');
 
         var result = {};
@@ -120,7 +140,7 @@ module.exports = {
      * @param platform
      */
     parsePreferences: function (rootdir, configData, platform, preferenceMappingData) {
-        var preferences = this.getPreferences(rootdir, platform),
+        var preferences = lib.getPreferences(rootdir, platform),
             type = 'preference';
 
         if (!platform) {
@@ -162,7 +182,7 @@ module.exports = {
      * @param platform
      */
     parseConfigFiles: function (rootdir, configData, platform) {
-        var configFiles = this.getConfigFilesByTargetAndParent(rootdir, platform),
+        var configFiles = lib.getConfigFilesByTargetAndParent(rootdir, platform),
             type = 'configFile';
 
         for (var key in configFiles) {
@@ -195,45 +215,9 @@ module.exports = {
      */
     parseConfigXml: function (rootdir, platform, preferenceMappingData) {
         var configData = {};
-        this.parsePreferences(rootdir, configData, platform, preferenceMappingData);
-        this.parseConfigFiles(rootdir, configData, platform);
+        lib.parsePreferences(rootdir, configData, platform, preferenceMappingData);
+        lib.parseConfigFiles(rootdir, configData, platform);
         return configData;
-    },
-
-    /**
-     * Parses config.xml data, and update each target file for a specified platform
-     * @param platform
-     */
-    updatePlatformConfig: function (rootdir, platform, preferenceMappingData) {
-        var configData = this.parseConfigXml(rootdir, platform, preferenceMappingData),
-            platformPath = path.join(rootdir, 'platforms', platform),
-            projectName = this.getConfigXml(rootdir).findtext('name');
-
-        for (var targetFileName in configData) {
-            if (configData.hasOwnProperty(targetFileName)) {
-                var configItems = configData[targetFileName];
-
-                var targetFile;
-
-                if (platform === 'ios') {
-                    if (targetFileName.indexOf("Info.plist") > -1) {
-                        targetFile = path.join(platformPath, projectName, projectName + '-Info.plist');
-                        this.updateIosPlist(targetFile, configItems);
-                    } else if (targetFileName.indexOf("-Prefix.pch") > -1) {
-                        targetFile = path.join(platformPath, projectName, projectName + '-Prefix.pch');
-                        this.updatePrefixPch(targetFile, configItems);
-                    }
-                } else if (platform === 'android') {
-                    if (targetFileName === 'AndroidManifest.xml') {
-                        targetFile = path.join(platformPath, targetFileName);
-                        this.updateAndroidManifest(targetFile, configItems);
-                    } else if (targetFileName.indexOf('.java') > -1) {
-                        targetFile = path.join(platformPath, targetFileName);
-                        this.updateAndroidClass(targetFile, configItems);
-                    }
-                }
-            }
-        }
     },
 
     /**
@@ -241,8 +225,8 @@ module.exports = {
      * @param targetFile
      * @param configItems
      */
-    updateAndroidManifest: function (targetFile, configItems) {
-        var tempManifest = this.parseElementtreeSync(targetFile),
+    updateAndroidManifest: function (targetFile, configItems, forceRemove) {
+        var tempManifest = lib.parseElementtreeSync(targetFile),
             root = tempManifest.getroot();
 
         var cordovaApp = "application/activity/intent-filter/action[@android:name='android.intent.action.MAIN']/../..";
@@ -296,7 +280,7 @@ module.exports = {
         });
 
         fs.writeFileSync(targetFile, tempManifest.write({ indent: 4 }), 'utf-8');
-        console.log("Wrote AndroidManifest.xml: " + targetFile);
+        console.log("* wrote AndroidManifest.xml: " + targetFile);
     },
 
     /**
@@ -311,7 +295,7 @@ module.exports = {
         configItems.forEach(function (item) {
             var key = item.parent;
             var plistXml = '<plist><dict><key>' + key + '</key>';
-            plistXml += this.eltreeToXmlString(item.data) + '</dict></plist>';
+            plistXml += lib.eltreeToXmlString(item.data) + '</dict></plist>';
 
             var configPlistObj = plist.parse(plistXml);
             infoPlist[key] = configPlistObj[key];
@@ -320,7 +304,7 @@ module.exports = {
         tempInfoPlist = plist.build(infoPlist);
         tempInfoPlist = tempInfoPlist.replace(/<string>[\s\r\n]*<\/string>/g, '<string></string>');
         fs.writeFileSync(targetFile, tempInfoPlist, 'utf-8');
-        console.log("Wrote iOS Plist: " + targetFile);
+        console.log("* wrote iOS Plist: " + targetFile);
     },
 
     updateAndroidClass: function (targetFile, configItems) {
@@ -358,14 +342,14 @@ module.exports = {
 
         if (changed) {
             fs.writeFileSync(targetFile, content, 'utf-8');
-            console.log("Wrote Android " + path.basename(targetFile));
+            console.log("* wrote Android " + path.basename(targetFile));
         }
     },
 
     /**
      *  Updates the *-Prefix.pch file with data from config.xml by parsing to an xml string
      */
-    updatePrefixPch: function (targetFile, configItems) {
+    updatePrefixPch: function (targetFile, configItems, forceRemove) {
         var headers = fs.readFileSync(targetFile, 'utf-8');
         var changed = false;
 
@@ -385,12 +369,9 @@ module.exports = {
 
             if (item.map.format) {
 
-                // try to remove the old line if formatted value is changed
+                content = content.format(item.data.attrib);
                 var regexp = new RegExp('#define (.[^ ]*) @?"?(.*)"?', 'gi');
                 var name = regexp.exec(content);
-
-                // format the header line
-                content = content.format(item.data.attrib);
 
                 // check if there were a previous header for that constant
                 if (name) {
@@ -410,19 +391,30 @@ module.exports = {
                 }
             }
 
-            if (headers.indexOf(content) !== -1) {
+            if (forceRemove) {
+
+                content = content.format(item.map.content);
+                var regexp = new RegExp('#define (.[^ ]*).*', 'gi');
+                var name = regexp.exec(content)[1];
+
+                headers = headers.replace(regexp, '');
+                console.log("* removing PCH header " + name);
+                changed = true;
+            } else if (headers.indexOf(content) !== -1) {
                 if (value) {
                     // header already present,
                     // nothing to do
                 } else {
                     // removing previously added header
                     headers = headers.replace(content, "");
+                    console.log("* updating PCH header " + content);
                     changed = true;
                 }
             } else {
                 if (value) {
                     // adding custom PCH header
                     headers += content + "\n";
+                    console.log("* adding PCH header " + content);
                     changed = true;
                 } else {
                     // header is not needed,
@@ -433,58 +425,8 @@ module.exports = {
 
         if (changed) {
             fs.writeFileSync(targetFile, headers, 'utf-8');
-            console.log("Wrote iOS Prefix.pch header: " + targetFile);
+            console.log("* wrote iOS Prefix.pch header: " + targetFile);
         }
-    },
-
-    /**
-     * Customize main app config.xml to add some custom preferences
-     */
-    updateAppConfig: function (rootdir, preferenceMappingData) {
-        var configData = this.parseConfigXml(rootdir, null, preferenceMappingData);
-        var changes = [];
-
-        Object.keys(preferenceMappingData.generic)
-            .forEach(function (preferenceName) {
-                var defaults = preferenceMappingData.generic[preferenceName];
-
-                var found = false;
-                Object.keys(configData['config.xml'] || [])
-                    .forEach(function (key) {
-                        var existingPreference = configData['config.xml'][key];
-
-                        if (existingPreference.data.attrib.name === preferenceName) {
-                            console.log("* preference " + preferenceName + " found");
-                            found = true;
-                        }
-                    });
-
-                if (!found) {
-                    console.log("* adding preference " + preferenceName);
-
-                    var newchildEl = new et.Element(defaults.destination);
-                    newchildEl.attrib['name'] = preferenceName;
-                    newchildEl.attrib['value'] = defaults.value;
-
-                    changes.push(newchildEl);
-                }
-
-            });
-
-        // if there are any changes, update config.xml
-        if (changes.length) {
-            var targetFile = path.join(rootdir, 'config.xml');
-            var tempConfig = this.parseElementtreeSync(targetFile),
-                root = tempConfig.getroot();
-
-            for (var i in changes) {
-                root.append(changes[i]);
-            }
-
-            fs.writeFileSync(targetFile, tempConfig.write({ indent: 4 }), 'utf-8');
-            console.log("Wrote app config.xml");
-        }
-
     },
 
     replaceClassname: function (packagename, sourceFile, targetFile) {
@@ -537,3 +479,5 @@ module.exports = {
     },
 
 };
+
+module.exports = lib;

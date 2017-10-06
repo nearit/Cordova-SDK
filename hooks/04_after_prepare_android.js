@@ -45,10 +45,10 @@ var platformDir = path.join(rootdir, 'platforms', 'android');
 var resourcesDir = path.join(rootdir, 'resources', 'android');
 var manifestFile = path.join(platformDir, 'AndroidManifest.xml')
 
-/*
-* Copy google-services.json file
-* from resources/android/google-services.json to platforms/android/google-services.json
-*/
+/**
+ * Copy google-services.json file
+ * from resources/android/google-services.json to platforms/android/google-services.json
+ */
 var sourceFile = path.join(resourcesDir, 'google-services.json');
 var targetFile = path.join(platformDir, 'google-services.json');
 
@@ -57,13 +57,67 @@ if (fs.existsSync(sourceFile)) {
 }
 
 /**
-* Inject `nearit-api-key` from Cordova `config.xml` into Android manifest
-*/
-var apiKey = lib.searchPreferenceByName(rootdir, 'android', 'nearit-api-key')
+ * Disable GMS within .gradle file
+ * when config.xml preference "nearit-feature-push" is "false"
+ */
+
+var pushEnabled = lib.searchPreferenceByName(rootdir, 'android', 'nearit-feature-push') == "true";
+var gradleDir = path.join(platformDir, 'cordova-plugin-nearit');
+var gradleFile = false;
+
+if (fs.existsSync(gradleDir)) {
+
+  fs.readdirSync(gradleDir)
+      .forEach(function (file) {
+          gradleFile = path.join(gradleDir, file);
+      });
+
+  if (fs.existsSync(gradleFile)) {
+      var content = fs.readFileSync(gradleFile, 'utf-8');
+
+      var regexp = new RegExp('(.*classpath \'com.google.gms.*)', 'gi');
+      var line1 = regexp.exec(content);
+      var changed = false;
+
+      if (line1) {
+        if (pushEnabled && line1[0].indexOf("//") != -1) {
+            content = content.replace(line1[0], line1[0].replace("//", ""));
+            changed = true;
+        } else if(line1[0].indexOf("//") == -1) {
+            content = content.replace(line1[0], "//" + line1[0]);
+            changed = true;
+        }
+      }
+
+      var regexp2 = new RegExp('(.*apply plugin: com.google.gms.googleservices.*)', 'gi');
+      var line2 = regexp2.exec(content);
+
+      if (line2) {
+          if (pushEnabled && line2[0].indexOf("//") != -1) {
+              content = content.replace(line2[0], line2[0].replace("//", ""));
+              changed = true;
+          } else if(line2[0].indexOf("//") == -1) {
+              content = content.replace(line2[0], "//" + line2[0]);
+              changed = true;
+          }
+      }
+
+      if (changed) {
+          console.log("* wrote " + path.basename(gradleFile));
+          fs.writeFileSync(gradleFile, content, 'utf-8');
+      }
+  }
+}
+
+
+/**
+ * Inject `nearit-api-key` from Cordova `config.xml` into Android manifest
+ */
+var apiKey = lib.searchPreferenceByName(rootdir, 'android', 'nearit-api-key');
 
 if (apiKey) {
-  var tempManifest = lib.parseElementtreeSync(manifestFile)
-  var root = tempManifest.getroot()
+  var tempManifest = lib.parseElementtreeSync(manifestFile);
+  var root = tempManifest.getroot();
 
   var nearApiKeyElm = root.find("application/meta-data[@android:name='near_api_key']")
   if (nearApiKeyElm) {
