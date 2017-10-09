@@ -55,7 +55,7 @@ public class NITHelper {
 	public static Map<String, Object> couponToMap(Coupon item) {
 		Map<String, Object> coupon = new HashMap<String, Object>();
 
-		coupon.put("name", item.name);
+		coupon.put("name", item.getTitle());
 		coupon.put("description", item.description);
 		coupon.put("value", item.value);
 		coupon.put("expiresAt", item.expires_at);

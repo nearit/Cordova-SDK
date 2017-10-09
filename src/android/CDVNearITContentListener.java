@@ -24,13 +24,11 @@ package it.near.sdk.cordova.android;
     SOFTWARE.
  */
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import it.near.sdk.reactions.contentplugin.model.Content;
-import it.near.sdk.reactions.contentplugin.model.Image;
+import it.near.sdk.reactions.contentplugin.model.ContentLink;
 import it.near.sdk.reactions.contentplugin.model.ImageSet;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.reactions.customjsonplugin.model.CustomJSON;
@@ -65,46 +63,28 @@ public class CDVNearITContentListener implements CoreContentsListener {
   {
     Map<String, Object> args = new HashMap<String, Object>();
 
+    args.put("title", notification.title);
     args.put("text", notification.contentString);
 
-    List<String> video = new ArrayList<String>();
-    if (notification.video_link != null) {
-      video.add(notification.video_link);
+    if (notification.getImageLink() != null) {
+      final ImageSet imageSet = notification.getImageLink();
+
+      Map<String, Object> imageDict = new HashMap<String, Object>();
+      imageDict.put("small", imageSet.getSmallSize());
+      imageDict.put("full", imageSet.getFullSize());
+
+      args.put("image", imageDict);
     }
-    args.put("video", video);
 
-    List<Map<String, Object>> images = new ArrayList<Map<String, Object>>();
-    if (notification.images != null) {
-      for(Image image : notification.images) {
-        ImageSet imageSet;
+    if (notification.getCta() != null) {
+      final ContentLink contentLink = notification.getCta();
 
-        try {
-          imageSet = image.toImageSet();
-        } catch(Image.MissingImageException err) {
-          continue;
-        }
+      Map<String, Object> ctaDict = new HashMap<String, Object>();
+      ctaDict.put("label", contentLink.label);
+      ctaDict.put("url", contentLink.url);
 
-        Map<String, Object> imageDict = new HashMap<String, Object>();
-
-        imageDict.put("small", imageSet.getSmallSize());
-        imageDict.put("full", imageSet.getFullSize());
-
-        images.add(imageDict);
-      }
+      args.put("cta", ctaDict);
     }
-    args.put("image", images);
-
-    List<String> upload = new ArrayList<String>();
-    if (notification.upload != null) {
-      upload.add(notification.upload.getUrl());
-    }
-    args.put("upload", upload);
-
-    List<String> audio = new ArrayList<String>();
-    if (notification.audio != null) {
-      upload.add(notification.audio.getUrl());
-    }
-    args.put("audio", audio);
 
     forwardEvent(
             CDVNearIT.CDVEventType.CDVNE_Event_Content,
