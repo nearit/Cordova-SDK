@@ -35,7 +35,7 @@ public class NITConfig
     /**
      * This field key is automatically mapped to preference {nearit-feature-push}
      */
-    public static final boolean ENABLE_PUSH = false;
+    public static final boolean ENABLE_PUSH = true;
 
     /**
      * This field key is automatically mapped to preference {nearit-feature-proximity}

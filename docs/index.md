@@ -1,16 +1,18 @@
 # NearIT Cordova SDK
 Cordova plugin for NearIT SDK
 
-[![Github](https://img.shields.io/badge/code-Github-green.svg)](https://github.com/nearit/Cordova-SDK)
-[![Gitter](https://img.shields.io/gitter/room/nearit/Lobby.svg)](https://gitter.im/nearit/Lobby)
+
+[![license](https://img.shields.io/github/license/nearit/Cordova-SDK.svg)](LICENSE)
+[![GitHub release](https://img.shields.io/github/release/nearit/Cordova-SDK.svg)](https://github.com/nearit/Cordova-SDK/releases)
+[![npm](https://img.shields.io/npm/v/cordova-plugin-nearit.svg)](https://www.npmjs.com/package/cordova-plugin-nearit)
 
 [![cordova](https://img.shields.io/badge/Cordova-6.0.0-green.svg)](https://cordova.apache.org/)
+![platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS-brightgreen.svg)
 [![Android](https://img.shields.io/badge/Android-16-blue.svg)](https://developer.android.com/about/dashboards/index.html#Platform)
 [![iOS](https://img.shields.io/badge/iOS-9-blue.svg)](https://developer.apple.com/ios/)
 
-[![GitHub release](https://img.shields.io/github/release/nearit/Cordova-SDK.svg)](https://github.com/nearit/Cordova-SDK/releases)
-[![license](https://img.shields.io/github/license/nearit/Cordova-SDK.svg)](LICENSE)
-
+[![Github](https://img.shields.io/badge/code-Github-green.svg)](https://github.com/nearit/Cordova-SDK)
+[![Gitter](https://img.shields.io/gitter/room/nearit/Lobby.svg)](https://gitter.im/nearit/Lobby)
 
 NearIT allows to engage app users by sending **context-aware targeted content**.
 

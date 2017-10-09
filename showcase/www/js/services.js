@@ -74,6 +74,25 @@ angular.module('starter.services', [])
       data: [],
     },
 
+    {
+      id: 'sendUserFeedback',
+      name: 'Reply with a Feedback',
+      data: ['prompt:feedbackId', 'prompt:recipeId', 'prompt:rating'],
+    },
+
+    {
+      id: 'sendUserFeedbackWithComment',
+      name: 'Reply with a Feedback + Comment',
+      data: ['prompt:feedbackId', 'prompt:recipeId', 'prompt:rating', 'prompt:comment'],
+    },
+
+    {
+      id: 'getCoupons',
+      name: 'Get coupon list',
+      data: [],
+      result: 'alert',
+    },
+
   ];
 
   return {

@@ -19,10 +19,13 @@ nearit.addEventListener(EventType, function(eventContent) {
 
 This table match every NearIT Recipe WHAT `Content Type` with the respective `EventType`
 
-| Content Type          | EventType                  |
-|-----------------------|----------------------------|
-|Simple Notification    | `CDVNE_Event_Simple`       |
-|CustomJSON             | `CDVNE_Event_CustomJSON`   |
+| Content Type          | EventType                                   |
+|-----------------------|---------------------------------------------|
+|Simple Notification    | `nearit.eventType.CDVNE_Event_Simple`       |
+|CustomJSON             | `nearit.eventType.CDVNE_Event_CustomJSON`   |
+|Content                | `nearit.eventType.CDVNE_Event_Content`      |
+|Feedback               | `nearit.eventType.CDVNE_Event_Feedback`     |
+|Coupon                 | `nearit.eventType.CDVNE_Event_Coupon`       |
 
 The `eventContent` object will contain the following fields
 
@@ -30,9 +33,92 @@ The `eventContent` object will contain the following fields
 |-----------------------|----------------------------|
 | `trackingInfo`        | Contains a string required to `sendTracking` related to an event |
 | `message`             | Contains notification message in case of `CDVNE_Event_Simple` or error message in case of `CDVNE_Event_Error` |
-| `data`                | Contains Custom JSON data in case of `CDVNE_Event_CustomJSON` |
 | `fromUserAction`      | A `boolean` indicating whichever the event was triggered by a user action (e.g. tap on a notification) |
 
+Other fields will be specific to the type of event triggered:
+
+#### For a Simple Notification event
+
+```
+{
+    trackingInfo: "...",
+    fromUserAction: false,
+    message: "sample Simple message event notification"
+}
+```
+
+#### For a CustomJSON event
+
+```
+{
+    trackingInfo: "...",
+    fromUserAction: false,
+    message: "sample Custom JSON event notification",
+    data: {
+      'this': 'is',
+      'a': 'json'
+    }
+}
+```
+
+#### For a Content event
+
+```
+{
+    trackingInfo: "...",
+    fromUserAction: false,
+    message: "sample Rich Content event notification",
+    title: "This is the rich content title",
+    text: "<p><strong>Lorem Ipsum</strong> è un testo segnaposto utilizzato nel settore della tipografia e della stampa. Lorem Ipsum è considerato il testo segnaposto standard sin dal sedicesimo secolo, quando un anonimo tipografo prese una cassetta di caratteri e li assemblò per preparare un testo campione. È sopravvissuto non solo a più di cinque secoli, ma anche al passaggio alla videoimpaginazione, pervenendoci sostanzialmente inalterato. Fu reso popolare, negli anni ’60, con la diffusione dei fogli di caratteri trasferibili “Letraset”, che contenevano passaggi del Lorem Ipsum, e più recentemente da software di impaginazione come Aldus PageMaker, che includeva versioni del Lorem Ipsum.</p>",
+    image: {
+        small: "https://placehold.it/300x300",
+        full: "https://placehold.it/1920x1080"
+    },
+    cta: {
+        label: "Click me!",
+        url: "https://placehold.it/1920x1080"
+    }
+}
+```
+
+#### For a Feedback event
+
+```
+{
+    trackingInfo: "...",
+    fromUserAction: false,
+    message: "sample Feedback event notification",
+    feedbackInfo: "...",
+    question: "In a world without walls and fences, who needs windows and gates?"
+}
+```
+
+#### For a Coupon event
+
+```
+{
+    trackingInfo: "...",
+    fromUserAction: false,
+    message: "sample Coupon event notification",
+    coupon: {
+      name: "test coupon",
+      description: "description",
+      value: "120",
+      expiresAt: "2018-12-21 09:00:00",
+      redeemableFrom: "2017-09-21 09:00:00",
+      claims: [
+        {
+          serialNumber: "123456",
+          claimedAt: "2017-09-28 09:00:00",
+          redeemedAt: "2017-09-28 16:00:00",
+          recipeId: "15"
+        }
+      ],
+      smallIcon: "http://via.placeholder.com/350x150",
+      icon: "http://via.placeholder.com/720x350"
+    }
+}
+```
 
 
 <!--

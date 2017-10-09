@@ -40,17 +40,21 @@ function NearIT() {
     var self = this;
 
     self.eventType = {
-        "CDVNE_PushNotification_Granted": "pushGranted.nearit",
+        "CDVNE_PushNotification_Granted":    "pushGranted.nearit",
         "CDVNE_PushNotification_NotGranted": "pushDenied.nearit",
-        "CDVNE_PushNotification_Remote": "pushReceived.nearit",
-        "CDVNE_PushNotification_Local": "pushReceived.nearit",
+        "CDVNE_PushNotification_Remote":     "pushReceived.nearit",
+        "CDVNE_PushNotification_Local":      "pushReceived.nearit",
 
-        "CDVNE_Location_Granted": "locationGranted.nearit",
+        "CDVNE_Location_Granted":    "locationGranted.nearit",
         "CDVNE_Location_NotGranted": "locationDenied.nearit",
 
-        "CDVNE_Event_Simple": "eventSimple.nearit",
+        "CDVNE_Event_Simple":     "eventSimple.nearit",
         "CDVNE_Event_CustomJSON": "eventJSON.nearit",
-        "CDVNE_Event_Error": "error"
+        "CDVNE_Event_Content":    "eventContent.nearit",
+        "CDVNE_Event_Feedback":   "eventFeedback.nearit",
+        "CDVNE_Event_Coupon":     "eventCoupon.nearit",
+
+        "CDVNE_Event_Error": "error.nearit"
     };
 
     self.serviceName = "nearit";
@@ -131,6 +135,48 @@ NearIT.prototype.setProfileId = function(profileId, successCallback, errorCallba
  */
 NearIT.prototype.setUserData = function(key, value, successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "setUserData", [key, value]);
+};
+
+/*
+ * User feedback
+ */
+
+/**
+ * Send NearIT user feedback with rating
+ * @param string     feedbacId identifier received with feedback event notification
+ * @param string     recipeId identifier received with feedback event notification
+ * @param integer    rating must be an integer between 0 and 5
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.sendUserFeedback = function(feedbackId, recipeId, rating, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackId, recipeId, rating]);
+};
+
+/**
+ * Send NearIT user feedback with rating and comment
+ * @param string     feedbacId identifier received with feedback event notification
+ * @param string     recipeId identifier received with feedback event notification
+ * @param integer    rating must be an integer between 0 and 5
+ * @param string     comment
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.sendUserFeedbackWithComment = function(feedbackId, recipeId, rating, comment, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackId, recipeId, rating, comment]);
+};
+
+/*
+ * Coupon
+ */
+
+/**
+ * Retrieve NearIT coupon list
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.getCoupons = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "getCoupons", []);
 };
 
 /*

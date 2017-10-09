@@ -138,6 +138,54 @@ CDVNearIT.prototype.setUserData = function(successCallback, errorCallback, opts)
 };
 
 /*
+ * Feedback
+ */
+
+/**
+ * Send NearIT feedback with rating and/or comment
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ * @param array opts method arguments
+ */
+CDVNearIT.prototype.sendUserFeedback = function(successCallback, errorCallback, opts) {
+    opts = opts || [];
+
+    if (opts.length != 3 && opts.length != 4) {
+        errorCallback("invalid number of arguments");
+    } else if((""+opts[0]).length == 0) {
+        errorCallback("missing feedbackId argument");
+    } else if((""+opts[1]).length == 0) {
+        errorCallback("missing recipeId argument");
+    } else if((""+opts[2]).length == 0) {
+        errorCallback("missing rating argument");
+    } else {
+        var rating = parseInt(opts[2]);
+
+        if (isNaN(rating) || rating < 0 || rating > 5) {
+            errorCallback("invalid rating argument");
+        } else {
+            successCallback();
+        });
+    }
+};
+
+/*
+ * Coupon
+ */
+
+/**
+ * Get coupon list
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ * @param array opts method arguments
+ */
+CDVNearIT.prototype.getCoupons = function(successCallback, errorCallback, opts) {
+    opts = opts || [];
+
+    successCallback([]);
+};
+
+/*
  * Tracking
  */
 

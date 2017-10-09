@@ -49,6 +49,9 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
     CDVNE_Event_Simple,
     CDVNE_Event_CustomJSON,
+    CDVNE_Event_Content,
+    CDVNE_Event_Feedback,
+    CDVNE_Event_Coupon,
     CDVNE_Event_Error
 
 };
@@ -78,6 +81,14 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 #pragma mark - User Data
 
 - (void)setUserData:( CDVInvokedUrlCommand* _Nonnull )command;
+
+#pragma mark - Feedback
+
+- (void)sendUserFeedback:( CDVInvokedUrlCommand* _Nonnull )command;
+
+#pragma mark - Coupon
+
+- (void)getCoupons:( CDVInvokedUrlCommand* _Nonnull )command;
 
 #pragma mark - Tracking
 
