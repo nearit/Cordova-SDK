@@ -43,7 +43,7 @@ Other fields will be specific to the type of event triggered:
 {
     trackingInfo: "...",
     fromUserAction: false,
-    message: "sample simple message event notification"
+    message: "sample Simple message event notification"
 }
 ```
 
@@ -53,14 +53,11 @@ Other fields will be specific to the type of event triggered:
 {
     trackingInfo: "...",
     fromUserAction: false,
-    message: "sample rich content event notification",
-    text: "<p><strong>Lorem Ipsum</strong> è un testo segnaposto utilizzato nel settore della tipografia e della stampa. Lorem Ipsum è considerato il testo segnaposto standard sin dal sedicesimo secolo, quando un anonimo tipografo prese una cassetta di caratteri e li assemblò per preparare un testo campione. È sopravvissuto non solo a più di cinque secoli, ma anche al passaggio alla videoimpaginazione, pervenendoci sostanzialmente inalterato. Fu reso popolare, negli anni ’60, con la diffusione dei fogli di caratteri trasferibili “Letraset”, che contenevano passaggi del Lorem Ipsum, e più recentemente da software di impaginazione come Aldus PageMaker, che includeva versioni del Lorem Ipsum.</p>",
-    image: [
-      {
-        small: "http://via.placeholder.com/350x150",
-        full: "http://via.placeholder.com/720x350"
-      }
-    ]
+    message: "sample Custom JSON event notification",
+    data: {
+      'this': 'is',
+      'a': 'json'
+    }
 }
 ```
 
@@ -70,23 +67,17 @@ Other fields will be specific to the type of event triggered:
 {
     trackingInfo: "...",
     fromUserAction: false,
-    message: "sample rich content event notification",
+    message: "sample Rich Content event notification",
+    title: "This is the rich content title",
     text: "<p><strong>Lorem Ipsum</strong> è un testo segnaposto utilizzato nel settore della tipografia e della stampa. Lorem Ipsum è considerato il testo segnaposto standard sin dal sedicesimo secolo, quando un anonimo tipografo prese una cassetta di caratteri e li assemblò per preparare un testo campione. È sopravvissuto non solo a più di cinque secoli, ma anche al passaggio alla videoimpaginazione, pervenendoci sostanzialmente inalterato. Fu reso popolare, negli anni ’60, con la diffusione dei fogli di caratteri trasferibili “Letraset”, che contenevano passaggi del Lorem Ipsum, e più recentemente da software di impaginazione come Aldus PageMaker, che includeva versioni del Lorem Ipsum.</p>",
-    image: [
-      {
-        small: "http://via.placeholder.com/350x150",
-        full: "http://via.placeholder.com/720x350"
-      }
-    ],
-    video: [
-        "https://youtu.be/p0mXsvUb8SI"
-    ],
-    upload: [
-        "http://www.lipsum.com/feed/html"
-    ],
-    audio: [
-        https://goo.gl/Rz3TGj
-    ]
+    image: {
+        small: "https://placehold.it/300x300",
+        full: "https://placehold.it/1920x1080"
+    },
+    cta: {
+        label: "Click me!",
+        url: "https://placehold.it/1920x1080"
+    }
 }
 ```
 
@@ -96,7 +87,7 @@ Other fields will be specific to the type of event triggered:
 {
     trackingInfo: "...",
     fromUserAction: false,
-    message: "sample rich content event notification",
+    message: "sample Feedback event notification",
     feedbackInfo: "...",
     question: "In a world without walls and fences, who needs windows and gates?"
 }
@@ -108,7 +99,7 @@ Other fields will be specific to the type of event triggered:
 {
     trackingInfo: "...",
     fromUserAction: false,
-    message: "sample rich content event notification",
+    message: "sample Coupon event notification",
     coupon: {
       name: "test coupon",
       description: "description",
