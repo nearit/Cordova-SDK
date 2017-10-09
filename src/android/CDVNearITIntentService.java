@@ -27,21 +27,19 @@ package it.near.sdk.cordova.android;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 
-import it.near.sdk.recipes.background.NearItBroadcastReceiver;
-import it.near.sdk.recipes.background.NearItIntentService;
+import it.near.sdk.recipes.background.NearBackgroundJobIntentService;
 import it.near.sdk.utils.AppVisibilityDetector;
 import it.near.sdk.utils.NearUtils;
 
-public class CDVNearITIntentService extends NearItIntentService {
+public class CDVNearITIntentService extends NearBackgroundJobIntentService {
 
   @Override
-  protected void onHandleIntent(@Nullable Intent intent) {
+  protected void onHandleWork(@Nullable Intent intent) {
     if (intent != null) {
       if (AppVisibilityDetector.sIsForeground) {
         NearUtils.parseCoreContents(intent, new CDVNearITContentListener(false));
-        NearItBroadcastReceiver.completeWakefulIntent(intent);
       } else {
-        super.onHandleIntent(intent);
+        super.onHandleWork(intent);
       }
     }
   }

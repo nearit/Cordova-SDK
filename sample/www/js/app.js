@@ -70,6 +70,9 @@ angular.module('starter', ['ionic', 'starter.controllers'])
           nearit.eventType.CDVNE_Location_NotGranted,
           nearit.eventType.CDVNE_Event_Simple,
           nearit.eventType.CDVNE_Event_CustomJSON,
+          nearit.eventType.CDVNE_Event_Content,
+          nearit.eventType.CDVNE_Event_Feedback,
+          nearit.eventType.CDVNE_Event_Coupon,
           nearit.eventType.CDVNE_Event_Error,
         ]
 
@@ -85,7 +88,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             } else if (event.error) {
               evtMessage = event.error
             }
-            
+
             var trckInfo = event.trackingInfo
             if (trckInfo) {
               toastr.info(eventType, evtMessage, { onclick: function() {

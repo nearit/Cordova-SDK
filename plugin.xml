@@ -26,7 +26,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-nearit"
         name="NearIT"
-        version="2.2.0">
+        version="2.2.7">
 
     <name>NearIT SDK</name>
     <description>Cordova plugin for NearIT SDK</description>
@@ -72,12 +72,12 @@
             NearIT iOS SDK dependency
             https://github.com/nearit/Near-iOS-SDK
             Supporting iOs 9.0 and later
-            Near-iOS-SDK release 2.2
+            Near-iOS-SDK release 2.2.4
         -->
         <pod name="NearITSDK" 
              configurations="release,debug"
              git="https://github.com/nearit/Near-iOS-SDK"
-             tag="2.2" />
+             tag="2.2.4" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="NearIT">
@@ -132,7 +132,7 @@
     <platform name="android">
 
         <edit-config file="AndroidManifest.xml" target="/manifest/uses-sdk" mode="merge">
-            <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="25" />
+            <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="26" />
         </edit-config>
 
         <config-file target="res/xml/config.xml" parent="/*">
@@ -147,18 +147,17 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <receiver android:exported="false" android:name="it.near.sdk.cordova.android.CDVNearItBroadcastReceiver">
-                <intent-filter>
-                    <action android:name="it.near.sdk.permission.GEO_MESSAGE" />
-                    <category android:name="android.intent.category.DEFAULT" />
-                </intent-filter>
+            <service android:name="it.near.sdk.cordova.android.CDVNearITIntentService"
+                    android:exported="false"
+                    android:permission="android.permission.BIND_JOB_SERVICE">
                 <intent-filter>
                     <action android:name="it.near.sdk.permission.PUSH_MESSAGE" />
                     <category android:name="android.intent.category.DEFAULT" />
                 </intent-filter>
-            </receiver>
-
-            <service android:name="it.near.sdk.cordova.android.CDVNearITIntentService" android:exported="false">
+                <intent-filter>
+                    <action android:name="it.near.sdk.permission.GEO_MESSAGE" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                </intent-filter>
             </service>
 
             <activity android:name="it.near.sdk.cordova.android.PermissionsActivity"
@@ -169,8 +168,8 @@
         <source-file src="src/android/NITConfig.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearIT.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearITContentListener.java" target-dir="src/it/near/sdk/cordova/android" />
-        <source-file src="src/android/CDVNearItBroadcastReceiver.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearITIntentService.java" target-dir="src/it/near/sdk/cordova/android" />
+        <source-file src="src/android/NITHelper.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/styles.xml" target-dir="res/values" />
 
         <framework src="src/android/nearit.gradle" custom="true" type="gradleReference" />

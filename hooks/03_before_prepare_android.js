@@ -57,26 +57,35 @@ var cordovaClassDir = path.join(platformDir, 'src',  packagename.split(".").join
  */
 
 assert(fs.existsSync(pluginDir), 'unable to find ' + pluginDir + ": are you running from main project dir?");
-assert(fs.existsSync(pluginClassDir), 'unable to find ' + pluginClassDir + ": are you running from main project dir?");
-assert(fs.existsSync(cordovaClassDir), 'unable to find ' + cordovaClassDir + ": are you running from main project dir?");
+//assert(fs.existsSync(pluginClassDir), 'unable to find ' + pluginClassDir + ": are you running from main project dir?");
+//assert(fs.existsSync(cordovaClassDir), 'unable to find ' + cordovaClassDir + ": are you running from main project dir?");
 
 /*
  * Override MainActivity and customize package to replace Cordova default one
  */
 
-var sourceFile = path.join(pluginDir, 'MainActivity.java');
-var targetFile = path.join(cordovaClassDir,  'MainActivity.java');
-var bakFile = targetFile + ".bak";
+if (!fs.existsSync(cordovaClassDir)) {
+    console.log("! unable to find " + cordovaClassDir + ": are you running from main project dir?");
+} else {
+    var sourceFile = path.join(pluginDir, 'MainActivity.java');
+    var targetFile = path.join(cordovaClassDir,  'MainActivity.java');
+    var bakFile = targetFile + ".bak";
 
-// add a bak file
-if (!fs.existsSync(bakFile)) {
-    fs.writeFileSync(bakFile, fs.readFileSync(targetFile).toString());
+    // add a bak file
+    if (!fs.existsSync(bakFile)) {
+        console.log("* creating backup file " + path.basename(bakFile));
+        fs.writeFileSync(bakFile, fs.readFileSync(targetFile).toString());
+    }
+    lib.replaceClassname(packagename, sourceFile, targetFile);
 }
-lib.replaceClassname(packagename, sourceFile, targetFile);
 
 /*
  * Customize CDVNearIT.java to refer to MainActivity
  */
-var sourceFile = path.join(pluginDir, 'CDVNearIT.java');
-var targetFile = path.join(pluginClassDir,  'CDVNearIT.java');
-lib.replaceClassname(packagename, sourceFile, targetFile);
+if (!fs.existsSync(pluginClassDir)) {
+    console.log('! unable to find pluginClassDir ' + pluginClassDir + ": are you running from main project dir?");
+} else {
+    var sourceFile = path.join(pluginDir, 'CDVNearIT.java');
+    var targetFile = path.join(pluginClassDir,  'CDVNearIT.java');
+    lib.replaceClassname(packagename, sourceFile, targetFile);
+}
