@@ -170,14 +170,14 @@ function main(rootdir) {
         var cordovaClassDir = path.join(platformDir, 'src',  packagename.split(".").join(path.sep));
 
         var targetFile = path.join(cordovaClassDir,  'MainActivity.java');
-        if (fs.existsSync(targetFile)) {
+        if (fs.existsSync(targetFile + ".bak")) {
             console.log("* clearing java class " + targetFile);
             fs.renameSync(targetFile + ".bak", targetFile);
         }
 
         var targetFile = path.join(platformDir, 'google-services.json');
         if (fs.existsSync(targetFile)) {
-            console.log("* clearing java class " + targetFile);
+            console.log("* removing file " + targetFile);
             fs.unlink(targetFile);
         }
 
