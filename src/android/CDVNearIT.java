@@ -42,6 +42,7 @@ import java.util.Map;
 
 import it.near.sdk.NearItManager;
 import it.near.sdk.communication.OptOutNotifier;
+import it.near.sdk.operation.NearItUserProfile;
 import it.near.sdk.operation.UserDataNotifier;
 import it.near.sdk.reactions.couponplugin.CouponListener;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
@@ -260,19 +261,26 @@ public class CDVNearIT extends CordovaPlugin {
 	 * @param callbackContext Cordova callback context
 	 * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void resetProfile(JSONArray args, final CallbackContext callbackContext) throws Exception
-    {
-	    Log.d(TAG, "NITManager :: resetProfile");
+	public void resetProfile(JSONArray args, final CallbackContext callbackContext) throws Exception {
+		Log.d(TAG, "NITManager :: resetProfile");
 
-	    cordova.getThreadPool().execute(new Runnable() {
-		    @Override
-		    public void run() {
-			    NearItManager.getInstance().resetProfileId();
+		cordova.getThreadPool().execute(new Runnable() {
+			@Override
+			public void run() {
+				NearItManager.getInstance().resetProfileId(new NearItUserProfile.ProfileFetchListener() {
+					@Override
+					public void onProfileId(String profileId) {
+						callbackContext.success(profileId);
+					}
 
-			    callbackContext.success();
-		    }
-	    });
-    }
+					@Override
+					public void onError(String s) {
+						callbackContext.error("Could not reset userProfile");
+					}
+				});
+			}
+		});
+	}
 
 	/**
 	 * Obtain current NearIT profile identifier
@@ -283,23 +291,26 @@ public class CDVNearIT extends CordovaPlugin {
 	 * @param callbackContext Cordova callback context
 	 * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void getProfileId(JSONArray args, final CallbackContext callbackContext) throws Exception
-    {
-	    Log.d(TAG, "NITManager :: getProfileId");
+	public void getProfileId(JSONArray args, final CallbackContext callbackContext) throws Exception {
+		Log.d(TAG, "NITManager :: getProfileId");
 
-	    cordova.getThreadPool().execute(new Runnable() {
-		    @Override
-		    public void run() {
-			    String profileId = NearItManager.getInstance().getProfileId();
+		cordova.getThreadPool().execute(new Runnable() {
+			@Override
+			public void run() {
+				NearItManager.getInstance().getProfileId(new NearItUserProfile.ProfileFetchListener() {
+					@Override
+					public void onProfileId(String profileId) {
+						callbackContext.success(profileId);
+					}
 
-			    if (profileId == null || profileId.length() == 0) {
-				    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.NO_RESULT));
-			    } else {
-				    callbackContext.success(profileId);
-			    }
-		    }
-	    });
-    }
+					@Override
+					public void onError(String s) {
+						callbackContext.error("Could not get user profile Id");
+					}
+				});
+			}
+		});
+	}
 
 	/**
 	 * Set NearIT profile identifier
@@ -367,25 +378,20 @@ public class CDVNearIT extends CordovaPlugin {
      */
     public void setUserData(JSONArray args, final CallbackContext callbackContext) throws Exception
     {
+    	try {
+				NITHelper.validateArgsCount(args, 2);
 
-	    NITHelper.validateArgsCount(args, 2);
+				String key = NITHelper.validateStringArgument(args, 0, "key");
+				String value = NITHelper.validateStringArgument(args, 1, "value");
 
-	    String key   = NITHelper.validateStringArgument(args, 0, "key");
-	    String value = NITHelper.validateStringArgument(args, 1, "value");
+				Log.d(TAG, "NITManager :: setUserData(" + key + ", " + value + ")");
 
-	    Log.d(TAG, "NITManager :: setUserData(" + key + ", " + value + ")");
+				NearItManager.getInstance().setUserData(key, value);
 
-        NearItManager.getInstance().setUserData(key, value, new UserDataNotifier() {
-	        @Override
-				public void onDataCreated() {
-					callbackContext.success();
-				}
-
-				@Override
-				public void onDataNotSetError(String error) {
-					callbackContext.error(error);
-				}
-			});
+				callbackContext.success();
+			} catch (Exception e) {
+    		callbackContext.error("Could not setUserData");
+			}
     }
 
     /*

@@ -175,14 +175,22 @@ __weak CDVNearIT *instance = nil;
  */
 - (void)resetProfile:( CDVInvokedUrlCommand* _Nonnull )command
 {
-    CDVPluginResult* pluginResult = nil;
-
     NITLogD(TAG, @"NITManager :: resetProfile");
-    [[NITManager defaultManager] resetProfile];
-
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    [[self commandDelegate] sendPluginResult:pluginResult
-                                  callbackId:[command callbackId]];
+ 
+    [[NITManager defaultManager] resetProfileWithCompletionHandler:^(NSString * _Nullable profileId, NSError * _Nullable error) {
+        CDVPluginResult* pluginResult = nil;
+        
+        if (!error) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                             messageAsString:profileId];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                             messageAsString:[error description]];
+        }
+        
+        [[self commandDelegate] sendPluginResult:pluginResult
+                                      callbackId:[command callbackId]];
+    }];
 }
 
 /**
@@ -193,19 +201,22 @@ __weak CDVNearIT *instance = nil;
  */
 - (void)getProfileId:( CDVInvokedUrlCommand* _Nonnull )command
 {
-    CDVPluginResult* pluginResult = nil;
-
     NITLogD(TAG, @"NITManager :: getProfileId");
-    NSString* profileId = [[NITManager defaultManager] profileId];
 
-    if (!IS_EMPTY(profileId)) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:profileId];
-    } else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
-    }
+    [[NITManager defaultManager] profileIdWithCompletionHandler:^(NSString * _Nullable profileId, NSError * _Nullable error) {
+        CDVPluginResult* pluginResult = nil;
 
-    [[self commandDelegate] sendPluginResult:pluginResult
-                                  callbackId:[command callbackId]];
+        if (!error) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                             messageAsString:profileId];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                             messageAsString:[error description]];
+        }
+        
+        [[self commandDelegate] sendPluginResult:pluginResult
+                                      callbackId:[command callbackId]];
+    }];
 }
 
 /**
@@ -233,6 +244,8 @@ __weak CDVNearIT *instance = nil;
 
     [[self commandDelegate] sendPluginResult:pluginResult
                                   callbackId:[command callbackId]];
+    
+    
 }
 
 #pragma mark - OptOut
