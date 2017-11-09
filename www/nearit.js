@@ -123,6 +123,19 @@ NearIT.prototype.setProfileId = function(profileId, successCallback, errorCallba
 };
 
 /*
+ * OptOut
+ */
+
+ /**
+ * OptOut NearIT user profile
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.optOut = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "optOut", []);
+}
+
+/*
  * User profiling data
  */
 
