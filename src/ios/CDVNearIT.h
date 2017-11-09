@@ -78,6 +78,10 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 - (void)getProfileId:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)setProfileId:( CDVInvokedUrlCommand* _Nonnull )command;
 
+#pragma mark - OptOut
+
+- (void)optOut:(CDVInvokedUrlCommand* _Nonnull)command;
+
 #pragma mark - User Data
 
 - (void)setUserData:( CDVInvokedUrlCommand* _Nonnull )command;

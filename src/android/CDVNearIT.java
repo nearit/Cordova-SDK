@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.near.sdk.NearItManager;
+import it.near.sdk.communication.OptOutNotifier;
 import it.near.sdk.operation.UserDataNotifier;
 import it.near.sdk.reactions.couponplugin.CouponListener;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
@@ -102,6 +103,8 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.getProfileId(args, callbackContext);
 					} else if (action.equals("setProfileId")) {
 						CDVNearIT.this.setProfileId(args, callbackContext);
+					} else if (action.equals("optOut")) {
+						CDVNearIT.this.optOut(args, callbackContext);
 					} else if (action.equals("setUserData")) {
 						CDVNearIT.this.setUserData(args, callbackContext);
 					} else if (action.equals("sendUserFeedback")) {
@@ -319,6 +322,35 @@ public class CDVNearIT extends CordovaPlugin {
 
 	    callbackContext.success();
     }
+
+    /*
+     * OptOut
+     */
+
+		/**
+		 * OptOut profile from NearIT
+		 * <code><pre>
+		 		cordova.exec(successCb, errorCb, "nearit", "optOut", []);
+		 	 </pre></code>
+		 * @param args Cordova exec arguments
+		 * @param callbackContext Cordova callback context
+		 * @throws Exception if there is any validation error or other kind of exception
+		 */
+		public void optOut(JSONArray args, final CallbackContext callbackContext) throws Exception {
+			Log.i(TAG, "NITManager :: optOut");
+
+			NearItManager.getInstance().optOut(new OptOutNotifier() {
+				@Override
+				public void onSuccess() {
+					callbackContext.success();
+				}
+
+				@Override
+				public void onFailure(String s) {
+					callbackContext.error("Could NOT optout user");
+				}
+			});
+		}
 
     /*
      * User Data

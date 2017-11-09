@@ -10,22 +10,34 @@ nearit.setUserData(key, value, successCallback, errorCallback)
 ```
 Please remember: you will need to use the "**Settings> Data Mapping**" section of <a href="https://go.nearit.com/" target="_blank">**NearIT**</a> to configure the data fields to be used inside recipes.
 
+## Reset Profile
+If you want to reset your user profile use this method:
+```js
+nearit.resetProfile(successCallback, errorCallback)
+```
 
-## Save the profile ID!
+## Link NearIT profiles with an external User Database
 
-If you can, we recommend you to store the NearIT profileID in your CRM database for two main reasons:
+You might want to link users in your CRM database with NearIT profiles. You can do it by storing the NearIT profileID in your CRM database. This way, you can link our analytics with your own user base and associate all the devices of an user to the same NearIT profile.
 
-- it allows you to link our analytics to your users
-- it allows to associate all the devices of an user to the same NearIT profile.
-
-
-Getting the local profile ID of an user is easy:
+To retrieve the current user profileID, simply call:
 ```js
 nearit.getProfileId(successCallback, errorCallback)
 ```
 
-
-If you detect that your user already has a NearIT profileID in your CRM database (i.e. after a login), you should manually write it on a local app installation:
+Furthermore, if you detect that your user already has a NearIT profileID in your CRM database, you can manually set it on a local app installation with the method:
 ```js
 nearit.setProfileId(profileId, successCallback, errorCallback)
 ```
+You can then set the relevant user-data to this profile with the aforementioned methods.
+
+**N.B:** Please keep in mind that you will be responsible of storing our profile identifier in your system.
+
+
+## Opt-out
+
+You can **opt-out** a profile and its devices:
+```js
+nearit.optOut(successCallback, errorCallback)
+```
+If the opt-out call is successful, the SDK **will cease to work**, which means the opted out device won't receive any notifications at all.

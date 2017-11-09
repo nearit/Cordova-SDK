@@ -31,7 +31,6 @@
 //
 
 #include "CDVNearIT.h"
-#import "NITJSONAPIResource.h"
 #import "AppDelegate+NearIT.h"
 
 #define TAG @"CDVNearIT"
@@ -235,6 +234,34 @@ __weak CDVNearIT *instance = nil;
     [[self commandDelegate] sendPluginResult:pluginResult
                                   callbackId:[command callbackId]];
 }
+
+#pragma mark - OptOut
+
+/**
+ * OptOut profile from NearIT
+ * <code><pre>
+ cordova.exec(successCb, errorCb, "nearit", "optOut", []);
+ </pre></code>
+ */
+- (void)optOut:(CDVInvokedUrlCommand* _Nonnull)command
+{
+    NITLogD(TAG, @"NITManager :: optOut");
+    
+    [[NITManager defaultManager] optOutWithCompletionHandler:^(BOOL success) {
+        CDVPluginResult* pluginResult = nil;
+
+        if (success) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                             messageAsString:@"Could NOT optout user"];
+        }
+
+        [[self commandDelegate] sendPluginResult:pluginResult
+                                      callbackId:[command callbackId]];
+    }];
+}
+
 
 #pragma mark - User Data
 
