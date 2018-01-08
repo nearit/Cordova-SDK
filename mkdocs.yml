@@ -7,7 +7,7 @@ pages:
         - 'Installation' : 'installation.md'
         - 'Enable Triggers' : 'enable-triggers.md'
         - 'Handle recipe content' : 'handle-content.md'
-        - 'User profiling' : 'user-profiling.md'
+        - 'User Profiling & Opt-out' : 'user-profiling.md'
     - 'Advanced topics' :
         - 'Android Push notifications' : 'fcm_walkthrough.md'
         - 'iOS Push certificates' : 'apns_walkthrough.md'
