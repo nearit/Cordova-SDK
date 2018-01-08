@@ -1,4 +1,4 @@
-# User profiling
+# User Profiling & Opt-out
 
 NearIT creates an anonymous profile for every user of your app. You can choose to add data to user profile. This data will be available inside recipes to allow the creation of user targets.
 
@@ -40,4 +40,4 @@ You can **opt-out** a profile and its devices:
 ```js
 nearit.optOut(successCallback, errorCallback)
 ```
-If the opt-out call is successful, the SDK **will cease to work**, which means the opted out device won't receive any notifications at all.
+If the opt-out call is successful all the **user-data** and **trackings** will be deleted and the **SDK will cease to work** (the user's devices will not receive further notifications).
