@@ -26,7 +26,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-nearit"
         name="NearIT"
-        version="2.3.0">
+        version="2.4.0">
 
     <name>NearIT SDK</name>
     <description>Cordova plugin for NearIT SDK</description>
@@ -132,7 +132,7 @@
     <platform name="android">
 
         <edit-config file="AndroidManifest.xml" target="/manifest/uses-sdk" mode="merge">
-            <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="26" />
+            <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="27" />
         </edit-config>
 
         <config-file target="res/xml/config.xml" parent="/*">
@@ -147,19 +147,6 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <service android:name="it.near.sdk.cordova.android.CDVNearITIntentService"
-                    android:exported="false"
-                    android:permission="android.permission.BIND_JOB_SERVICE">
-                <intent-filter>
-                    <action android:name="it.near.sdk.permission.PUSH_MESSAGE" />
-                    <category android:name="android.intent.category.DEFAULT" />
-                </intent-filter>
-                <intent-filter>
-                    <action android:name="it.near.sdk.permission.GEO_MESSAGE" />
-                    <category android:name="android.intent.category.DEFAULT" />
-                </intent-filter>
-            </service>
-
             <activity android:name="it.near.sdk.cordova.android.PermissionsActivity"
                       android:theme="@style/NearDialogTheme" />
         </config-file>
@@ -168,7 +155,6 @@
         <source-file src="src/android/NITConfig.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearIT.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearITContentListener.java" target-dir="src/it/near/sdk/cordova/android" />
-        <source-file src="src/android/CDVNearITIntentService.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/NITHelper.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/styles.xml" target-dir="res/values" />
 

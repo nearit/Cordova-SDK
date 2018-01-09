@@ -35,10 +35,10 @@ import it.near.sdk.reactions.customjsonplugin.model.CustomJSON;
 import it.near.sdk.reactions.feedbackplugin.model.Feedback;
 import it.near.sdk.reactions.simplenotificationplugin.model.SimpleNotification;
 import it.near.sdk.trackings.TrackingInfo;
-import it.near.sdk.utils.CoreContentsListener;
+import it.near.sdk.utils.ContentsListener;
 
 
-public class CDVNearITContentListener implements CoreContentsListener {
+public class CDVNearITContentListener implements ContentsListener {
 
   private boolean fromUserActions = false;
 

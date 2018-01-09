@@ -112,6 +112,8 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.sendUserFeedback(args, callbackContext);
 					} else if (action.equals("getCoupons")) {
 						CDVNearIT.this.getCoupons(args, callbackContext);
+					} else if (action.equals("triggerEvent")) {
+						CDVNearIT.this.triggerEvent(args, callbackContext);
 					} else if (action.equals("sendTrackingWithRecipeIdForEventNotified")) {
 						CDVNearIT.this.sendTrackingWithRecipeIdForEventNotified(args, callbackContext);
 					} else if (action.equals("sendTrackingWithRecipeIdForEventEngaged")) {
@@ -488,6 +490,33 @@ public class CDVNearIT extends CordovaPlugin {
 			}
 		});
 	}
+
+		/*
+		*	 Custom Trigger
+		*/
+
+		/**
+		 * Trigger custom event
+		 * <code><pre>
+				cordova.exec(successCb, errorCb, "nearit", "triggerEvent", [eventKey]);
+			</pre></code>
+	 	*/
+		public void triggerEvent(JSONArray args, final CallbackContext callbackContext) throws Exception {
+			Log.d(TAG, "NITManager :: triggerEvent()");
+
+			if (args.length() < 1) {
+				throw new Exception("Wrong number of arguments! expected 'eventKey' arg");
+			}
+
+			// Retrieve 'eventKey' param
+			final String eventKey = NITHelper.validateStringArgument(args, 0, "eventKey");
+
+			// Trigger Custom Event Key
+			NearItManager.getInstance().processCustomTrigger(eventKey);
+
+			// Resolve null, if a Recipe is triggered then the normal notification flow will run
+			callbackContext.success();
+		}
 
     /*
      * Tracking

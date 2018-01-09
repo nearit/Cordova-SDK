@@ -116,14 +116,14 @@ public class MainActivity
         if (intent != null && NearUtils.carriesNearItContent(intent)) {
             // we got a NearIT intent
             // coming from a notification tap
-            NearUtils.parseCoreContents(intent, userContentListener);
+            NearUtils.parseContents(intent, userContentListener);
         }
     }
 
     @Override
     public void foregroundEvent(Parcelable content, TrackingInfo trackingInfo) {
         // NearIT event came from proximity event
-        NearUtils.parseCoreContents(content, trackingInfo, defaultContentListener);
+        NearUtils.parseContents(content, trackingInfo, defaultContentListener);
     }
 
 }
