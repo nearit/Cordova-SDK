@@ -176,7 +176,9 @@
         <source-file src="src/android/CDVNearIT.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearITContentListener.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/NITHelper.java" target-dir="src/it/near/sdk/cordova/android" />
+
         <source-file src="src/android/styles.xml" target-dir="res/values" />
+        <source-file src="src/android/CDVNearITStrings.xml" target-dir="res/values" />
 
         <framework src="src/android/nearit.gradle" custom="true" type="gradleReference" />
 
