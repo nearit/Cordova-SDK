@@ -72,12 +72,12 @@
             NearIT iOS SDK dependency
             https://github.com/nearit/Near-iOS-SDK
             Supporting iOs 9.0 and later
-            Near-iOS-SDK release 2.4.0
+            Near-iOS-SDK release 2.5.1
         -->
         <pod name="NearITSDK" 
              configurations="release,debug"
              git="https://github.com/nearit/iOS-SDK"
-             tag="2.4.0" />
+             tag="2.5.1" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="NearIT">
@@ -86,8 +86,28 @@
             </feature>
         </config-file>
 
+        <!-- Required permissions strings -->
+        <config-file platform="ios" target="*-Info.plist" parent="NSBluetoothPeripheralUsageDescription">
+            <string>This app uses Bluetooth communication to detect nearby beacons</string>
+        </config-file>
+        
+        <config-file platform="ios" target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
+	        <string>Location access &apos;Always&apos; is required for Geofences and Beacons to work</string>
+        </config-file>
+        
         <config-file platform="ios" target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
-            <string>I need your location</string>
+	        <string>Location access &apos;Always&apos; is required for Geofences and Beacons to work</string>
+        </config-file>
+        
+        <config-file platform="ios" target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
+	        <string>Location access &apos;Always&apos; is required for Geofences and Beacons to work</string>
+        </config-file>
+
+        <!-- required background modes -->
+        <config-file platform="ios" target="*-Info.plist" parent="UIBackgroundModes">
+            <array>
+                <string>fetch</string>
+            </array>
         </config-file>
 
         <config-file platform="ios" target="*-Info.plist" parent="LSRequiresIPhoneOS">

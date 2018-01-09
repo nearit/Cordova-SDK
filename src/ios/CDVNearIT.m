@@ -493,6 +493,33 @@ __weak CDVNearIT *instance = nil;
     }];
 }
 
+#pragma mark - Custom Trigger
+/**
+ * Trigger a custom event
+ * <code><pre>
+ cordova.exec(successCb, errorCb, "nearit", "triggerEvent", [eventKey]);
+ </pre></code>
+ */
+- (void)triggerEvent:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+    
+    NSString* eventKey = [[command arguments] objectAtIndex:0];
+    
+    if (IS_EMPTY(eventKey)) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                         messageAsString:@"Missing eventKey parameter"];
+    } else {
+        [[NITManager defaultManager] processCustomTriggerWithKey:eventKey];
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    }
+
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                  callbackId:[command callbackId]];
+}
+
+
 #pragma mark - Tracking
 
 /**
