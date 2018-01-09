@@ -132,7 +132,7 @@
     <platform name="android">
 
         <edit-config file="AndroidManifest.xml" target="/manifest/uses-sdk" mode="merge">
-            <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="27" />
+            <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="26" />
         </edit-config>
 
         <config-file target="res/xml/config.xml" parent="/*">

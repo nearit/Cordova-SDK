@@ -37,8 +37,7 @@ import it.near.sdk.NearItManager;
 import it.near.sdk.cordova.android.CDVNearITContentListener;
 import it.near.sdk.cordova.android.NITConfig;
 import it.near.sdk.cordova.android.PermissionsActivity;
-import it.near.sdk.geopolis.beacons.ranging.ProximityListener;
-import it.near.sdk.recipes.models.Recipe;
+import it.near.sdk.recipes.foreground.ProximityListener;
 import it.near.sdk.trackings.TrackingInfo;
 import it.near.sdk.utils.NearUtils;
 
