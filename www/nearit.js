@@ -193,6 +193,20 @@ NearIT.prototype.getCoupons = function(successCallback, errorCallback) {
 };
 
 /*
+ * Custom Triggers
+ */
+
+/**
+ * Trigger a custom event
+ * @param {string}   eventKey The custom event key to be triggered
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.triggerEvent = function(eventKey, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "triggerEvent", [eventKey]);
+};
+
+/*
  * Tracking
  */
 
