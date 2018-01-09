@@ -117,6 +117,9 @@
                                                     NO;
 #endif
 
+    // Setup Background Fetch Interval
+    [application setMinimumBackgroundFetchInterval:7200]; // 2 hours
+    
     // This line at runtime does not go into an infinite loop
     // because it will call the real method instead of ours.
     return [self customapplication:application didFinishLaunchingWithOptions:launchOptions];
@@ -365,6 +368,15 @@
     [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:[error description] trackingInfo:nil];
 }
 
+// MARK: UNUserNotificationCenterDelegate
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
+{
+    completionHandler(UNNotificationPresentationOptionAlert);
+}
+
 // MARK: - Push Notification handling
 
 - (void)application:(UIApplication *)application
@@ -507,6 +519,13 @@ static char key2;
     [application registerForRemoteNotifications];
 #endif
 
+}
+
+# pragma mark Background Fetch
+
++ (void)application:(UIApplication* _Nonnull)application performFetchWithCompletionHandler:(void (^_Nonnull)(UIBackgroundFetchResult))completionHandler {
+    [[NITManager defaultManager] application:application
+           performFetchWithCompletionHandler:completionHandler];
 }
 
 @end

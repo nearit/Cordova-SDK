@@ -37,8 +37,7 @@ import it.near.sdk.NearItManager;
 import it.near.sdk.cordova.android.CDVNearITContentListener;
 import it.near.sdk.cordova.android.NITConfig;
 import it.near.sdk.cordova.android.PermissionsActivity;
-import it.near.sdk.geopolis.beacons.ranging.ProximityListener;
-import it.near.sdk.recipes.models.Recipe;
+import it.near.sdk.recipes.foreground.ProximityListener;
 import it.near.sdk.trackings.TrackingInfo;
 import it.near.sdk.utils.NearUtils;
 
@@ -116,14 +115,14 @@ public class MainActivity
         if (intent != null && NearUtils.carriesNearItContent(intent)) {
             // we got a NearIT intent
             // coming from a notification tap
-            NearUtils.parseCoreContents(intent, userContentListener);
+            NearUtils.parseContents(intent, userContentListener);
         }
     }
 
     @Override
     public void foregroundEvent(Parcelable content, TrackingInfo trackingInfo) {
         // NearIT event came from proximity event
-        NearUtils.parseCoreContents(content, trackingInfo, defaultContentListener);
+        NearUtils.parseContents(content, trackingInfo, defaultContentListener);
     }
 
 }

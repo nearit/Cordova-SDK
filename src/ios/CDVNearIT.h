@@ -94,6 +94,10 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 - (void)getCoupons:( CDVInvokedUrlCommand* _Nonnull )command;
 
+#pragma mark - Custom Trigger
+
+- (void)triggerEvent:( CDVInvokedUrlCommand* _Nonnull )command;
+
 #pragma mark - Tracking
 
 - (void)sendTrackingWithRecipeIdForEventNotified:( CDVInvokedUrlCommand* _Nonnull )command;
