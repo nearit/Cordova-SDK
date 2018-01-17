@@ -138,13 +138,12 @@ public class CDVNearITContentListener implements ContentsListener {
   }
 
   @Override
-  public void gotFeedbackNotification(Feedback notification, TrackingInfo trackingInfo)
+  public void gotFeedbackNotification(Feedback feedback, TrackingInfo trackingInfo)
   {
     Map<String, Object> args = new HashMap<String, Object>();
 
-    args.put("feedbackId", notification.getId());
-    args.put("recipeId",   notification.getRecipeId());
-    args.put("question",   notification.question);
+    args.put("feedbackId", NITHelper.feedbackToBase64(feedback));
+    args.put("question",   feedback.question);
 
     forwardEvent(
             CDVNearIT.CDVEventType.CDVNE_Event_Feedback,
