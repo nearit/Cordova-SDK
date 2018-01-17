@@ -1,6 +1,10 @@
 package it.near.sdk.cordova.android;
 
 import android.os.Parcel;
+import android.util.Base64;
+import android.util.Log;
+
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,6 +18,7 @@ import java.util.Map;
 import it.near.sdk.reactions.couponplugin.model.Claim;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.reactions.feedbackplugin.model.Feedback;
+import it.near.sdk.trackings.TrackingInfo;
 
 /**
  * @author "Fabio Cigliano" on 23/09/17
@@ -97,6 +102,40 @@ public class NITHelper {
 		parcel.recycle();
 
 		return feedback;
+	}
+
+	// Feedback
+	public static String feedbackToBase64(final Feedback feedback) throws Exception {
+		// JSONify feedback
+		final String feedbackJson = new Gson().toJson(feedback);
+
+		// Encode to base64
+		return Base64.encodeToString(feedbackJson.getBytes("UTF-8"), Base64.DEFAULT);
+	}
+
+	public static Feedback feedbackFromBase64(final String feedbackBase64) throws Exception {
+		// Decode from base64
+		final String feedbackJsonString = new String(Base64.decode(feedbackBase64, Base64.DEFAULT), "UTF-8");
+
+		// DeJSONify Feedback
+		return new Gson().fromJson(feedbackJsonString, Feedback.class);
+	}
+
+	// TrackingInfo
+	public static String trackingInfoToBase64(final TrackingInfo trackingInfo) throws Exception {
+		// JSONify trackingInfo
+		final String trackingInfoJson = new Gson().toJson(trackingInfo);
+
+		// Encode to base64
+		return Base64.encodeToString(trackingInfoJson.getBytes("UTF-8"), Base64.DEFAULT);
+	}
+
+	public static TrackingInfo trackingInfoFromBase64(final String trackingInfoBase64) throws Exception {
+		// Decode from base64
+		final String trackingInfoJsonString = new String(Base64.decode(trackingInfoBase64, Base64.DEFAULT), "UTF-8");
+
+		// DeJSONify trackingInfo
+		return new Gson().fromJson(trackingInfoJsonString, TrackingInfo.class);
 	}
 
 }
