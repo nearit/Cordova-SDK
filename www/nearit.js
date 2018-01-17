@@ -162,8 +162,8 @@ NearIT.prototype.setUserData = function(key, value, successCallback, errorCallba
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.sendUserFeedback = function(feedbackId, recipeId, rating, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackId, recipeId, rating]);
+NearIT.prototype.sendUserFeedback = function(feedbackId, rating, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackId, rating]);
 };
 
 /**
@@ -175,8 +175,8 @@ NearIT.prototype.sendUserFeedback = function(feedbackId, recipeId, rating, succe
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.sendUserFeedbackWithComment = function(feedbackId, recipeId, rating, comment, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackId, recipeId, rating, comment]);
+NearIT.prototype.sendUserFeedbackWithComment = function(feedbackId, rating, comment, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackId, rating, comment]);
 };
 
 /*
