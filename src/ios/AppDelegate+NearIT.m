@@ -71,6 +71,7 @@
 {
 
     [NITManager setupWithApiKey:NEARIT_APIKEY];
+    [NITManager setFrameworkName:@"cordova"];
     [[NITManager defaultManager] setDelegate:self];
 
 #ifdef DEBUG
