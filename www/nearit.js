@@ -78,7 +78,7 @@ NearIT.prototype.addEventListener = function(eventType, eventCallback) {
         console.log("NearIT :: event " + eventType + " triggered ", arguments);
         eventCallback.apply(this, arguments);
     });
-}
+};
 
 /**
  * Fire NearIT event from UI (just for testing)
@@ -88,7 +88,7 @@ NearIT.prototype.addEventListener = function(eventType, eventCallback) {
  */
 NearIT.prototype.fireEvent = function(eventType, successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "fireEvent", [eventType]);
-}
+};
 
 /*
  * User Profile Id
@@ -133,7 +133,7 @@ NearIT.prototype.setProfileId = function(profileId, successCallback, errorCallba
  */
 NearIT.prototype.optOut = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "optOut", []);
-}
+};
 
 /*
  * User profiling data
