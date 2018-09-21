@@ -101,17 +101,16 @@ public class CDVNearITContentListener implements ContentsListener {
     Map<String, Object> args = new HashMap<String, Object>();
 
     try {
-      args.put("coupon", NITHelper.couponToMap(notification));
+        args.put("coupon", NITHelper.couponToMap(notification));
+        forwardEvent(
+                CDVNearIT.CDVEventType.CDVNE_Event_Coupon,
+                args,
+                trackingInfo,
+                notification.notificationMessage
+        );
     } catch (Exception e) {
-      NearLog.d('[Cordova Plugin]', 'coupon encoding error',e);
+        NearLog.d("NearIT Cordova Plugin", "coupon encoding error", e);
     }
-
-    forwardEvent(
-            CDVNearIT.CDVEventType.CDVNE_Event_Coupon,
-            args,
-            trackingInfo,
-            notification.notificationMessage
-    );
   }
 
   @Override
@@ -148,18 +147,17 @@ public class CDVNearITContentListener implements ContentsListener {
     Map<String, Object> args = new HashMap<String, Object>();
 
     try {
-      args.put("feedbackId", NITHelper.feedbackToBase64(feedback));
-    } catch(Exception e) {
-      NearLog.d('[Cordova Plugin]', 'feeback encoding error',e);
-    }
-    
-    args.put("question",   feedback.question);
+        args.put("feedbackId", NITHelper.feedbackToBase64(feedback));
+        args.put("question",   feedback.question);
 
-    forwardEvent(
-            CDVNearIT.CDVEventType.CDVNE_Event_Feedback,
-            args,
-            trackingInfo,
-            feedback.notificationMessage
-    );
+        forwardEvent(
+                CDVNearIT.CDVEventType.CDVNE_Event_Feedback,
+                args,
+                trackingInfo,
+                feedback.notificationMessage
+        );
+    } catch(Exception e) {
+        NearLog.d("NearIT Cordova Plugin", "feeback encoding error", e);
+    }
   }
 }
