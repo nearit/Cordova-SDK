@@ -11,7 +11,11 @@
     {
       "name": "Mattia Panzeri",
       "email": "mattia.panzeri93@gmail.com"
-    }
+    },
+    {
+      "name": "Claudio Suardi",
+      "email": "claudio@nearit.com"
+    },
   ],
   "license": "MIT",
   "cordova": {
