@@ -36,6 +36,7 @@ import it.near.sdk.reactions.feedbackplugin.model.Feedback;
 import it.near.sdk.reactions.simplenotificationplugin.model.SimpleNotification;
 import it.near.sdk.trackings.TrackingInfo;
 import it.near.sdk.utils.ContentsListener;
+import it.near.sdk.logging.*;
 
 
 public class CDVNearITContentListener implements ContentsListener {
@@ -99,7 +100,11 @@ public class CDVNearITContentListener implements ContentsListener {
   {
     Map<String, Object> args = new HashMap<String, Object>();
 
-    args.put("coupon", NITHelper.couponToMap(notification));
+    try {
+      args.put("coupon", NITHelper.couponToMap(notification));
+    } catch (Exception e) {
+      NearLog.d('[Cordova Plugin]', 'coupon encoding error',e);
+    }
 
     forwardEvent(
             CDVNearIT.CDVEventType.CDVNE_Event_Coupon,
@@ -142,7 +147,12 @@ public class CDVNearITContentListener implements ContentsListener {
   {
     Map<String, Object> args = new HashMap<String, Object>();
 
-    args.put("feedbackId", NITHelper.feedbackToBase64(feedback));
+    try {
+      args.put("feedbackId", NITHelper.feedbackToBase64(feedback));
+    } catch(Exception e) {
+      NearLog.d('[Cordova Plugin]', 'feeback encoding error',e);
+    }
+    
     args.put("question",   feedback.question);
 
     forwardEvent(
