@@ -652,7 +652,7 @@ public class CDVNearIT extends CordovaPlugin {
     {
         Log.d(TAG, "NITManager :: request permission to the user");
 
-        PermissionsActivity.run(/* {package} */.MainActivity.getInstance());
+        // PermissionsActivity.run(/* {package} */.MainActivity.getInstance());
 
         callbackContext.success();
     }
