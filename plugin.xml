@@ -43,11 +43,6 @@
         <engine name="cordova-android" version=">=6.2.3" />
     </engines>
 
-    <!-- customize config.xml and platform project files 
-    <hook type="after_plugin_install" src="hooks/01_before_prepare.js" />
-    <hook type="before_prepare" src="hooks/01_before_prepare.js" />
-    -->
-
     <js-module src="www/nearit.js" name="nearit">
         <runs />
         <clobbers target="nearit" />
@@ -127,12 +122,6 @@
         <header-file src="src/ios/CDVNearIT.h" />
         <source-file src="src/ios/CDVNearIT.m" />
 
-        <!--
-        hook to fix CODE_SIGN_ENTITLEMENTS
-        https://issues.apache.org/jira/browse/CB-12212
-        
-        <hook type="before_prepare" src="hooks/02_before_prepare_ios.js"/>-->
-
     </platform>
 
     <!-- browser platform definition -->
@@ -182,13 +171,6 @@
         <source-file src="src/android/CDVNearITStrings.xml" target-dir="res/values" />
 
         <framework src="src/android/nearit.gradle" custom="true" type="gradleReference" />
-
-        <!--
-        To replace android MainActivity
-        
-        <hook type="before_prepare" src="hooks/03_before_prepare_android.js"/>
-        <hook type="after_prepare" src="hooks/04_after_prepare_android.js"/>
-        <hook type="before_plugin_uninstall" src="hooks/05_before_plugin_uninstall.js"/>-->
 
     </platform>
 
