@@ -55,10 +55,5 @@
   "main": "index.js",
   "directories": {
     "doc": "docs"
-  },
-  "engines": {
-    "cordova": ">=6.0.0",
-    "cordova-ios": ">=4.0.0",
-    "cordova-android": ">=6.2.3"
   }
 }
