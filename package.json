@@ -15,7 +15,7 @@
     {
       "name": "Claudio Suardi",
       "email": "claudio@nearit.com"
-    },
+    }
   ],
   "license": "MIT",
   "cordova": {
@@ -56,18 +56,9 @@
   "directories": {
     "doc": "docs"
   },
-  "engines": [
-    {
-      "name": "cordova",
-      "version": ">=6.0.0"
-    },
-    {
-      "name": "cordova-ios",
-      "version": ">=4.0.0"
-    },
-    {
-      "name": "cordova-android",
-      "version": ">=6.2.3"
-    }
-  ]
+  "engines": {
+    "cordova": ">=6.0.0",
+    "cordova-ios": ">=4.0.0",
+    "cordova-android": ">=6.2.3"
+  }
 }

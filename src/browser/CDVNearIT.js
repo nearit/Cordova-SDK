@@ -163,7 +163,7 @@ CDVNearIT.prototype.sendUserFeedback = function(successCallback, errorCallback, 
             errorCallback("invalid rating argument");
         } else {
             successCallback();
-        });
+        };
     }
 };
 
