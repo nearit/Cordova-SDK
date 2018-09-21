@@ -149,7 +149,7 @@ public class CDVNearITContentListener implements ContentsListener {
             CDVNearIT.CDVEventType.CDVNE_Event_Feedback,
             args,
             trackingInfo,
-            notification.notificationMessage
+            feedback.notificationMessage
     );
   }
 }
