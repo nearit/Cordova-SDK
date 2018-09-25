@@ -396,6 +396,37 @@ public class CDVNearIT extends CordovaPlugin {
 			}
     }
 
+	/**
+     * Track a multiple choice user data
+     * <code><pre>
+        cordova.exec(successCb, errorCb, "nearit", "setMultichoiceUserData", [key, userValues]);
+    </pre></code>
+     * @param args Cordova exec arguments
+     * @param callbackContext Cordova callback context
+     * @throws Exception if there is any validation error or other kind of exception
+     */
+    public void setMultichoiceUserData(JSONArray args, final CallbackContext callbackContext) throws Exception
+    {
+    	try {
+			NITHelper.validateArgsCount(args, 2);
+
+			NearMultipleChoiceDataPoint multiChoiceData = null;
+
+			String key = NITHelper.validateStringArgument(args, 0, "key");
+			HashMap<String, boolean> values = NITHelper.validateMapArgument(args, 1, "values");
+
+	        multiChoiceData = new NearMultipleChoiceDataPoint(data);
+
+			Log.d(TAG, "NITManager :: setMultichoiceUserData(" + key + ", " + values.toString() + ")");
+
+			NearItManager.getInstance().setUserData(key, multiChoiceData);
+
+			callbackContext.success();
+		} catch (Exception e) {
+    		callbackContext.error("Could not setUserData");
+		}
+    }
+
     /*
      * Feedback
      */
