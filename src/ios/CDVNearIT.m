@@ -475,9 +475,9 @@ __weak CDVNearIT *instance = nil;
     }];
 }
 
-#pragma mark - Custom Trigger
+#pragma mark - In-app Event
 /**
- * Trigger a custom event
+ * Trigger in-app event
  * <code><pre>
  cordova.exec(successCb, errorCb, "nearit", "triggerEvent", [eventKey]);
  </pre></code>
@@ -492,7 +492,7 @@ __weak CDVNearIT *instance = nil;
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                          messageAsString:@"Missing eventKey parameter"];
     } else {
-        [[NITManager defaultManager] processCustomTriggerWithKey:eventKey];
+        [[NITManager defaultManager] triggerInAppEventWithKey:eventKey];
 
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
