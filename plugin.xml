@@ -144,6 +144,12 @@
         <edit-config file="AndroidManifest.xml" target="/manifest/uses-sdk" mode="merge">
             <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="26" />
         </edit-config>
+        
+        <config-file file="AndroidManifest.xml" target="/manifest/application">
+            <meta-data
+                android:name="near_api_key"
+                android:value="@string/nearit_api_key" />
+        </config-file>
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="nearit">
