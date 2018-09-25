@@ -162,18 +162,18 @@
             <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
         </config-file>
 
-        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+        <!-- <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <activity android:name="it.near.sdk.cordova.android.PermissionsActivity"
                       android:theme="@style/NearDialogTheme" />
-        </config-file>
+        </config-file> -->
 
-        <source-file src="src/android/PermissionsActivity.java" target-dir="src/it/near/sdk/cordova/android" />
+        <!-- <source-file src="src/android/PermissionsActivity.java" target-dir="src/it/near/sdk/cordova/android" /> -->
         <source-file src="src/android/NITConfig.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearIT.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearITContentListener.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/NITHelper.java" target-dir="src/it/near/sdk/cordova/android" />
 
-        <source-file src="src/android/styles.xml" target-dir="res/values" />
+        <!-- <source-file src="src/android/styles.xml" target-dir="res/values" /> -->
         <source-file src="src/android/CDVNearITStrings.xml" target-dir="res/values" />
 
         <framework src="src/android/nearit.gradle" custom="true" type="gradleReference" />
