@@ -1,6 +1,6 @@
 
 dependencies {
-    compile "com.android.support:appcompat-v7:26.1.0"
+    compile "com.android.support:appcompat-v7:27.1.1"
     compile "it.near.sdk:nearit:2.9.5"
 }
 
