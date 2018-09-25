@@ -505,9 +505,17 @@ __weak CDVNearIT *instance = nil;
 #pragma mark - Tracking
 
 /**
- * Track an event of type "NITRecipeNotified"
+ * DEPRECATED
+ */
+- (void)sendTrackingWithRecipeIdForEventNotified:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    [self sendTrackingWithRecipeIdForEventReceived:command];
+}
+
+/**
+ * Track an event of type "NITRecipeReceived"
  * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventNotified", [trackingInfo]);
+    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
 </pre></code>
  */
 - (void)sendTrackingWithRecipeIdForEventNotified:( CDVInvokedUrlCommand* _Nonnull )command
@@ -520,7 +528,7 @@ __weak CDVNearIT *instance = nil;
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                          messageAsString:@"Missing trackingInfo parameter"];
     } else {
-        [self sendTrackingWithTrackingInfo:trackingInfoB64 eventName:NITRecipeNotified];
+        [self sendTrackingWithTrackingInfo:trackingInfoB64 eventName:NITRecipeReceived];
 
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
@@ -529,12 +537,20 @@ __weak CDVNearIT *instance = nil;
 }
 
 /**
- * Track an event of type "NITRecipeEngaged"
- * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventEngaged", [trackingInfo]);
-</pre></code>
+ * DEPRECATED
  */
 - (void)sendTrackingWithRecipeIdForEventEngaged:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    [self sendTrackingWithRecipeIdForEventOpened:command];
+}
+
+/**
+ * Track an event of type "NITRecipeOpened"
+ * <code><pre>
+    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
+</pre></code>
+ */
+- (void)sendTrackingWithRecipeIdForEventOpened:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 
@@ -545,7 +561,7 @@ __weak CDVNearIT *instance = nil;
                                          messageAsString:@"Missing trackingInfo parameter"];
     } else {
         [self sendTrackingWithTrackingInfo:trackingInfoJsonString
-                                 eventName:NITRecipeEngaged];
+                                 eventName:NITRecipeOpened];
 
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
