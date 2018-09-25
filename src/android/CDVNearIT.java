@@ -521,38 +521,58 @@ public class CDVNearIT extends CordovaPlugin {
      */
 
     /**
-     * Track an event of type "NITRecipeNotified"
-     * <code><pre>
-        cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventNotified", [trackingInfo]);
-    </pre></code>
-     * @param args Cordova exec arguments
-     * @param callbackContext Cordova callback context
-     * @throws Exception if there is any validation error or other kind of exception
+	 * @deprecated use {@link #sendTrackingWithRecipeIdForEventReceived()} instead.
      */
     public void sendTrackingWithRecipeIdForEventNotified(JSONArray args,
                                                          CallbackContext callbackContext)
 		    throws Exception
     {
-
-			NITHelper.validateArgsCount(args, 1);
-
-			final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
-
-			this.sendTracking(trackingInfoJsonString, Recipe.NOTIFIED_STATUS);
-
-			callbackContext.success();
+		sendTrackingWithRecipeIdForEventReceived(args, callbackContext);
     }
 
-    /**
-     * Track an event of type "NITRecipeEngaged"
+	/**
+     * Track an event of type "RECEIVED"
      * <code><pre>
-        cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventEngaged", [trackingInfo]);
+        cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
     </pre></code>
      * @param args Cordova exec arguments
      * @param callbackContext Cordova callback context
      * @throws Exception if there is any validation error or other kind of exception
      */
+    public void sendTrackingWithRecipeIdForEventReceived(JSONArray args,
+                                                         CallbackContext callbackContext)
+		    throws Exception
+    {
+
+		NITHelper.validateArgsCount(args, 1);
+
+		final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
+
+		this.sendTracking(trackingInfoJsonString, Recipe.RECEIVED);
+
+		callbackContext.success();
+    }
+
+    /**
+     * @deprecated use {@link #sendTrackingWithRecipeIdForEventOpened()} instead.
+     */
     public void sendTrackingWithRecipeIdForEventEngaged(JSONArray args,
+                                                        CallbackContext callbackContext)
+		    throws Exception
+    {
+		sendTrackingWithRecipeIdForEventOpened(args, callbackContext);
+    }
+
+	/**
+     * Track an event of type "OPENED"
+     * <code><pre>
+        cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
+    </pre></code>
+     * @param args Cordova exec arguments
+     * @param callbackContext Cordova callback context
+     * @throws Exception if there is any validation error or other kind of exception
+     */
+    public void sendTrackingWithRecipeIdForEventOpened(JSONArray args,
                                                         CallbackContext callbackContext)
 		    throws Exception
     {
@@ -561,7 +581,7 @@ public class CDVNearIT extends CordovaPlugin {
 
 	    final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
 
-	    this.sendTracking(trackingInfoJsonString, Recipe.ENGAGED_STATUS);
+	    this.sendTracking(trackingInfoJsonString, Recipe.OPENED);
 
 		callbackContext.success();
     }
