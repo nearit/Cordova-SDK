@@ -489,32 +489,32 @@ public class CDVNearIT extends CordovaPlugin {
 		});
 	}
 
-		/*
-		*	 Custom Trigger
-		*/
+	/*
+	*	 In-app Events
+	*/
 
-		/**
-		 * Trigger custom event
-		 * <code><pre>
-				cordova.exec(successCb, errorCb, "nearit", "triggerEvent", [eventKey]);
-			</pre></code>
-	 	*/
-		public void triggerEvent(JSONArray args, final CallbackContext callbackContext) throws Exception {
-			Log.d(TAG, "NITManager :: triggerEvent()");
+	/**
+		* Trigger in-app event
+		* <code><pre>
+			cordova.exec(successCb, errorCb, "nearit", "triggerEvent", [eventKey]);
+		</pre></code>
+	*/
+	public void triggerEvent(JSONArray args, final CallbackContext callbackContext) throws Exception {
+		Log.d(TAG, "NITManager :: triggerInAppEvent()");
 
-			if (args.length() < 1) {
-				throw new Exception("Wrong number of arguments! expected 'eventKey' arg");
-			}
-
-			// Retrieve 'eventKey' param
-			final String eventKey = NITHelper.validateStringArgument(args, 0, "eventKey");
-
-			// Trigger Custom Event Key
-			NearItManager.getInstance().processCustomTrigger(eventKey);
-
-			// Resolve null, if a Recipe is triggered then the normal notification flow will run
-			callbackContext.success();
+		if (args.length() < 1) {
+			throw new Exception("Wrong number of arguments! expected 'eventKey' arg");
 		}
+
+		// Retrieve 'eventKey' param
+		final String eventKey = NITHelper.validateStringArgument(args, 0, "eventKey");
+
+		// Trigger In-app Event Key
+		NearItManager.getInstance().triggerInAppEvent(eventKey);
+
+		// Resolve null, if a Recipe is triggered then the normal notification flow will run
+		callbackContext.success();
+	}
 
     /*
      * Tracking
