@@ -27,6 +27,7 @@
 //  NearITSDK
 //
 //  Created by Fabio Cigliano on 25/07/17.
+//  Modified by Federic Boschini on 25/09/18.
 //  Copyright © 2017 NearIT. All rights reserved.
 //
 
@@ -85,6 +86,7 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 #pragma mark - User Data
 
 - (void)setUserData:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)setMultichoiceUserData:( CDVInvokedUrlCommand* _Nonnull )command;
 
 #pragma mark - Feedback
 

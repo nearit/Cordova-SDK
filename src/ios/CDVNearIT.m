@@ -311,6 +311,38 @@ __weak CDVNearIT *instance = nil;
                                   callbackId:[command callbackId]];
 }
 
+/**
+ * Track a multichoice user data
+ * <code><pre>
+    cordova.exec(successCb, errorCb, "nearit", "setMultichoiceUserData", [fieldName, userValue]);
+</pre></code>
+ */
+- (void)setMultichoiceUserData:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+
+    NSString* key   = [[command arguments] objectAtIndex:0];
+    NSDictionary* value = [[command arguments] objectAtIndex:1];
+
+    if (IS_EMPTY(key)) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                         messageAsString:@"Missing key parameter"];
+    } else if(IS_EMPTY(value)) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                         messageAsString:@"Missing value parameter"];
+    } else {
+
+        NITLogD(TAG, @"NITManager :: setUserDataWithKey(%@, %@)", key, value);
+        [[NITManager defaultManager] setUserDataWithKey:key multiValue:values];
+        
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+
+    }
+
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                  callbackId:[command callbackId]];
+}
+
 #pragma mark - Feedback
 
 /**
