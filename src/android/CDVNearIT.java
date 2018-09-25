@@ -726,13 +726,7 @@ public class CDVNearIT extends CordovaPlugin {
     }
 
     /**
-     * Manually refresh NearIT recipes
-     * <code><pre>
-        cordova.exec(successCb, errorCb, "nearit", "refreshRecipes", []);
-     </pre></code>
-     * @param args Cordova exec arguments
-     * @param callbackContext Cordova callback context
-     * @throws Exception if there is any validation error or other kind of exception
+     * @deprecated no need to refresh recipe. This is done automagically by the native SDK
      */
     public void refreshRecipes(JSONArray args, final CallbackContext callbackContext) throws Exception
     {
