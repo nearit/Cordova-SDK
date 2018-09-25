@@ -22,6 +22,7 @@ import it.near.sdk.trackings.TrackingInfo;
 
 /**
  * @author "Fabio Cigliano" on 23/09/17
+ * @author "Federico Boschini" on 25/09/18
  */
 
 public class NITHelper {
@@ -42,6 +43,30 @@ public class NITHelper {
 		return value;
 	}
 
+	public static HashMap<String, Boolean> validateMapArgument(JSONArray args, int pos, String name) throws Exception {
+		HashMap<String, Boolean> map = new HashMap<>();
+        
+        try {
+            JSONObject object = args.getJSONObject(pos);
+            Iterator<String> it = object.keys();
+            while (it.hasNext()) {
+                String key = it.next();
+                try {
+                    boolean value = (boolean) object.get(key);
+                    map.put(key, value);
+                } catch (ClassCastException e) {
+                    throw new Exception("Not boolean value for key " + key + " in " + name + " parameter!");
+                }
+            }
+        } catch (JSONException e) {
+            throw new Exception("Invalid format for " + name + " parameter!");
+        }
+        if (!map.isEmpty()) {
+            throw new Exception("Missing " + name + " parameter!");
+        }
+
+		return map;
+	}
 	/**
 	 * @param item Coupon item
 	 * @return JSONObject result
