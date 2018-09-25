@@ -674,10 +674,7 @@ __weak CDVNearIT *instance = nil;
 }
 
 /**
- * Manually refresh NearIT recipes
- * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "refreshRecipes", []);
- </pre></code>
+ * DEPRECATED
  */
 - (void)refreshRecipes:( CDVInvokedUrlCommand* _Nonnull )command
 {
