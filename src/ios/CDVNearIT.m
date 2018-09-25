@@ -27,6 +27,7 @@
 //  NearITSDK
 //
 //  Created by Fabio Cigliano on 25/07/17.
+//  Modified by Federic Boschini on 25/09/18.
 //  Copyright © 2017 NearIT. All rights reserved.
 //
 
@@ -300,21 +301,10 @@ __weak CDVNearIT *instance = nil;
     } else {
 
         NITLogD(TAG, @"NITManager :: setUserDataWithKey(%@, %@)", key, value);
-        [[NITManager defaultManager] setUserDataWithKey:key value:value completionHandler:^(NSError* error) {
-            CDVPluginResult* pluginResult = nil;
+        [[NITManager defaultManager] setUserDataWithKey:key value:value];
+        
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
 
-            if (error) {
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                 messageAsString:[error description]];
-            } else {
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            }
-
-            [[self commandDelegate] sendPluginResult:pluginResult
-                                          callbackId:[command callbackId]];
-        }];
-
-        return;
     }
 
     [[self commandDelegate] sendPluginResult:pluginResult
