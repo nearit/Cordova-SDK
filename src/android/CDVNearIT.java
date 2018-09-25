@@ -340,30 +340,30 @@ public class CDVNearIT extends CordovaPlugin {
      * OptOut
      */
 
-		/**
-		 * OptOut profile from NearIT
-		 * <code><pre>
-		 		cordova.exec(successCb, errorCb, "nearit", "optOut", []);
-		 	 </pre></code>
-		 * @param args Cordova exec arguments
-		 * @param callbackContext Cordova callback context
-		 * @throws Exception if there is any validation error or other kind of exception
-		 */
-		public void optOut(JSONArray args, final CallbackContext callbackContext) throws Exception {
-			Log.i(TAG, "NITManager :: optOut");
+	/**
+		* OptOut profile from NearIT
+		* <code><pre>
+			cordova.exec(successCb, errorCb, "nearit", "optOut", []);
+			</pre></code>
+		* @param args Cordova exec arguments
+		* @param callbackContext Cordova callback context
+		* @throws Exception if there is any validation error or other kind of exception
+		*/
+	public void optOut(JSONArray args, final CallbackContext callbackContext) throws Exception {
+		Log.i(TAG, "NITManager :: optOut");
 
-			NearItManager.getInstance().optOut(new OptOutNotifier() {
-				@Override
-				public void onSuccess() {
-					callbackContext.success();
-				}
+		NearItManager.getInstance().optOut(new OptOutNotifier() {
+			@Override
+			public void onSuccess() {
+				callbackContext.success();
+			}
 
-				@Override
-				public void onFailure(String s) {
-					callbackContext.error("Could NOT optout user");
-				}
-			});
-		}
+			@Override
+			public void onFailure(String s) {
+				callbackContext.error("Could NOT optout user");
+			}
+		});
+	}
 
     /*
      * User Data
