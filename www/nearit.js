@@ -150,6 +150,17 @@ NearIT.prototype.setUserData = function(key, value, successCallback, errorCallba
     exec(successCallback, errorCallback, this.serviceName, "setUserData", [key, value]);
 };
 
+/**
+ * Set NearIT user profile multichoice data
+ * @param string     fieldName name of the attribute
+ * @param {Object}   values object including boolean values for keys
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.setMultichoiceUserData = function(key, values, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "setMultichoiceUserData", [key, values]);
+};
+
 /*
  * User feedback
  */
@@ -197,7 +208,7 @@ NearIT.prototype.getCoupons = function(successCallback, errorCallback) {
  */
 
 /**
- * Trigger a custom event
+ * Trigger in-app event
  * @param {string}   eventKey The custom event key to be triggered
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
@@ -211,23 +222,37 @@ NearIT.prototype.triggerEvent = function(eventKey, successCallback, errorCallbac
  */
 
 /**
- * Track a "Notified" event related to this recipe
- * @param {string}   trackingInfo trackingInfo related to source event
- * @param {Function} successCallback The function to call when the call is successful
- * @param {Function} errorCallback The function to call when there is an error
+ * @deprecated
  */
 NearIT.prototype.trackNotifiedEvent = function(trackingInfo, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventNotified", [trackingInfo]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
 };
 
 /**
- * Track an "Engaged" event related to this recipe
+ * Track a "Received" event related to this recipe
  * @param {string}   trackingInfo trackingInfo related to source event
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
+NearIT.prototype.trackReceivedEvent = function(trackingInfo, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
+};
+
+/**
+ * @deprecated
+ */
 NearIT.prototype.trackEngagedEvent = function(trackingInfo, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventEngaged", [trackingInfo]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
+};
+
+/**
+ * Track an "Opened" event related to this recipe
+ * @param {string}   trackingInfo trackingInfo related to source event
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.trackOpenedEvent = function(trackingInfo, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
 };
 
 /**
@@ -273,9 +298,7 @@ NearIT.prototype.permissionRequest = function(successCallback, errorCallback) {
 };
 
 /**
- * Manually refresh NearIT recipes
- * @param {Function} successCallback The function to call when the call is successful
- * @param {Function} errorCallback The function to call when there is an error
+ * @deprecated
  */
 NearIT.prototype.refreshRecipes = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "refreshRecipes", []);
