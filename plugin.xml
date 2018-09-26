@@ -138,19 +138,17 @@
         </js-module>
     </platform>
 
-    <!-- Android platform definition -->
+    <!--    Android platform definition    -->
     <platform name="android">
-
-        <edit-config file="AndroidManifest.xml" target="/manifest/uses-sdk" mode="merge">
-            <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="26" />
-        </edit-config>
         
-        <config-file file="AndroidManifest.xml" target="/manifest/application">
+        <!--    Add API KEY meta-data entry to Manifest. Its value refers to string resource    -->
+        <config-file target="AndroidManifest.xml" parent="/manifest/application/">
             <meta-data
                 android:name="near_api_key"
                 android:value="@string/nearit_api_key" />
         </config-file>
 
+        <!--    Add package to config.xml   -->
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="nearit">
                 <param name="android-package" value="it.near.sdk.cordova.android.CDVNearIT" />
@@ -158,24 +156,21 @@
             </feature>
         </config-file>
 
+        <!--    Add RECEIVE_BOOT_COMPLETED permission to Manifest   -->
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
         </config-file>
 
-        <!-- <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <activity android:name="it.near.sdk.cordova.android.PermissionsActivity"
-                      android:theme="@style/NearDialogTheme" />
-        </config-file> -->
-
-        <!-- <source-file src="src/android/PermissionsActivity.java" target-dir="src/it/near/sdk/cordova/android" /> -->
+        <!--    Add source files    -->
         <source-file src="src/android/NITConfig.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearIT.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearITContentListener.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/NITHelper.java" target-dir="src/it/near/sdk/cordova/android" />
 
-        <!-- <source-file src="src/android/styles.xml" target-dir="res/values" /> -->
+        <!--    Add strings to res  -->
         <source-file src="src/android/CDVNearITStrings.xml" target-dir="res/values" />
 
+        <!--    Add gradle reference    -->
         <framework src="src/android/nearit.gradle" custom="true" type="gradleReference" />
 
     </platform>
