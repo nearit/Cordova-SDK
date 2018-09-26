@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,7 @@ public class NITHelper {
 	}
 
 	public static HashMap<String, Boolean> validateMapArgument(JSONArray args, int pos, String name) throws Exception {
-		HashMap<String, Boolean> map = new HashMap<>();
+		HashMap<String, Boolean> map = new HashMap<String, Boolean>();
         
         try {
             JSONObject object = args.getJSONObject(pos);
