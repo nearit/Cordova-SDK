@@ -319,13 +319,12 @@ public class CDVNearIT extends CordovaPlugin {
 	/**
 	 * Set NearIT profile identifier
 	 * <code><pre>
-	 cordova.exec(successCb, errorCb, "nearit", "setProfileId", [profileId]);
+	 cordova.exec("nearit", "setProfileId", [profileId]);
 	 </pre></code>
 	 * @param args Cordova exec arguments
-	 * @param callbackContext Cordova callback context
 	 * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void setProfileId(JSONArray args, CallbackContext callbackContext) throws Exception
+	public void setProfileId(JSONArray args) throws Exception
     {
 	    NITHelper.validateArgsCount(args, 1);
 
@@ -334,7 +333,6 @@ public class CDVNearIT extends CordovaPlugin {
 	    Log.i(TAG, "NITManager :: setProfileId(" + profileId + ")");
 	    NearItManager.getInstance().setProfileId(profileId);
 
-	    callbackContext.success();
     }
 
     /*
