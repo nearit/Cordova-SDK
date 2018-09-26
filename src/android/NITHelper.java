@@ -28,6 +28,8 @@ import it.near.sdk.trackings.TrackingInfo;
 
 public class NITHelper {
 
+	private static final String TAG = "NITHelper";
+
 	public static void validateArgsCount(JSONArray args, int expectedCount) throws Exception {
 		if (args.length() != expectedCount) {
 			throw new Exception("Wrong number of arguments! expected " + expectedCount);
@@ -45,11 +47,16 @@ public class NITHelper {
 	}
 
 	public static HashMap<String, Boolean> validateMapArgument(JSONArray args, int pos, String name) throws Exception {
-		HashMap<String, Boolean> map = new HashMap<String, Boolean>();
+		HashMap<String, Boolean> map = null;
         
+		if (args.get(pos).equals(null)) {
+			return null;
+		}
+
         try {
             JSONObject object = args.getJSONObject(pos);
             Iterator<String> it = object.keys();
+			map = new HashMap<String, Boolean>();
             while (it.hasNext()) {
                 String key = it.next();
                 try {
@@ -62,7 +69,7 @@ public class NITHelper {
         } catch (JSONException e) {
             throw new Exception("Invalid format for " + name + " parameter!");
         }
-        if (!map.isEmpty()) {
+        if (map != null && map.isEmpty()) {
             throw new Exception("Missing " + name + " parameter!");
         }
 
