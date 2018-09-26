@@ -115,11 +115,11 @@ NearIT.prototype.getProfileId = function(successCallback, errorCallback) {
 /**
  * Set NearIT user profile Id
  * @param string     profileId A previously stored NearIT profile id
- * @param {Function} successCallback The function to call when the call is successful
- * @param {Function} errorCallback The function to call when there is an error
+ * @deprecated @param {Function} successCallback
+ * @deprecated @param {Function} errorCallback
  */
 NearIT.prototype.setProfileId = function(profileId, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "setProfileId", [profileId]);
+    exec(this.serviceName, "setProfileId", [profileId]);
 };
 
 /*
