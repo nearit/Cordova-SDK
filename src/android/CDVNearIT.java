@@ -617,37 +617,29 @@ public class CDVNearIT extends CordovaPlugin {
     /**
      * Manually start NITManager radar
      * <code><pre>
-        cordova.exec(successCb, errorCb, "nearit", "startRadar", []);
+        cordova.exec("nearit", "startRadar", []);
      </pre></code>
      * @param args Cordova exec arguments
-     * @param callbackContext Cordova callback context
      * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void startRadar(JSONArray args, CallbackContext callbackContext) throws Exception
+	public void startRadar(JSONArray args) throws Exception
     {
 	    Log.d(TAG, "NITManager :: start");
-
 	    NearItManager.getInstance().startRadar();
-
-        callbackContext.success();
     }
 
     /**
      * Manually stop NITManager radar
      * <code><pre>
-        cordova.exec(successCb, errorCb, "nearit", "stopRadar", []);
+        cordova.exec("nearit", "stopRadar", []);
      </pre></code>
      * @param args Cordova exec arguments
-     * @param callbackContext Cordova callback context
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void stopRadar(JSONArray args, CallbackContext callbackContext) throws Exception
+    public void stopRadar(JSONArray args) throws Exception
     {
 	    Log.d(TAG, "NITManager :: stop");
-
 	    NearItManager.getInstance().stopRadar();
-
-        callbackContext.success();
     }
 
     /**
