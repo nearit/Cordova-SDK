@@ -432,9 +432,9 @@ public class CDVNearIT extends CordovaPlugin {
 			NearMultipleChoiceDataPoint multiChoiceData = null;
 
 			String key = NITHelper.validateStringArgument(args, 0, "key");
-			HashMap<String, boolean> values = NITHelper.validateMapArgument(args, 1, "values");
+			HashMap<String, Boolean> values = NITHelper.validateMapArgument(args, 1, "values");
 
-	        multiChoiceData = new NearMultipleChoiceDataPoint(data);
+	        multiChoiceData = new NearMultipleChoiceDataPoint(values);
 
 			Log.d(TAG, "NITManager :: setMultichoiceUserData(" + key + ", " + values.toString() + ")");
 
