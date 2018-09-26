@@ -266,20 +266,20 @@ NearIT.prototype.trackCustomEvent = function(trackingInfo, eventName, successCal
 
 /**
  * Start NITManager radar
- * @param {Function} successCallback The function to call when the call is successful
- * @param {Function} errorCallback The function to call when there is an error
+ * @deprecated @param {Function} successCallback
+ * @deprecated @param {Function} errorCallback
  */
 NearIT.prototype.startRadar = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "startRadar", []);
+    exec(this.serviceName, "startRadar", []);
 };
 
 /**
  * Stop NITManager radar
- * @param {Function} successCallback The function to call when the call is successful
- * @param {Function} errorCallback The function to call when there is an error
+ * @deprecated @param {Function} successCallback
+ * @deprecated @param {Function} errorCallback
  */
 NearIT.prototype.stopRadar = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "stopRadar", []);
+    exec(this.serviceName, "stopRadar", []);
 };
 
 /**
