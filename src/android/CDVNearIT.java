@@ -371,13 +371,12 @@ public class CDVNearIT extends CordovaPlugin {
     /**
      * Track a user data
      * <code><pre>
-        cordova.exec(successCb, errorCb, "nearit", "setUserData", [fieldName, userValue]);
+        cordova.exec("nearit", "setUserData", [fieldName, userValue]);
     </pre></code>
      * @param args Cordova exec arguments
-     * @param callbackContext Cordova callback context
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void setUserData(JSONArray args, final CallbackContext callbackContext) throws Exception
+    public void setUserData(JSONArray args) throws Exception
     {
     	try {
 			NITHelper.validateArgsCount(args, 2);
@@ -386,25 +385,22 @@ public class CDVNearIT extends CordovaPlugin {
 			String value = NITHelper.validateStringArgument(args, 1, "value");
 
 			Log.d(TAG, "NITManager :: setUserData(" + key + ", " + value + ")");
-
 			NearItManager.getInstance().setUserData(key, value);
 
-			callbackContext.success();
 		} catch (Exception e) {
-    		callbackContext.error("Could not setUserData");
+			Log.e(TAG, "NITManager :: Could not setUserData");
 		}
     }
 
 	/**
      * Track a multiple choice user data
      * <code><pre>
-        cordova.exec(successCb, errorCb, "nearit", "setMultichoiceUserData", [key, userValues]);
+        cordova.exec("nearit", "setMultichoiceUserData", [key, userValues]);
     </pre></code>
      * @param args Cordova exec arguments
-     * @param callbackContext Cordova callback context
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void setMultichoiceUserData(JSONArray args, final CallbackContext callbackContext) throws Exception
+    public void setMultichoiceUserData(JSONArray args) throws Exception
     {
     	try {
 			NITHelper.validateArgsCount(args, 2);
@@ -417,12 +413,10 @@ public class CDVNearIT extends CordovaPlugin {
 	        multiChoiceData = new NearMultipleChoiceDataPoint(values);
 
 			Log.d(TAG, "NITManager :: setMultichoiceUserData(" + key + ", " + values.toString() + ")");
-
 			NearItManager.getInstance().setUserData(key, multiChoiceData);
 
-			callbackContext.success();
 		} catch (Exception e) {
-    		callbackContext.error("Could not setUserData");
+    		Log.e(TAG, "NITManager :: Could not setUserData");
 		}
     }
 
