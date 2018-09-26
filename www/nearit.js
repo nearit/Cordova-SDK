@@ -250,6 +250,14 @@ NearIT.prototype.trackOpenedEvent = function(trackingInfo) {
 };
 
 /**
+ * Track a CTA of a Content Notification as tapped
+ * @param {string}   trackingInfo trackingInfo related to source event
+ */
+NearIT.prototype.trackCTATappedEvent = function(trackingInfo) {
+    exec(this.serviceName, "sendTrackingForCTATapped", [trackingInfo]);
+};
+
+/**
  * Track a custom event related to this recipe
  * @param {string}   trackingInfo trackingInfo related to source event
  * @param {string}   eventName name of the custom event to track
