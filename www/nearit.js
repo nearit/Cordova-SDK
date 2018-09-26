@@ -143,22 +143,20 @@ NearIT.prototype.optOut = function(successCallback, errorCallback) {
  * Set NearIT user profile data
  * @param string     fieldName name of the attribute
  * @param string     value value of the attribute
- * @param {Function} successCallback The function to call when the call is successful
- * @param {Function} errorCallback The function to call when there is an error
+ * @deprecated @param {Function} successCallback
+ * @deprecated @param {Function} errorCallback
  */
 NearIT.prototype.setUserData = function(key, value, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "setUserData", [key, value]);
+    exec(this.serviceName, "setUserData", [key, value]);
 };
 
 /**
  * Set NearIT user profile multichoice data
  * @param string     fieldName name of the attribute
  * @param {Object}   values object including boolean values for keys
- * @param {Function} successCallback The function to call when the call is successful
- * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.setMultichoiceUserData = function(key, values, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "setMultichoiceUserData", [key, values]);
+NearIT.prototype.setMultichoiceUserData = function(key, values) {
+    exec(this.serviceName, "setMultichoiceUserData", [key, values]);
 };
 
 /*
