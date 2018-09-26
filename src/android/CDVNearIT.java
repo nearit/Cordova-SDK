@@ -55,6 +55,10 @@ import it.near.sdk.recipes.RecipeRefreshListener;
 import it.near.sdk.recipes.models.Recipe;
 import it.near.sdk.trackings.TrackingInfo;
 
+import static it.near.sdk.recipes.models.Recipe.CTA_TAPPED;
+import static it.near.sdk.recipes.models.Recipe.OPENED;
+import static it.near.sdk.recipes.models.Recipe.RECEIVED;
+
 /**
  * This class implements NearIT plugin interface for Android.
  */
@@ -566,7 +570,7 @@ public class CDVNearIT extends CordovaPlugin {
 	/**
      * Track an event of type "OPENED"
      * <code><pre>
-        cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
+        cordova.exec("nearit", "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
     </pre></code>
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
@@ -580,6 +584,24 @@ public class CDVNearIT extends CordovaPlugin {
 
 	    this.sendTracking(trackingInfoJsonString, Recipe.OPENED);
     }
+
+	/**
+     * Track CTA tapped event
+     * <code><pre>
+        cordova.exec("nearit", "sendTrackingForCTATapped", [trackingInfo]);
+    </pre></code>
+     * @param args Cordova exec arguments
+     * @throws Exception if there is any validation error or other kind of exception
+     */
+	public void sendTrackingForCTATapped(JSONArray args) throws Exception
+	{
+
+		NITHelper.validateArgsCount(args, 12);
+
+	    final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
+
+	    this.sendTracking(trackingInfoJsonString, Recipe.CTA_TAPPED);
+	}
 
     /**
      * Track a custom event
