@@ -213,8 +213,8 @@ NearIT.prototype.getCoupons = function(successCallback, errorCallback) {
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.triggerEvent = function(eventKey, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "triggerEvent", [eventKey]);
+NearIT.prototype.triggerEvent = function(eventKey) {
+    exec(this.serviceName, "triggerEvent", [eventKey]);
 };
 
 /*
