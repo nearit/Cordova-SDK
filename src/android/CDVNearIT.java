@@ -98,60 +98,42 @@ public class CDVNearIT extends CordovaPlugin {
 			@Override
 			public void run() {
 				try {
-					switch (action) {
-						case "fireEvent":
-							CDVNearIT.this.fireEvent(args, callbackContext);
-							break;
-						case "resetProfile":
-							CDVNearIT.this.resetProfile(args, callbackContext);
-							break;
-						case "getProfileId":
-							CDVNearIT.this.getProfileId(args, callbackContext);
-							break;
-						case "setProfileId":
-							CDVNearIT.this.setProfileId(args, callbackContext);
-							break;
-						case "optOut":
-							CDVNearIT.this.optOut(args, callbackContext);
-							break;
-						case "setUserData":
-							CDVNearIT.this.setUserData(args, callbackContext);
-							break;
-						case "sendUserFeedback":
-							CDVNearIT.this.sendUserFeedback(args, callbackContext);
-							break;
-						case "getCoupons":
-							CDVNearIT.this.getCoupons(args, callbackContext);
-							break;
-						case "triggerEvent":
-							CDVNearIT.this.triggerEvent(args, callbackContext);
-							break;
-						case "sendTrackingWithRecipeIdForEventNotified":
-							CDVNearIT.this.sendTrackingWithRecipeIdForEventNotified(args, callbackContext);
-							break;
-						case "sendTrackingWithRecipeIdForEventEngaged":
-							CDVNearIT.this.sendTrackingWithRecipeIdForEventEngaged(args, callbackContext);
-							break;
-						case "sendTrackingWithRecipeIdForCustomEvent":
-							CDVNearIT.this.sendTrackingWithRecipeIdForCustomEvent(args, callbackContext);
-							break;
-						case "startRadar":
-							CDVNearIT.this.startRadar(args, callbackContext);
-							break;
-						case "stopRadar":
-							CDVNearIT.this.stopRadar(args, callbackContext);
-							break;
-						case "permissionRequest":
-							CDVNearIT.this.permissionRequest(args, callbackContext);
-							break;
-						case "refreshRecipes":
-							CDVNearIT.this.refreshRecipes(args, callbackContext);
-							break;
-						default:
-							final String message = "unknown action " + action;
-							Log.e(TAG, message);
-							CDVNearIT.this.fireWindowEvent(CDVEventType.CDVNE_Event_Error, message);
-							break;
+					if (action.equals("fireEvent")) {
+						CDVNearIT.this.fireEvent(args, callbackContext);
+					} else if (action.equals("resetProfile")) {
+						CDVNearIT.this.resetProfile(args, callbackContext);
+					} else if (action.equals("getProfileId")) {
+						CDVNearIT.this.getProfileId(args, callbackContext);
+					} else if (action.equals("setProfileId")) {
+						CDVNearIT.this.setProfileId(args, callbackContext);
+					} else if (action.equals("optOut")) {
+						CDVNearIT.this.optOut(args, callbackContext);
+					} else if (action.equals("setUserData")) {
+						CDVNearIT.this.setUserData(args, callbackContext);
+					} else if (action.equals("sendUserFeedback")) {
+						CDVNearIT.this.sendUserFeedback(args, callbackContext);
+					} else if (action.equals("getCoupons")) {
+						CDVNearIT.this.getCoupons(args, callbackContext);
+					} else if (action.equals("triggerEvent")) {
+						CDVNearIT.this.triggerEvent(args, callbackContext);
+					} else if (action.equals("sendTrackingWithRecipeIdForEventNotified")) {
+						CDVNearIT.this.sendTrackingWithRecipeIdForEventNotified(args, callbackContext);
+					} else if (action.equals("sendTrackingWithRecipeIdForEventEngaged")) {
+						CDVNearIT.this.sendTrackingWithRecipeIdForEventEngaged(args, callbackContext);
+					} else if (action.equals("sendTrackingWithRecipeIdForCustomEvent")) {
+						CDVNearIT.this.sendTrackingWithRecipeIdForCustomEvent(args, callbackContext);
+					} else if (action.equals("startRadar")) {
+						CDVNearIT.this.startRadar(args, callbackContext);
+					} else if (action.equals("stopRadar")) {
+						CDVNearIT.this.stopRadar(args, callbackContext);
+					} else if (action.equals("permissionRequest")) {
+						CDVNearIT.this.permissionRequest(args, callbackContext);
+					} else if (action.equals("refreshRecipes")) {
+						CDVNearIT.this.refreshRecipes(args, callbackContext);
+					} else {
+						final String message = "unknown action " + action;
+						Log.e(TAG, message);
+						CDVNearIT.this.fireWindowEvent(CDVEventType.CDVNE_Event_Error, message);
 					}
         		} catch (Exception err) {
             		// TODO: log this error
