@@ -53,7 +53,7 @@ public class NITHelper {
             while (it.hasNext()) {
                 String key = it.next();
                 try {
-                    boolean value = (boolean) object.get(key);
+                    boolean value = ((Boolean) object.get(key)).booleanValue();
                     map.put(key, value);
                 } catch (ClassCastException e) {
                     throw new Exception("Not boolean value for key " + key + " in " + name + " parameter!");
