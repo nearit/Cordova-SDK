@@ -99,8 +99,8 @@ NearIT.prototype.fireEvent = function(eventType, successCallback, errorCallback)
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.resetProfile = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "resetProfile", []);
+NearIT.prototype.resetProfileId = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "resetProfileId", []);
 };
 
 /**
