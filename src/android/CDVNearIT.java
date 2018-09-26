@@ -37,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ import it.near.sdk.NearItManager;
 import it.near.sdk.communication.OptOutNotifier;
 import it.near.sdk.operation.NearItUserProfile;
 import it.near.sdk.operation.UserDataNotifier;
+import it.near.sdk.operation.values.NearMultipleChoiceDataPoint;
 import it.near.sdk.reactions.couponplugin.CouponListener;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.reactions.feedbackplugin.FeedbackEvent;
