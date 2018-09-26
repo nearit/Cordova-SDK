@@ -46,6 +46,12 @@ public class NITHelper {
 		return value;
 	}
 
+	public static String validateNullableStringArgument(JSONArray args, int pos, String name) throws Exception {
+		String value = args.getString(pos);
+		if (value == "null") return null;
+		return value;
+	}
+
 	public static HashMap<String, Boolean> validateMapArgument(JSONArray args, int pos, String name) throws Exception {
 		HashMap<String, Boolean> map = null;
         
