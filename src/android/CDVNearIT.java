@@ -93,9 +93,7 @@ public class CDVNearIT extends CordovaPlugin {
     		final String action,
 		    final JSONArray args,
 		    final CallbackContext callbackContext
-	)
-			throws JSONException
-	{
+	) throws JSONException {
 		Log.d(TAG, "execute(" + action + ")");
 
 		cordova.getThreadPool().execute(new Runnable() {
@@ -128,8 +126,8 @@ public class CDVNearIT extends CordovaPlugin {
 					} else if (action.equals("sendTrackingWithRecipeIdForEventEngaged")
 								|| action.equals("sendTrackingWithRecipeIdForEventOpened")) {
 						CDVNearIT.this.sendTrackingWithRecipeIdForEventOpened(args, callbackContext);
-					} else if (action.equals("sendTrackingForCTATapped")) {
-						CDVNearIT.this.sendTrackingForCTATapped(args, callbackContext);
+					} else if (action.equals("sendTrackingForEventCTATapped")) {
+						CDVNearIT.this.sendTrackingForEventCTATapped(args, callbackContext);
 					} else if (action.equals("sendTrackingWithRecipeIdForCustomEvent")) {
 						CDVNearIT.this.sendTrackingWithRecipeIdForCustomEvent(args, callbackContext);
 					} else if (action.equals("startRadar")) {
@@ -249,16 +247,16 @@ public class CDVNearIT extends CordovaPlugin {
 	 * @param callbackContext Cordova callback context
 	 * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void fireEvent(JSONArray args, CallbackContext callbackContext) throws Exception
-    {
-	    NITHelper.validateArgsCount(args, 1);
-
-	    String eventType = NITHelper.validateStringArgument(args, 0, "eventType");
-
-	    Log.i(TAG, "fire custom window event (from js) of type " + eventType);
-	    fireWindowEvent(eventType, new JSONObject("{\"message\": \"custom event from cordova app\"}"));
-
-	    callbackContext.success();
+	public void fireEvent(JSONArray args, CallbackContext callbackContext) throws Exception {
+		try {
+			NITHelper.validateArgsCount(args, 1);
+			String eventType = NITHelper.validateStringArgument(args, 0, "eventType");
+			Log.i(TAG, "fire custom window event (from js) of type " + eventType);
+			fireWindowEvent(eventType, new JSONObject("{\"message\": \"custom event from cordova app\"}"));
+			callbackContext.success();
+		} catch (Exception e) {
+			Log.e(TAG, "NITManager :: Could not fire event: ", e);
+		}
     }
 
     /*
@@ -334,15 +332,15 @@ public class CDVNearIT extends CordovaPlugin {
 	 * @param args Cordova exec arguments
 	 * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void setProfileId(JSONArray args, CallbackContext callbackContext) throws Exception
-    {
-	    NITHelper.validateArgsCount(args, 1);
-
-	    String profileId = NITHelper.validateStringArgument(args, 0, "profileId");
-
-	    Log.i(TAG, "NITManager :: setProfileId(" + profileId + ")");
-	    NearItManager.getInstance().setProfileId(profileId);
-
+	public void setProfileId(JSONArray args, CallbackContext callbackContext) throws Exception {
+		try {
+			NITHelper.validateArgsCount(args, 1);
+	    	String profileId = NITHelper.validateStringArgument(args, 0, "profileId");
+	    	Log.i(TAG, "NITManager :: setProfileId(" + profileId + ")");
+	    	NearItManager.getInstance().setProfileId(profileId);
+		} catch(Exception e) {
+			Log.e(TAG, "NITManager :: Could not setProfileId");
+		}
     }
 
     /*
@@ -386,17 +384,13 @@ public class CDVNearIT extends CordovaPlugin {
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void setUserData(JSONArray args, CallbackContext callbackContext) throws Exception
-    {
+    public void setUserData(JSONArray args, CallbackContext callbackContext) throws Exception {
     	try {
 			NITHelper.validateArgsCount(args, 2);
-
 			String key = NITHelper.validateStringArgument(args, 0, "key");
 			String value = NITHelper.validateNullableStringArgument(args, 1, "value");
-
 			Log.d(TAG, "NITManager :: setUserData(" + key + ", " + value + ")");
 			NearItManager.getInstance().setUserData(key, value);
-
 		} catch (Exception e) {
 			Log.e(TAG, "NITManager :: Could not setUserData");
 		}
@@ -410,13 +404,10 @@ public class CDVNearIT extends CordovaPlugin {
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void setMultichoiceUserData(JSONArray args, CallbackContext callbackContext) throws Exception
-    {
+    public void setMultichoiceUserData(JSONArray args, CallbackContext callbackContext) throws Exception {
     	try {
 			NITHelper.validateArgsCount(args, 2);
-
 			NearMultipleChoiceDataPoint multiChoiceData = null;
-
 			String key = NITHelper.validateStringArgument(args, 0, "key");
 			HashMap<String, Boolean> values = NITHelper.validateMapArgument(args, 1, "values");
 
@@ -426,7 +417,6 @@ public class CDVNearIT extends CordovaPlugin {
 			}
 
 			NearItManager.getInstance().setUserData(key, multiChoiceData);
-
 		} catch (Exception e) {
     		Log.e(TAG, "NITManager :: Could not setUserData: ", e);
 		}
@@ -445,8 +435,7 @@ public class CDVNearIT extends CordovaPlugin {
      * @param callbackContext Cordova callback context
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void sendUserFeedback(JSONArray args, final CallbackContext callbackContext) throws Exception
-    {
+    public void sendUserFeedback(JSONArray args, final CallbackContext callbackContext) throws Exception {
 
         if (args.length() < 2) {
             throw new Exception("Wrong number of arguments! expected at least 2");
@@ -456,34 +445,38 @@ public class CDVNearIT extends CordovaPlugin {
             throw new Exception("Wrong number of arguments! expected at max 3");
         }
 
-        String feedbackId = NITHelper.validateStringArgument(args, 0, "feedbackId");
-        int rating        = args.getInt(1);
-				
-        if (rating < 0 || rating > 5) {
-					throw new Exception("Invalid rating parameter (must be an integer between 0 and 5)");
-        }
-				
-				String comment = "";
-	    	if (args.length() == 3) {
-		    	comment = args.getString(2);
-	    	}
+		try {
+			String feedbackId = NITHelper.validateStringArgument(args, 0, "feedbackId");
+			int rating        = args.getInt(1);
+					
+			if (rating < 0 || rating > 5) {
+						throw new Exception("Invalid rating parameter (must be an integer between 0 and 5)");
+			}
+					
+					String comment = "";
+				if (args.length() == 3) {
+					comment = args.getString(2);
+				}
 
-	    Log.d(TAG, "NITManager :: sendUserFeedback(" + feedbackId + ", " + rating + ", " + comment + ")");
+			Log.d(TAG, "NITManager :: sendUserFeedback(" + feedbackId + ", " + rating + ", " + comment + ")");
 
-	    Feedback feedback = NITHelper.feedbackFromBase64(feedbackId);
-	    FeedbackEvent event = new FeedbackEvent(feedback, rating, comment);
+			Feedback feedback = NITHelper.feedbackFromBase64(feedbackId);
+			FeedbackEvent event = new FeedbackEvent(feedback, rating, comment);
 
-        NearItManager.getInstance().sendEvent(event, new NearITEventHandler() {
-	        @Override
-	        public void onSuccess() {
-		        callbackContext.success();
-	        }
+			NearItManager.getInstance().sendEvent(event, new NearITEventHandler() {
+				@Override
+				public void onSuccess() {
+					callbackContext.success();
+				}
 
-	        @Override
-	        public void onFail(int i, String error) {
-		        callbackContext.error(error);
-	        }
-        });
+				@Override
+				public void onFail(int i, String error) {
+					callbackContext.error(error);
+				}
+			});
+		} catch (Exception e) {
+			Log.e(TAG, "NITManager :: Could not send feedback: ", e);
+		}
     }
 
     /*
@@ -496,8 +489,7 @@ public class CDVNearIT extends CordovaPlugin {
 	    cordova.exec(successCb, errorCb, "nearit", "getCoupons", []);
 	 </pre></code>
 	 */
-	public void getCoupons(JSONArray args, final CallbackContext callbackContext) throws Exception
-	{
+	public void getCoupons(JSONArray args, final CallbackContext callbackContext) throws Exception {
 		Log.d(TAG, "NITManager :: getCoupons()");
 
 		NearItManager.getInstance().getCoupons(new CouponListener() {
@@ -543,12 +535,16 @@ public class CDVNearIT extends CordovaPlugin {
 			throw new Exception("Wrong number of arguments! expected 'eventKey' arg");
 		}
 
-		// Retrieve 'eventKey' param
-		final String eventKey = NITHelper.validateStringArgument(args, 0, "eventKey");
+		try {
+			// Retrieve 'eventKey' param
+			final String eventKey = NITHelper.validateStringArgument(args, 0, "eventKey");
 
-		// Trigger In-app Event
-		Log.d(TAG, "NITManager :: triggerInAppEvent()");
-		NearItManager.getInstance().triggerInAppEvent(eventKey);
+			// Trigger In-app Event
+			Log.d(TAG, "NITManager :: triggerInAppEvent()");
+			NearItManager.getInstance().triggerInAppEvent(eventKey);
+		} catch(Exception e) {
+			Log.e(TAG, "NITManager :: Could not trigger event: ", e);
+		}
 	}
 
     /*
@@ -564,15 +560,14 @@ public class CDVNearIT extends CordovaPlugin {
      * @throws Exception if there is any validation error or other kind of exception
      */
     public void sendTrackingWithRecipeIdForEventReceived(JSONArray args, CallbackContext callbackContext)
-		    throws Exception
-    {
-
-		NITHelper.validateArgsCount(args, 1);
-
-		final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
-
-		this.sendTracking(trackingInfoJsonString, Recipe.RECEIVED);
-
+		    throws Exception {
+		try {
+			NITHelper.validateArgsCount(args, 1);
+			final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
+			this.sendTracking(trackingInfoJsonString, Recipe.RECEIVED);
+		} catch (Exception e) {
+			Log.e(TAG, "NITManager :: Could not send tracking: ", e);
+		}
     }
 
 	/**
@@ -583,32 +578,33 @@ public class CDVNearIT extends CordovaPlugin {
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void sendTrackingWithRecipeIdForEventOpened(JSONArray args, CallbackContext callbackContext) throws Exception
-    {
+    public void sendTrackingWithRecipeIdForEventOpened(JSONArray args, CallbackContext callbackContext) throws Exception {
+		try {
+			NITHelper.validateArgsCount(args, 1);
+			final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
+			this.sendTracking(trackingInfoJsonString, Recipe.OPENED);
+		} catch (Exception e) {
+			Log.e(TAG, "NITManager :: Could not send tracking: ", e);
+		}
 
-	    NITHelper.validateArgsCount(args, 1);
-
-	    final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
-
-	    this.sendTracking(trackingInfoJsonString, Recipe.OPENED);
     }
 
 	/**
      * Track CTA tapped event
      * <code><pre>
-        cordova.exec("nearit", "sendTrackingForCTATapped", [trackingInfo]);
+        cordova.exec("nearit", "sendTrackingForEventCTATapped", [trackingInfo]);
     </pre></code>
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-	public void sendTrackingForCTATapped(JSONArray args, CallbackContext callbackContext) throws Exception
-	{
-
-		NITHelper.validateArgsCount(args, 12);
-
-	    final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
-
-	    this.sendTracking(trackingInfoJsonString, Recipe.CTA_TAPPED);
+	public void sendTrackingForEventCTATapped(JSONArray args, CallbackContext callbackContext) throws Exception {
+		try {
+			NITHelper.validateArgsCount(args, 12);
+			final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
+			this.sendTracking(trackingInfoJsonString, Recipe.CTA_TAPPED);
+		} catch (Exception e) {
+			Log.e(TAG, "NITManager :: Could not send tracking: ", e);
+		}
 	}
 
     /**
@@ -619,25 +615,26 @@ public class CDVNearIT extends CordovaPlugin {
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void sendTrackingWithRecipeIdForCustomEvent(JSONArray args, CallbackContext callbackContext) throws Exception
-    {
-
-	    NITHelper.validateArgsCount(args, 12);
-
-	    final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
-	    final String eventName = NITHelper.validateStringArgument(args, 1, "eventName");
-
-		this.sendTracking(trackingInfoJsonString, eventName);
+    public void sendTrackingWithRecipeIdForCustomEvent(JSONArray args, CallbackContext callbackContext) throws Exception {
+		try {
+			NITHelper.validateArgsCount(args, 12);
+			final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
+			final String eventName = NITHelper.validateStringArgument(args, 1, "eventName");
+			this.sendTracking(trackingInfoJsonString, eventName);
+		} catch(Exception e) {
+			Log.e(TAG, "NITManager :: Could not send tracking: ", e);
+		}
 
     }
 
     private void sendTracking(final String trackingInfoBase64, final String eventName) throws Exception {
-
-		final TrackingInfo trackingInfo = trackingInfoFromBase64(trackingInfoBase64);
-
-		Log.d(TAG, "NITManager :: track event (" + eventName + ") with trackingInfo (" + trackingInfoBase64 + ")");
-
-		NearItManager.getInstance().sendTracking(trackingInfo, eventName);
+		try {
+			final TrackingInfo trackingInfo = trackingInfoFromBase64(trackingInfoBase64);
+			Log.d(TAG, "NITManager :: track event (" + eventName + ") with trackingInfo (" + trackingInfoBase64 + ")");
+			NearItManager.getInstance().sendTracking(trackingInfo, eventName);
+		} catch (Exception e) {
+			Log.e(TAG, "NITManager :: Could not send tracking: ", e);
+		}
 	}
 
     /*
@@ -652,8 +649,7 @@ public class CDVNearIT extends CordovaPlugin {
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void startRadar(JSONArray args, CallbackContext callbackContext) throws Exception
-    {
+	public void startRadar(JSONArray args, CallbackContext callbackContext) throws Exception {
 	    Log.d(TAG, "NITManager :: start");
 	    NearItManager.getInstance().startRadar();
     }
@@ -666,8 +662,7 @@ public class CDVNearIT extends CordovaPlugin {
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void stopRadar(JSONArray args, CallbackContext callbackContext) throws Exception
-    {
+    public void stopRadar(JSONArray args, CallbackContext callbackContext) throws Exception {
 	    Log.d(TAG, "NITManager :: stop");
 	    NearItManager.getInstance().stopRadar();
     }
@@ -681,24 +676,18 @@ public class CDVNearIT extends CordovaPlugin {
      * @param callbackContext Cordova callback context
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void permissionRequest(JSONArray args, CallbackContext callbackContext) throws Exception
-    {
+    public void permissionRequest(JSONArray args, CallbackContext callbackContext) throws Exception {
         Log.d(TAG, "NITManager :: request permission to the user");
-
         // PermissionsActivity.run(/* {package} */.MainActivity.getInstance());
-
         callbackContext.success();
     }
 
     /**
      * @deprecated no need to refresh recipe. This is done automagically by the native SDK
      */
-    public void refreshRecipes(JSONArray args, final CallbackContext callbackContext) throws Exception
-    {
-
+    public void refreshRecipes(JSONArray args, final CallbackContext callbackContext) throws Exception {
 	    Log.i(TAG, "NITManager :: refreshing recipes");
 	    NearItManager.getInstance().refreshConfigs(new RecipeRefreshListener() {
-
 		    @Override
 		    public void onRecipesRefresh() {
 			    callbackContext.success();
@@ -708,7 +697,6 @@ public class CDVNearIT extends CordovaPlugin {
 		    public void onRecipesRefreshFail() {
 			    callbackContext.error("Could not refresh recipes");
 		    }
-
 	    });
     }
 
