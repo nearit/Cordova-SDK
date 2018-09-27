@@ -451,6 +451,10 @@
 
 }
 
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    [[NITManager defaultManager] application:app openURL:url options:options];
+}
+
 #ifdef NEARIT_USE_LOCATION
 // MARK: - Location Manager Handling
 
