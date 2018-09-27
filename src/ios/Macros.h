@@ -49,3 +49,4 @@
 #endif
 
 #define IS_EMPTY(v) (v == nil || [v length] <= 0)
+#define IS_EMPTY_DICTIONARY(v) (v == nil || [v count] == 0)
