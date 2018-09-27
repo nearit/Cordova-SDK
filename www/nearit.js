@@ -262,7 +262,7 @@ NearIT.prototype.trackOpenedEvent = function(trackingInfo, successCallback, erro
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.trackCTATappedEvent = function(trackingInfo, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingForCTATapped", [trackingInfo]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingForEventCTATapped", [trackingInfo]);
 };
 
 /**
