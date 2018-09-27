@@ -73,7 +73,7 @@
         <pod name="NearITSDK" 
              configurations="release,debug"
              git="https://github.com/nearit/iOS-SDK"
-             tag="2.5.5" />
+             tag="2.9.5" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="NearIT">
