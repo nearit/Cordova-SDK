@@ -171,10 +171,10 @@ __weak CDVNearIT *instance = nil;
 /**
  * Reset NearIT profile and user data
  * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "resetProfile", []);
+    cordova.exec(successCb, errorCb, "nearit", "resetProfileId", []);
 </pre></code>
  */
-- (void)resetProfile:( CDVInvokedUrlCommand* _Nonnull )command
+- (void)resetProfileId:( CDVInvokedUrlCommand* _Nonnull )command
 {
     NITLogD(TAG, @"NITManager :: resetProfile");
  
@@ -322,17 +322,17 @@ __weak CDVNearIT *instance = nil;
     CDVPluginResult* pluginResult = nil;
 
     NSString* key   = [[command arguments] objectAtIndex:0];
-    NSDictionary* value = [[command arguments] objectAtIndex:1];
+    NSDictionary* values = [[command arguments] objectAtIndex:1];
 
     if (IS_EMPTY(key)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                          messageAsString:@"Missing key parameter"];
-    } else if(IS_EMPTY(value)) {
+    } else if(IS_EMPTY_DICTIONARY(values)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                          messageAsString:@"Missing value parameter"];
     } else {
 
-        NITLogD(TAG, @"NITManager :: setUserDataWithKey(%@, %@)", key, value);
+        NITLogD(TAG, @"NITManager :: setUserDataWithKey(%@, %@)", key, values);
         [[NITManager defaultManager] setUserDataWithKey:key multiValue:values];
         
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -537,20 +537,12 @@ __weak CDVNearIT *instance = nil;
 #pragma mark - Tracking
 
 /**
- * DEPRECATED
- */
-- (void)sendTrackingWithRecipeIdForEventNotified:( CDVInvokedUrlCommand* _Nonnull )command
-{
-    [self sendTrackingWithRecipeIdForEventReceived:command];
-}
-
-/**
  * Track an event of type "NITRecipeReceived"
  * <code><pre>
     cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
 </pre></code>
  */
-- (void)sendTrackingWithRecipeIdForEventNotified:( CDVInvokedUrlCommand* _Nonnull )command
+- (void)sendTrackingWithRecipeIdForEventReceived:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 
@@ -569,20 +561,36 @@ __weak CDVNearIT *instance = nil;
 }
 
 /**
- * DEPRECATED
- */
-- (void)sendTrackingWithRecipeIdForEventEngaged:( CDVInvokedUrlCommand* _Nonnull )command
-{
-    [self sendTrackingWithRecipeIdForEventOpened:command];
-}
-
-/**
  * Track an event of type "NITRecipeOpened"
  * <code><pre>
     cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
 </pre></code>
  */
 - (void)sendTrackingWithRecipeIdForEventOpened:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+
+    NSString* trackingInfoB64 = [[command arguments] objectAtIndex:0];
+
+    if (IS_EMPTY(trackingInfoB64)) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                         messageAsString:@"Missing trackingInfo parameter"];
+    } else {
+        [self sendTrackingWithTrackingInfo:trackingInfoB64 eventName:NITRecipeOpened];
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    }
+
+    [[self commandDelegate] sendPluginResult:pluginResult callbackId:[command callbackId]];
+}
+
+/**
+ * Track an event of type "NITRecipeCtaTapped"
+ * <code><pre>
+    cordova.exec(successCb, errorCb, "nearit", "sendTrackingForEventCTATapped", [trackingInfo]);
+</pre></code>
+ */
+- (void)sendTrackingForEventCTATapped:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 
@@ -593,7 +601,7 @@ __weak CDVNearIT *instance = nil;
                                          messageAsString:@"Missing trackingInfo parameter"];
     } else {
         [self sendTrackingWithTrackingInfo:trackingInfoJsonString
-                                 eventName:NITRecipeOpened];
+                                 eventName:NITRecipeCtaTapped];
 
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
