@@ -69,10 +69,10 @@
 - (BOOL)customapplication:(UIApplication *)application
         didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-
     [NITManager setupWithApiKey:NEARIT_APIKEY];
     [NITManager setFrameworkName:@"cordova"];
     [[NITManager defaultManager] setDelegate:self];
+    UNUserNotificationCenter.currentNotificationCenter.delegate = self;
 
 #ifdef DEBUG
     [NITLog setLogEnabled:YES];
