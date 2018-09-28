@@ -222,12 +222,6 @@ public class CDVNearIT extends CordovaPlugin {
 		fireWindowEvent(event, args, trackingInfo);
 	}
 
-	public void fireWindowEvent(CDVEventType event, Map<String, Object> args, TrackingInfo trackingInfo, String message, boolean fromUserAction) {
-		args.put("fromUserAction", fromUserAction);
-
-		fireWindowEvent(event, args, trackingInfo, message);
-	}
-
 	public void fireWindowEvent(CDVEventType event, String message) {
 		Map<String, Object> args = new HashMap<String, Object>();
 
