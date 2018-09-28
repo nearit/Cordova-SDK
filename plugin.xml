@@ -82,23 +82,6 @@
             </feature>
         </config-file>
 
-        <!-- Required permissions strings -->
-        <config-file platform="ios" target="*-Info.plist" parent="NSBluetoothPeripheralUsageDescription">
-            <string>This app uses Bluetooth communication to detect nearby beacons</string>
-        </config-file>
-        
-        <config-file platform="ios" target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
-	        <string>Location access &apos;Always&apos; is required for Geofences and Beacons to work</string>
-        </config-file>
-        
-        <config-file platform="ios" target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
-	        <string>Location access &apos;Always&apos; is required for Geofences and Beacons to work</string>
-        </config-file>
-        
-        <config-file platform="ios" target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
-	        <string>Location access &apos;Always&apos; is required for Geofences and Beacons to work</string>
-        </config-file>
-
         <!-- required background modes -->
         <config-file platform="ios" target="*-Info.plist" parent="UIBackgroundModes">
             <array>
