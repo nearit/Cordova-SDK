@@ -295,12 +295,9 @@ __weak CDVNearIT *instance = nil;
     if (IS_EMPTY(key)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                          messageAsString:@"Missing key parameter"];
-    } else if(IS_EMPTY(value)) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                         messageAsString:@"Missing value parameter"];
     } else {
 
-        NITLogD(TAG, @"NITManager :: setUserDataWithKey(%@, %@)", key, value);
+        //NITLogD(TAG, @"NITManager :: setUserDataWithKey(%@, %@)", key, value);
         [[NITManager defaultManager] setUserDataWithKey:key value:value];
         
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -322,17 +319,14 @@ __weak CDVNearIT *instance = nil;
     CDVPluginResult* pluginResult = nil;
 
     NSString* key   = [[command arguments] objectAtIndex:0];
-    NSDictionary* values = [[command arguments] objectAtIndex:1];
+    NSMutableDictionary* values = [[command arguments] objectAtIndex:1];
+    // NSMutableDictionary* data = nil;
 
     if (IS_EMPTY(key)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                          messageAsString:@"Missing key parameter"];
-    } else if(IS_EMPTY_DICTIONARY(values)) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                         messageAsString:@"Missing value parameter"];
     } else {
 
-        NITLogD(TAG, @"NITManager :: setUserDataWithKey(%@, %@)", key, values);
         [[NITManager defaultManager] setUserDataWithKey:key multiValue:values];
         
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
