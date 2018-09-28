@@ -43,6 +43,9 @@
         <engine name="cordova-android" version=">=6.2.3" />
     </engines>
 
+    <hook type="after_plugin_install" src="hooks/before_prepare.js" />
+    <hook type="after_prepare" src="hooks/before_prepare.js" />
+
     <js-module src="www/nearit.js" name="nearit">
         <runs />
         <clobbers target="nearit" />
@@ -68,7 +71,7 @@
             NearIT iOS SDK dependency
             https://github.com/nearit/Near-iOS-SDK
             Supporting iOS 9.0 and later
-            Near-iOS-SDK release 2.5.5
+            Near-iOS-SDK release 2.9.5
         -->
         <pod name="NearITSDK" 
              configurations="release,debug"
@@ -80,23 +83,6 @@
                 <param name="ios-package" value="CDVNearIT" />
                 <param name="onload" value="true" />
             </feature>
-        </config-file>
-
-        <!-- Required permissions strings -->
-        <config-file platform="ios" target="*-Info.plist" parent="NSBluetoothPeripheralUsageDescription">
-            <string>This app uses Bluetooth communication to detect nearby beacons</string>
-        </config-file>
-        
-        <config-file platform="ios" target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
-	        <string>Location access &apos;Always&apos; is required for Geofences and Beacons to work</string>
-        </config-file>
-        
-        <config-file platform="ios" target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
-	        <string>Location access &apos;Always&apos; is required for Geofences and Beacons to work</string>
-        </config-file>
-        
-        <config-file platform="ios" target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
-	        <string>Location access &apos;Always&apos; is required for Geofences and Beacons to work</string>
         </config-file>
 
         <!-- required background modes -->
@@ -140,13 +126,6 @@
 
     <!--    Android platform definition    -->
     <platform name="android">
-        
-        <!--    Add API KEY meta-data entry to Manifest. Its value refers to string resource    -->
-        <config-file target="AndroidManifest.xml" parent="/manifest/application/">
-            <meta-data
-                android:name="near_api_key"
-                android:value="@string/nearit_api_key" />
-        </config-file>
 
         <!--    Add package to config.xml   -->
         <config-file target="res/xml/config.xml" parent="/*">
@@ -174,5 +153,7 @@
         <framework src="src/android/nearit.gradle" custom="true" type="gradleReference" />
 
     </platform>
+
+    <hook type="after_prepare" src="hooks/after_prepare_android.js"/>
 
 </plugin>

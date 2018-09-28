@@ -27,7 +27,8 @@
 //  Near Obj Sample
 //
 //  Created by Francesco Leoni on 07/07/17.
-//  Copyright © 2017 Francesco Leoni. All rights reserved.
+//  Modified by Federico Boschini on 28/09/18.
+//  Copyright © 2017 NearIT. All rights reserved.
 //
 
 #define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
@@ -35,18 +36,6 @@
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
-
-#ifdef NEARIT_PUSH
-#define NEARIT_USE_PUSH_NOTIFICATION
-#endif
-
-#ifdef NEARIT_GEO
-#define NEARIT_USE_LOCATION
-#else
-#ifdef NEARIT_PROXIMITY
-#define NEARIT_USE_LOCATION
-#endif
-#endif
 
 #define IS_EMPTY(v) (v == nil || [v length] <= 0)
 #define IS_EMPTY_DICTIONARY(v) ([v count] == 0)
