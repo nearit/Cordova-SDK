@@ -25,6 +25,8 @@ package it.near.sdk.cordova.android;
  */
 
 import android.util.Base64;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -54,6 +56,7 @@ import it.near.sdk.recipes.NearITEventHandler;
 import it.near.sdk.recipes.RecipeRefreshListener;
 import it.near.sdk.recipes.models.Recipe;
 import it.near.sdk.trackings.TrackingInfo;
+import it.near.sdk.utils.NearUtils;
 
 import static it.near.sdk.recipes.models.Recipe.CTA_TAPPED;
 import static it.near.sdk.recipes.models.Recipe.OPENED;
@@ -70,6 +73,12 @@ public class CDVNearIT extends CordovaPlugin {
 
 	public static CDVNearIT getInstance() {
 		return mInstance;
+	}
+
+	public static void onPostCreate(Context context, Intent intent) {
+		if (NearUtils.carriesNearItContent(intent)) {
+			NearUtils.parseContents(intent, new CDVNearITContentListener());
+		}
 	}
 
 	@Override
