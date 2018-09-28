@@ -683,6 +683,10 @@ public class CDVNearIT extends CordovaPlugin {
 	    });
     }
 
+	public static void disableDefaultRangingNotifications() {
+        NearItManager.getInstance().disableDefaultRangingNotifications();
+    }
+
     // Utils
 	private static String trackingInfoToBase64(final TrackingInfo trackingInfo) throws Exception {
 		// JSONify trackingInfo

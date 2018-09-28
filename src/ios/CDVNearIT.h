@@ -109,5 +109,6 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 - (void)stopRadar:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)permissionRequest:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)refreshRecipes:( CDVInvokedUrlCommand* _Nonnull )command DEPRECATED_ATTRIBUTE;
+- (void)disableDefaultRangingNotifications;
 
 @end

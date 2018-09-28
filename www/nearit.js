@@ -303,7 +303,12 @@ NearIT.prototype.refreshRecipes = function(successCallback, errorCallback) {
 };
 
 /*
- *
+ * Disable Default Ranging Notifications
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
  */
+NearIT.prototype.disableDefaultRangingNotifications = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "disableDefaultRangingNotifications", []);
+};
 
 module.exports = new NearIT();

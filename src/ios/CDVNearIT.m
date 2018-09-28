@@ -708,4 +708,9 @@ __weak CDVNearIT *instance = nil;
     }];
 }
 
+// MARK: Customization
+- (void)disableDefaultRangingNotifications {
+    [NITManager defaultManager].showForegroundNotification = false;
+}
+
 @end
