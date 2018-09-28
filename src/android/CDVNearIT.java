@@ -134,8 +134,6 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.startRadar(args, callbackContext);
 					} else if (action.equals("stopRadar")) {
 						CDVNearIT.this.stopRadar(args, callbackContext);
-					} else if (action.equals("permissionRequest")) {
-						CDVNearIT.this.permissionRequest(args, callbackContext);
 					} else if (action.equals("refreshRecipes")) {
 						CDVNearIT.this.refreshRecipes(args, callbackContext);
 					} else {
@@ -665,21 +663,6 @@ public class CDVNearIT extends CordovaPlugin {
     public void stopRadar(JSONArray args, CallbackContext callbackContext) throws Exception {
 	    Log.d(TAG, "NITManager :: stop");
 	    NearItManager.getInstance().stopRadar();
-    }
-
-    /**
-     * Manually ask for permission
-     * <code><pre>
-        cordova.exec(successCb, errorCb, "nearit", "permissionRequest", []);
-     </pre></code>
-     * @param args Cordova exec arguments
-     * @param callbackContext Cordova callback context
-     * @throws Exception if there is any validation error or other kind of exception
-     */
-    public void permissionRequest(JSONArray args, CallbackContext callbackContext) throws Exception {
-        Log.d(TAG, "NITManager :: request permission to the user");
-        // PermissionsActivity.run(/* {package} */.MainActivity.getInstance());
-        callbackContext.success();
     }
 
     /**

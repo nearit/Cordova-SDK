@@ -40,13 +40,8 @@
 typedef NS_ENUM(NSUInteger, CDVEventType) {
     CDVNE_Null,
 
-    CDVNE_PushNotification_Granted,
-    CDVNE_PushNotification_NotGranted,
     CDVNE_PushNotification_Remote,
     CDVNE_PushNotification_Local,
-
-    CDVNE_Location_Granted,
-    CDVNE_Location_NotGranted,
 
     CDVNE_Event_Simple,
     CDVNE_Event_CustomJSON,

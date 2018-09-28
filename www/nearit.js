@@ -45,9 +45,6 @@ function NearIT() {
         "CDVNE_PushNotification_Remote":     "pushReceived.nearit",
         "CDVNE_PushNotification_Local":      "pushReceived.nearit",
 
-        "CDVNE_Location_Granted":    "locationGranted.nearit",
-        "CDVNE_Location_NotGranted": "locationDenied.nearit",
-
         "CDVNE_Event_Simple":     "eventSimple.nearit",
         "CDVNE_Event_CustomJSON": "eventJSON.nearit",
         "CDVNE_Event_Content":    "eventContent.nearit",
@@ -296,15 +293,6 @@ NearIT.prototype.startRadar = function(successCallback, errorCallback) {
  */
 NearIT.prototype.stopRadar = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "stopRadar", []);
-};
-
-/**
- * Request permission to push notification and geolocation services
- * @param {Function} successCallback The function to call when the call is successful
- * @param {Function} errorCallback The function to call when there is an error
- */
-NearIT.prototype.permissionRequest = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "permissionRequest", []);
 };
 
 /**

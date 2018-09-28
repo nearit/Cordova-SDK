@@ -689,25 +689,6 @@ __weak CDVNearIT *instance = nil;
 }
 
 /**
- * Manually ask for permission
- * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "permissionRequest", []);
- </pre></code>
- */
-- (void)permissionRequest:( CDVInvokedUrlCommand* _Nonnull )command
-{
-    CDVPluginResult* pluginResult = nil;
-
-    NITLogD(TAG, @"NITManager :: request permission to the user");
-    [(AppDelegate*)[[UIApplication sharedApplication] delegate] permissionRequest];
-
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-
-    [[self commandDelegate] sendPluginResult:pluginResult
-                                  callbackId:[command callbackId]];
-}
-
-/**
  * DEPRECATED
  */
 - (void)refreshRecipes:( CDVInvokedUrlCommand* _Nonnull )command
