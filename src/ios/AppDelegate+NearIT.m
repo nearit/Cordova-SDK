@@ -27,6 +27,7 @@
 //  NearITSDK
 //
 //  Created by Fabio Cigliano on 25/07/17.
+//  Modified by Federico Boschini on 28/09/18.
 //  Copyright © 2017 NearIT. All rights reserved.
 //
 
@@ -74,52 +75,18 @@
     [[NITManager defaultManager] setDelegate:self];
     UNUserNotificationCenter.currentNotificationCenter.delegate = self;
 
-#ifdef DEBUG
-    [NITLog setLogEnabled:YES];
-
-    NITLogI(TAG, @"setup with: geofencing=%i, push=%i, proximity=%i, showBackgroundNotification=%i",
-
-#ifdef NEARIT_GEO
-          1,
-#else
-          0,
-#endif
-
-#ifdef NEARIT_PUSH
-          1,
-#else
-          0,
-#endif
-
-#ifdef NEARIT_PROXIMITY
-          1,
-#else
-          0,
-#endif
-
-#ifdef NEARIT_SHOW_BACKGROUND_NOTIFICATION
-            1
-#else
-            0
-#endif
-
-    );
-#endif
-
-    /*
-     * By default the SDK generates automatic background local notifications,
-     * set nearit-showBackgroundNotification preference to false
-     * within your config.xml if you want to disable the automatic notificions
-     */
-    [NITManager defaultManager].showBackgroundNotification =
-#ifdef NEARIT_SHOW_BACKGROUND_NOTIFICATION
-                                                    YES;
-#else
-                                                    NO;
-#endif
+    #ifdef DEBUG
+        [NITLog setLogEnabled:YES];
+    #endif
 
     // Setup Background Fetch Interval
-    [application setMinimumBackgroundFetchInterval:7200]; // 2 hours
+    [application setMinimumBackgroundFetchInterval:
+        #ifdef NEARIT_MIN_BACKGROUND_FETCH_INTERVAL
+            NEARIT_MIN_BACKGROUND_FETCH_INTERVAL
+        #else
+            7200 // 2 hours
+        #endif
+    ];
     
     // This line at runtime does not go into an infinite loop
     // because it will call the real method instead of ours.
