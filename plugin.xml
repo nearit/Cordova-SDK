@@ -68,7 +68,7 @@
             NearIT iOS SDK dependency
             https://github.com/nearit/Near-iOS-SDK
             Supporting iOS 9.0 and later
-            Near-iOS-SDK release 2.5.5
+            Near-iOS-SDK release 2.9.5
         -->
         <pod name="NearITSDK" 
              configurations="release,debug"
@@ -123,13 +123,6 @@
 
     <!--    Android platform definition    -->
     <platform name="android">
-        
-        <!--    Add API KEY meta-data entry to Manifest. Its value refers to string resource    -->
-        <config-file target="AndroidManifest.xml" parent="/manifest/application/">
-            <meta-data
-                android:name="near_api_key"
-                android:value="@string/nearit_api_key" />
-        </config-file>
 
         <!--    Add package to config.xml   -->
         <config-file target="res/xml/config.xml" parent="/*">
