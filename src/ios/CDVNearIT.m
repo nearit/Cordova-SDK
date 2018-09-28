@@ -58,13 +58,8 @@ __weak CDVNearIT *instance = nil;
 
     switch(eventType) {
 
-        case CDVNE_PushNotification_Granted:    result =  @"pushGranted.nearit"; break;
-        case CDVNE_PushNotification_NotGranted: result =   @"pushDenied.nearit"; break;
         case CDVNE_PushNotification_Remote:     result = @"pushReceived.nearit"; break;
         case CDVNE_PushNotification_Local:      result = @"pushReceived.nearit"; break;
-
-        case CDVNE_Location_Granted:    result = @"locationGranted.nearit"; break;
-        case CDVNE_Location_NotGranted: result =  @"locationDenied.nearit"; break;
 
         case CDVNE_Event_Simple:     result =   @"eventSimple.nearit"; break;
         case CDVNE_Event_CustomJSON: result =     @"eventJSON.nearit"; break;
