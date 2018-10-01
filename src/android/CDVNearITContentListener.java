@@ -124,7 +124,7 @@ public class CDVNearITContentListener implements ContentsListener {
   public void gotSimpleNotification(SimpleNotification notification, TrackingInfo trackingInfo)
   {
     Map<String, Object> args = new HashMap<String, Object>();
-
+    
     forwardEvent(
             CDVNearIT.CDVEventType.CDVNE_Event_Simple,
             args,

@@ -24,29 +24,23 @@ package it.near.sdk.cordova.android;
     SOFTWARE.
  */
 
-import android.util.Base64;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import it.near.sdk.NearItManager;
 import it.near.sdk.communication.OptOutNotifier;
 import it.near.sdk.operation.NearItUserProfile;
-import it.near.sdk.operation.UserDataNotifier;
 import it.near.sdk.operation.values.NearMultipleChoiceDataPoint;
 import it.near.sdk.reactions.couponplugin.CouponListener;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
@@ -58,16 +52,12 @@ import it.near.sdk.recipes.models.Recipe;
 import it.near.sdk.trackings.TrackingInfo;
 import it.near.sdk.utils.NearUtils;
 
-import static it.near.sdk.recipes.models.Recipe.CTA_TAPPED;
-import static it.near.sdk.recipes.models.Recipe.OPENED;
-import static it.near.sdk.recipes.models.Recipe.RECEIVED;
-
 /**
  * This class implements NearIT plugin interface for Android.
  */
 public class CDVNearIT extends CordovaPlugin {
 
-	private final String TAG = "CDVNearIT";
+	private static final String TAG = "CDVNearIT";
 
 	private static CDVNearIT mInstance = null;
 
@@ -169,14 +159,6 @@ public class CDVNearIT extends CordovaPlugin {
     {
         CDVNE_Null(""),
 
-        CDVNE_PushNotification_Granted("pushGranted.nearit"),
-        CDVNE_PushNotification_NotGranted("pushDenied.nearit"),
-        CDVNE_PushNotification_Remote("pushReceived.nearit"),
-        CDVNE_PushNotification_Local("pushReceived.nearit"),
-
-        CDVNE_Location_Granted("locationGranted.nearit"),
-        CDVNE_Location_NotGranted("locationDenied.nearit"),
-
         CDVNE_Event_Simple("eventSimple.nearit"),
         CDVNE_Event_CustomJSON("eventJSON.nearit"),
         CDVNE_Event_Content("eventContent.nearit"),
@@ -220,7 +202,13 @@ public class CDVNearIT extends CordovaPlugin {
 	}
 
 	public void fireWindowEvent(CDVEventType event, Map<String, Object> args, TrackingInfo trackingInfo) {
-		args.put("trackingInfo", trackingInfo);
+		String trackingInfoData = null;
+		try {
+			trackingInfoData = NITHelper.trackingInfoToBase64(trackingInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		args.put("trackingInfo", trackingInfoData);
 
 		fireWindowEvent(event, args);
 	}
@@ -689,22 +677,5 @@ public class CDVNearIT extends CordovaPlugin {
 	public static void disableDefaultRangingNotifications() {
         NearItManager.getInstance().disableDefaultRangingNotifications();
     }
-
-    // Utils
-	private static String trackingInfoToBase64(final TrackingInfo trackingInfo) throws Exception {
-		// JSONify trackingInfo
-		final String trackingInfoJson = new Gson().toJson(trackingInfo);
-
-		// Encode to base64
-		return Base64.encodeToString(trackingInfoJson.getBytes("UTF-8"), Base64.DEFAULT);
-	}
-
-	private static TrackingInfo trackingInfoFromBase64(final String trackingInfoBase64) throws Exception {
-		// Decode from base64
-		final String trackingInfoJsonString = new String(Base64.decode(trackingInfoBase64, Base64.DEFAULT), "UTF-8");
-
-		// DeJSONify trackingInfo
-		return new Gson().fromJson(trackingInfoJsonString, TrackingInfo.class);
-	}
 
 }
