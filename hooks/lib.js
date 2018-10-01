@@ -1,5 +1,7 @@
+#!/usr/bin/env node
 
 var fs = require("fs"),
+    plist = require("plist"),
     path = require("path"),
     assert = require('assert'),
     et = require('elementtree');
@@ -9,10 +11,13 @@ var preferenceMappingData = require('./config').preferenceMappingData;
 /**
  * @author "Mirco Cipriani"
  * @author "Fabio Cigliano"
+ * @author "Federico Boschini"
  * @created 24/07/17
+ * @modified 28/09/18
  * Original version took from:
  * @link https://raw.githubusercontent.com/mircoc/cordova-plugin-settings-hook/master/src/index.js
  */
+
 String.prototype.format = String.prototype.format || function (map) {
     var formatted = this;
     Object.keys(map).forEach(function (key) {
@@ -24,7 +29,6 @@ String.prototype.format = String.prototype.format || function (map) {
 };
 
 var lib = {
-
     /**
      * Parses a given file into an elementtree object
      */
@@ -107,34 +111,6 @@ var lib = {
     },
 
     /**
-     * Retrieves all configured xml for a specific platform/target/parent element
-     * nested inside a platforms config-file element within the config.xml.
-     * The config-file elements are then indexed by target|parent so if there are
-     * any config-file elements per platform that have the same target and parent,
-     * the last config-file element is used.
-     */
-    getConfigFilesByTargetAndParent: function (rootdir, platform) {
-        var configFileData = lib.getConfigXml(rootdir)
-            .findall('platform[@name=\'' + platform + '\']/config-file');
-
-        var result = {};
-
-        configFileData.forEach(function (item) {
-
-            var parent = item.attrib.parent;
-            //if parent attribute is undefined /* or */, set parent to top level elementree selector
-            if (!parent || parent === '/*' || parent === '*/') {
-                parent = './';
-            }
-            var key = item.attrib.target + '|' + parent;
-
-            result[key] = item;
-        });
-
-        return result;
-    },
-
-    /**
      * Retrieves the config.xml's pereferences for a given platform and parses them into JSON data
      * @param configData
      * @param platform
@@ -209,6 +185,34 @@ var lib = {
     },
 
     /**
+     * Retrieves all configured xml for a specific platform/target/parent element
+     * nested inside a platforms config-file element within the config.xml.
+     * The config-file elements are then indexed by target|parent so if there are
+     * any config-file elements per platform that have the same target and parent,
+     * the last config-file element is used.
+     */
+    getConfigFilesByTargetAndParent: function (rootdir, platform) {
+        var configFileData = lib.getConfigXml(rootdir)
+            .findall('platform[@name=\'' + platform + '\']/config-file');
+
+        var result = {};
+
+        configFileData.forEach(function (item) {
+
+            var parent = item.attrib.parent;
+            //if parent attribute is undefined /* or */, set parent to top level elementree selector
+            if (!parent || parent === '/*' || parent === '*/') {
+                parent = './';
+            }
+            var key = item.attrib.target + '|' + parent;
+
+            result[key] = item;
+        });
+
+        return result;
+    },
+
+    /**
      * Parses the config.xml's preferences and config-file elements for a given platform
      * @param platform
      * @returns {{}}
@@ -218,69 +222,6 @@ var lib = {
         lib.parsePreferences(rootdir, configData, platform, preferenceMappingData);
         lib.parseConfigFiles(rootdir, configData, platform);
         return configData;
-    },
-
-    /**
-     * Updates the AndroidManifest.xml target file with data from config.xml
-     * @param targetFile
-     * @param configItems
-     */
-    updateAndroidManifest: function (targetFile, configItems, forceRemove) {
-        var tempManifest = lib.parseElementtreeSync(targetFile),
-            root = tempManifest.getroot();
-
-        var cordovaApp = "application/activity/intent-filter/action[@android:name='android.intent.action.MAIN']/../..";
-        var mainActivity = root.find(cordovaApp);
-
-        configItems.forEach(function (item) {
-
-            var parentEl;
-            if (item.parent === "__cordovaMainActivity__") {
-                parentEl = mainActivity;
-            } else {
-                // if parent is not found on the root, child/grandchild nodes are searched
-                parentEl = root.find(item.parent) || root.find('*/' + item.parent);
-            }
-
-            var data = item.data,
-                childSelector = item.destination,
-                childEl;
-
-            if (!parentEl) {
-                return;
-            }
-
-            if (item.type === 'preference') {
-                parentEl.attrib[childSelector] = data.attrib['value'];
-            } else {
-                // since there can be multiple uses-permission elements, we need to select them by unique name
-                if (childSelector === 'uses-permission') {
-                    childSelector += '[@android:name=\'' + data.attrib['android:name'] + '\']';
-                }
-
-                childEl = parentEl.find(childSelector);
-                // if child element doesnt exist, create new element
-                if (!childEl) {
-                    childEl = new et.Element(item.destination);
-                    parentEl.append(childEl);
-                }
-
-                if (typeof data === "object") {
-                    // copy all config.xml data except for the generated _id property
-                    for (var key in data) {
-                        // skip loop if the property is from prototype
-                        if (!data.hasOwnProperty(key)) continue;
-
-                        if (key !== '_id') {
-                            childEl[key] = data[key];
-                        }
-                    }
-                }
-            }
-        });
-
-        fs.writeFileSync(targetFile, tempManifest.write({ indent: 4 }), 'utf-8');
-        console.log("* wrote AndroidManifest.xml: " + targetFile);
     },
 
     /**
@@ -305,45 +246,6 @@ var lib = {
         tempInfoPlist = tempInfoPlist.replace(/<string>[\s\r\n]*<\/string>/g, '<string></string>');
         fs.writeFileSync(targetFile, tempInfoPlist, 'utf-8');
         console.log("* wrote iOS Plist: " + targetFile);
-    },
-
-    updateAndroidClass: function (targetFile, configItems) {
-        if (!fs.existsSync(targetFile)) {
-            console.log("* skipping to process: " + path.basename(targetFile));
-            return false;
-        }
-
-        var content = fs.readFileSync(targetFile, 'utf-8');
-        var changed = false;
-
-        configItems.forEach(function (item) {
-            var name = item.data.attrib.name;
-            var value = item.data.attrib.value;
-
-            // try to remove the old line if formatted value is changed
-            var regexp = new RegExp('\{' + name + '\}.*\n.*\n\t? +(.*(boolean|String).* = (.*))\;', 'gi');
-            var line = regexp.exec(content);
-
-            var from_line = line[1];
-            var type = line[2];
-            var from_value = line[3];
-            var to_value = (type === 'String') ? "\"" + value + "\"" : value;
-
-            if (from_value != to_value) {
-                changed = true;
-
-                var to_line = from_line.replace(from_value, to_value);
-
-                content = content.replace(from_line, to_line);
-
-                console.log("* changed value: " + name + " = " + value);
-            }
-        });
-
-        if (changed) {
-            fs.writeFileSync(targetFile, content, 'utf-8');
-            console.log("* wrote Android " + path.basename(targetFile));
-        }
     },
 
     /**
@@ -426,55 +328,6 @@ var lib = {
         if (changed) {
             fs.writeFileSync(targetFile, headers, 'utf-8');
             console.log("* wrote iOS Prefix.pch header: " + targetFile);
-        }
-    },
-
-    replaceClassname: function (packagename, sourceFile, targetFile) {
-        var replace = "/* {package} */" + packagename;
-
-        assert(fs.existsSync(sourceFile), 'unable to find ' + sourceFile + ": are you running from main project dir?");
-        assert(fs.existsSync(targetFile), 'unable to find ' + targetFile + ": are you running from main project dir?");
-
-        var text = fs.readFileSync(sourceFile, 'utf-8');
-        var destinationText = fs.readFileSync(targetFile, 'utf-8');
-
-        var regexp = new RegExp('(\\/\\* {package} \\*\\/.*)(\\\\|;)', 'g');
-        var line = false;
-        var changed = false;
-
-        while (line = regexp.exec(text)) {
-
-            var idx1 = line[1].indexOf('.MainActivity');
-            if (idx1 > -1) {
-                line[1] = line[1].substr(0, idx1);
-            }
-
-            if (line[1] !== replace) {
-                changed = true;
-                text = text.replace(line[1], replace);
-            }
-        }
-
-        if (destinationText !== text) {
-            console.log("* wrote Android " + path.basename(targetFile));
-            fs.writeFileSync(targetFile, text, 'utf-8');
-        }
-    },
-
-    copyIfChanged: function (sourceFile, targetFile) {
-
-        assert(fs.existsSync(sourceFile), 'unable to find ' + sourceFile + ": are you running from main project dir?");
-
-        var sourceText = fs.readFileSync(sourceFile, 'utf-8');
-        var destinationText = false;
-
-        if (fs.existsSync(targetFile)) {
-            destinationText = fs.readFileSync(targetFile, 'utf-8');
-        }
-
-        if (destinationText !== sourceText) {
-            console.log("Wrote Android " + path.basename(targetFile));
-            fs.writeFileSync(targetFile, sourceText, 'utf-8');
         }
     },
 

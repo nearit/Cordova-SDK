@@ -27,6 +27,7 @@
 //  NearITSDK
 //
 //  Created by Fabio Cigliano on 25/07/17.
+//  Modified by Federic Boschini on 25/09/18.
 //  Copyright © 2017 NearIT. All rights reserved.
 //
 
@@ -39,13 +40,8 @@
 typedef NS_ENUM(NSUInteger, CDVEventType) {
     CDVNE_Null,
 
-    CDVNE_PushNotification_Granted,
-    CDVNE_PushNotification_NotGranted,
     CDVNE_PushNotification_Remote,
     CDVNE_PushNotification_Local,
-
-    CDVNE_Location_Granted,
-    CDVNE_Location_NotGranted,
 
     CDVNE_Event_Simple,
     CDVNE_Event_CustomJSON,
@@ -74,7 +70,7 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 #pragma mark - Profile Id
 
-- (void)resetProfile:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)resetProfileId:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)getProfileId:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)setProfileId:( CDVInvokedUrlCommand* _Nonnull )command;
 
@@ -85,23 +81,25 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 #pragma mark - User Data
 
 - (void)setUserData:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)setMultichoiceUserData:( CDVInvokedUrlCommand* _Nonnull )command;
 
 #pragma mark - Feedback
 
-- (void)sendUserFeedback:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)sendFeedback:( CDVInvokedUrlCommand* _Nonnull )command;
 
 #pragma mark - Coupon
 
 - (void)getCoupons:( CDVInvokedUrlCommand* _Nonnull )command;
 
-#pragma mark - Custom Trigger
+#pragma mark - In-app Event
 
 - (void)triggerEvent:( CDVInvokedUrlCommand* _Nonnull )command;
 
 #pragma mark - Tracking
 
-- (void)sendTrackingWithRecipeIdForEventNotified:( CDVInvokedUrlCommand* _Nonnull )command;
-- (void)sendTrackingWithRecipeIdForEventEngaged:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)sendTrackingWithRecipeIdForEventReceived:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)sendTrackingWithRecipeIdForEventOpened:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)sendTrackingForEventCTATapped:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)sendTrackingWithRecipeIdForCustomEvent:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)sendTrackingWithTrackingInfo:(NSString* _Nonnull) trackingInfoJsonString eventName: (NSString* _Nonnull) eventName;
 
@@ -109,7 +107,7 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 - (void)startRadar:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)stopRadar:( CDVInvokedUrlCommand* _Nonnull )command;
-- (void)permissionRequest:( CDVInvokedUrlCommand* _Nonnull )command;
-- (void)refreshRecipes:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)refreshRecipes:( CDVInvokedUrlCommand* _Nonnull )command DEPRECATED_ATTRIBUTE;
+- (void)disableDefaultRangingNotifications;
 
 @end

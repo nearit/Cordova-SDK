@@ -45,9 +45,6 @@ function NearIT() {
         "CDVNE_PushNotification_Remote":     "pushReceived.nearit",
         "CDVNE_PushNotification_Local":      "pushReceived.nearit",
 
-        "CDVNE_Location_Granted":    "locationGranted.nearit",
-        "CDVNE_Location_NotGranted": "locationDenied.nearit",
-
         "CDVNE_Event_Simple":     "eventSimple.nearit",
         "CDVNE_Event_CustomJSON": "eventJSON.nearit",
         "CDVNE_Event_Content":    "eventContent.nearit",
@@ -99,8 +96,8 @@ NearIT.prototype.fireEvent = function(eventType, successCallback, errorCallback)
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.resetProfile = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "resetProfile", []);
+NearIT.prototype.resetProfileId = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "resetProfileId", []);
 };
 
 /**
@@ -150,33 +147,42 @@ NearIT.prototype.setUserData = function(key, value, successCallback, errorCallba
     exec(successCallback, errorCallback, this.serviceName, "setUserData", [key, value]);
 };
 
+/**
+ * Set NearIT user profile multichoice data
+ * @param string     fieldName name of the attribute
+ * @param {Object}   values object including boolean values for keys
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.setMultichoiceUserData = function(key, values, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "setMultichoiceUserData", [key, values]);
+};
+
 /*
  * User feedback
  */
 
 /**
- * Send NearIT user feedback with rating
+ * Send user feedback with rating
  * @param string     feedbacId identifier received with feedback event notification
- * @param string     recipeId identifier received with feedback event notification
  * @param integer    rating must be an integer between 0 and 5
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.sendUserFeedback = function(feedbackId, rating, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackId, rating]);
+NearIT.prototype.sendFeedback = function(feedbackId, rating, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendFeedback", [feedbackId, rating, ""]);
 };
 
 /**
- * Send NearIT user feedback with rating and comment
- * @param string     feedbacId identifier received with feedback event notification
- * @param string     recipeId identifier received with feedback event notification
+ * Send user feedback with rating and comment
+ * @param string     feedbackId identifier received with feedback event notification
  * @param integer    rating must be an integer between 0 and 5
  * @param string     comment
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.sendUserFeedbackWithComment = function(feedbackId, rating, comment, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackId, rating, comment]);
+NearIT.prototype.sendFeedbackWithComment = function(feedbackId, rating, comment, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendFeedback", [feedbackId, rating, comment]);
 };
 
 /*
@@ -197,7 +203,7 @@ NearIT.prototype.getCoupons = function(successCallback, errorCallback) {
  */
 
 /**
- * Trigger a custom event
+ * Trigger in-app event
  * @param {string}   eventKey The custom event key to be triggered
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
@@ -211,23 +217,47 @@ NearIT.prototype.triggerEvent = function(eventKey, successCallback, errorCallbac
  */
 
 /**
- * Track a "Notified" event related to this recipe
- * @param {string}   trackingInfo trackingInfo related to source event
- * @param {Function} successCallback The function to call when the call is successful
- * @param {Function} errorCallback The function to call when there is an error
+ * @deprecated
  */
 NearIT.prototype.trackNotifiedEvent = function(trackingInfo, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventNotified", [trackingInfo]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
 };
 
 /**
- * Track an "Engaged" event related to this recipe
+ * Track a "Received" event related to this recipe
  * @param {string}   trackingInfo trackingInfo related to source event
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
+NearIT.prototype.trackReceivedEvent = function(trackingInfo, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
+};
+
+/**
+ * @deprecated
+ */
 NearIT.prototype.trackEngagedEvent = function(trackingInfo, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventEngaged", [trackingInfo]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
+};
+
+/**
+ * Track an "Opened" event related to this recipe
+ * @param {string}   trackingInfo trackingInfo related to source event
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.trackOpenedEvent = function(trackingInfo, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
+};
+
+/**
+ * Track a CTA of a Content Notification as tapped
+ * @param {string}   trackingInfo trackingInfo related to source event
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.trackCTATappedEvent = function(trackingInfo, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingForEventCTATapped", [trackingInfo]);
 };
 
 /**
@@ -264,25 +294,19 @@ NearIT.prototype.stopRadar = function(successCallback, errorCallback) {
 };
 
 /**
- * Request permission to push notification and geolocation services
- * @param {Function} successCallback The function to call when the call is successful
- * @param {Function} errorCallback The function to call when there is an error
- */
-NearIT.prototype.permissionRequest = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "permissionRequest", []);
-};
-
-/**
- * Manually refresh NearIT recipes
- * @param {Function} successCallback The function to call when the call is successful
- * @param {Function} errorCallback The function to call when there is an error
+ * @deprecated
  */
 NearIT.prototype.refreshRecipes = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "refreshRecipes", []);
 };
 
 /*
- *
+ * Disable Default Ranging Notifications
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
  */
+NearIT.prototype.disableDefaultRangingNotifications = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "disableDefaultRangingNotifications", []);
+};
 
 module.exports = new NearIT();

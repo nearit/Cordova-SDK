@@ -1,13 +1,21 @@
 angular.module('starter.controllers', [])
 
 .controller('MainCtrl', function($scope, $ionicPlatform) {
-  $scope.refresh = function() {
+
+  $ionicPlatform.ready(function() {
+    toastr.info("Welcome to NearIT sample");
+  });
+
+
+  /*$scope.refresh = function() {
     console.log('refresh button clicked');
 
     // nearit-cordova-sdk
     $ionicPlatform.ready(function() {
       if (window.nearit) {
         // ensure that the plugin is initialized
+
+        
 
         toastr.info("Refreshing recipes", "", {progressBar:true});
 
@@ -25,7 +33,5 @@ angular.module('starter.controllers', [])
     });
     // @end nearit-cordova-sdk
 
-  };
-})
-
-;
+  };*/
+});
