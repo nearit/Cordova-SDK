@@ -36,16 +36,10 @@ import it.near.sdk.reactions.feedbackplugin.model.Feedback;
 import it.near.sdk.reactions.simplenotificationplugin.model.SimpleNotification;
 import it.near.sdk.trackings.TrackingInfo;
 import it.near.sdk.utils.ContentsListener;
+import it.near.sdk.logging.*;
 
 
 public class CDVNearITContentListener implements ContentsListener {
-
-  private boolean fromUserActions = false;
-
-  public CDVNearITContentListener(boolean fromUserActions)
-  {
-    this.fromUserActions = fromUserActions;
-  }
 
   private void forwardEvent(CDVNearIT.CDVEventType eventType, Map<String, Object> args, TrackingInfo trackingInfo, String notificationMessage)
   {
@@ -53,8 +47,7 @@ public class CDVNearITContentListener implements ContentsListener {
             eventType,
             args,
             trackingInfo,
-            notificationMessage,
-            fromUserActions
+            notificationMessage
     );
   }
 
@@ -99,14 +92,17 @@ public class CDVNearITContentListener implements ContentsListener {
   {
     Map<String, Object> args = new HashMap<String, Object>();
 
-    args.put("coupon", NITHelper.couponToMap(notification));
-
-    forwardEvent(
-            CDVNearIT.CDVEventType.CDVNE_Event_Coupon,
-            args,
-            trackingInfo,
-            notification.notificationMessage
-    );
+    try {
+        args.put("coupon", NITHelper.couponToMap(notification));
+        forwardEvent(
+                CDVNearIT.CDVEventType.CDVNE_Event_Coupon,
+                args,
+                trackingInfo,
+                notification.notificationMessage
+        );
+    } catch (Exception e) {
+        NearLog.d("NearIT Cordova Plugin", "coupon encoding error", e);
+    }
   }
 
   @Override
@@ -128,7 +124,7 @@ public class CDVNearITContentListener implements ContentsListener {
   public void gotSimpleNotification(SimpleNotification notification, TrackingInfo trackingInfo)
   {
     Map<String, Object> args = new HashMap<String, Object>();
-
+    
     forwardEvent(
             CDVNearIT.CDVEventType.CDVNE_Event_Simple,
             args,
@@ -142,14 +138,18 @@ public class CDVNearITContentListener implements ContentsListener {
   {
     Map<String, Object> args = new HashMap<String, Object>();
 
-    args.put("feedbackId", NITHelper.feedbackToBase64(feedback));
-    args.put("question",   feedback.question);
+    try {
+        args.put("feedbackId", NITHelper.feedbackToBase64(feedback));
+        args.put("question",   feedback.question);
 
-    forwardEvent(
-            CDVNearIT.CDVEventType.CDVNE_Event_Feedback,
-            args,
-            trackingInfo,
-            notification.notificationMessage
-    );
+        forwardEvent(
+                CDVNearIT.CDVEventType.CDVNE_Event_Feedback,
+                args,
+                trackingInfo,
+                feedback.notificationMessage
+        );
+    } catch(Exception e) {
+        NearLog.d("NearIT Cordova Plugin", "feeback encoding error", e);
+    }
   }
 }

@@ -27,6 +27,7 @@
 //  NearITSDK
 //
 //  Created by Fabio Cigliano on 25/07/17.
+//  Modified by Federico Boschini on 28/09/18.
 //  Copyright © 2017 NearIT. All rights reserved.
 //
 
@@ -36,22 +37,10 @@
 #import <NearITSDK/NearITSDK.h>
 
 #import <UserNotifications/UserNotifications.h>
-
-#ifdef NEARIT_USE_LOCATION
 #import <CoreLocation/CoreLocation.h>
-#endif
 
-@interface AppDelegate (NearIT) <
-                                 UNUserNotificationCenterDelegate,
-#ifdef NEARIT_USE_LOCATION
-                                 CLLocationManagerDelegate,
-#endif
-                                 NITManagerDelegate>
+@interface AppDelegate (NearIT) <UNUserNotificationCenterDelegate, CLLocationManagerDelegate, NITManagerDelegate>
 
-#ifdef NEARIT_USE_LOCATION
 @property (nonatomic, strong) CLLocationManager *locationManager;
-#endif
-
-- (void)permissionRequest;
 
 @end

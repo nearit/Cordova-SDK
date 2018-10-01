@@ -27,6 +27,7 @@
 //  NearITSDK
 //
 //  Created by Fabio Cigliano on 25/07/17.
+//  Modified by Federico Boschini on 28/09/18.
 //  Copyright © 2017 NearIT. All rights reserved.
 //
 
@@ -69,64 +70,30 @@
 - (BOOL)customapplication:(UIApplication *)application
         didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-
     [NITManager setupWithApiKey:NEARIT_APIKEY];
     [NITManager setFrameworkName:@"cordova"];
     [[NITManager defaultManager] setDelegate:self];
+    UNUserNotificationCenter.currentNotificationCenter.delegate = self;
 
-#ifdef DEBUG
-    [NITLog setLogEnabled:YES];
-
-    NITLogI(TAG, @"setup with: geofencing=%i, push=%i, proximity=%i, showBackgroundNotification=%i",
-
-#ifdef NEARIT_GEO
-          1,
-#else
-          0,
-#endif
-
-#ifdef NEARIT_PUSH
-          1,
-#else
-          0,
-#endif
-
-#ifdef NEARIT_PROXIMITY
-          1,
-#else
-          0,
-#endif
-
-#ifdef NEARIT_SHOW_BACKGROUND_NOTIFICATION
-            1
-#else
-            0
-#endif
-
-    );
-#endif
-
-    /*
-     * By default the SDK generates automatic background local notifications,
-     * set nearit-showBackgroundNotification preference to false
-     * within your config.xml if you want to disable the automatic notificions
-     */
-    [NITManager defaultManager].showBackgroundNotification =
-#ifdef NEARIT_SHOW_BACKGROUND_NOTIFICATION
-                                                    YES;
-#else
-                                                    NO;
-#endif
+    #ifdef DEBUG
+        [NITLog setLogEnabled:YES];
+    #endif
 
     // Setup Background Fetch Interval
-    [application setMinimumBackgroundFetchInterval:7200]; // 2 hours
+    [application setMinimumBackgroundFetchInterval:
+        #ifdef NEARIT_MIN_BACKGROUND_FETCH_INTERVAL
+            NEARIT_MIN_BACKGROUND_FETCH_INTERVAL
+        #else
+            7200 // 2 hours
+        #endif
+    ];
     
     // This line at runtime does not go into an infinite loop
     // because it will call the real method instead of ours.
     return [self customapplication:application didFinishLaunchingWithOptions:launchOptions];
 }
 
-- (BOOL)handleNearContent: (id _Nonnull) content trackingInfo: (NITTrackingInfo* _Nonnull) trackingInfo fromUserAction: (BOOL) fromUserAction
+- (BOOL)handleNearContent: (id _Nonnull) content trackingInfo: (NITTrackingInfo* _Nonnull) trackingInfo
 {
     NSMutableDictionary* arguments = [NSMutableDictionary dictionary];
 
@@ -139,9 +106,6 @@
 
         [arguments setObject:message forKey:@"message"];
     }
-
-    // fromUserAction boolean
-    [arguments setObject:@(fromUserAction) forKey:@"fromUserAction"];
 
     // notification content depending on notification type
     if ([content isKindOfClass:[NITSimpleNotification class]]) {
@@ -362,7 +326,7 @@
         eventWithContent:(id _Nonnull) content
         trackingInfo:(NITTrackingInfo* _Nonnull) trackingInfo
 {
-    [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:NO];
+    [self handleNearContent:content trackingInfo:trackingInfo];
 }
 
 - (void)manager:(NITManager* _Nonnull)manager eventFailureWithError:(NSError* _Nonnull)error
@@ -403,7 +367,7 @@
          if (error) {
              [self manager:[NITManager defaultManager] eventFailureWithError:error];
          } else {
-             [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:YES];
+             [self handleNearContent:content trackingInfo:trackingInfo];
          }
 
     }];
@@ -424,7 +388,7 @@
             if (error) {
                 [self manager:[NITManager defaultManager] eventFailureWithError:error];
             } else {
-                [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:YES];
+                [self handleNearContent:content trackingInfo:trackingInfo];
             }
 
         }];
@@ -444,14 +408,17 @@
             if (error) {
                 [self manager:[NITManager defaultManager] eventFailureWithError:error];
             } else {
-                [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:YES];
+                [self handleNearContent:content trackingInfo:trackingInfo];
             }
 
         }];
 
 }
 
-#ifdef NEARIT_USE_LOCATION
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    [[NITManager defaultManager] application:app openURL:url options:options];
+}
+
 // MARK: - Location Manager Handling
 
 @dynamic locationManager;
@@ -472,56 +439,13 @@ static char key2;
 {
     NITLogV(TAG, @"didChangeAuthorizationStatus status=%d", status);
 
-    if (status == kCLAuthorizationStatusAuthorizedAlways) {
-        [[CDVNearIT instance] fireWindowEvent:CDVNE_Location_Granted];
+    if (status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse) {
         NITLogI(TAG, @"NITManager start");
         [[NITManager defaultManager] start];
     } else {
-        [[CDVNearIT instance] fireWindowEvent:CDVNE_Location_NotGranted];
         NITLogI(TAG, @"NITManager stop");
         [[NITManager defaultManager] stop];
     }
-
-}
-#endif
-
-- (void)permissionRequest {
-    NITLogV(TAG, @"permission request to the user");
-
-    UIApplication* application = [UIApplication sharedApplication];
-
-#ifdef NEARIT_USE_LOCATION
-    self.locationManager = [[CLLocationManager alloc] init];
-    self.locationManager.delegate = self;
-    [self.locationManager requestAlwaysAuthorization];
-#endif
-
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
-        [[UNUserNotificationCenter currentNotificationCenter]
-            requestAuthorizationWithOptions:UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound
-         completionHandler:^(BOOL granted, NSError * _Nullable error) {
-             // completion handler
-             NITLogD(TAG, @"push notification permission callback (granted=%i, error=%@)", granted, error);
-             if (granted) {
-                 [[CDVNearIT instance] fireWindowEvent:CDVNE_PushNotification_Granted];
-             } else {
-                 [[CDVNearIT instance] fireWindowEvent:CDVNE_PushNotification_NotGranted];
-             }
-
-             if (error) {
-                 [[CDVNearIT instance] fireWindowEvent:CDVNE_Event_Error withMessage:[error description] trackingInfo:nil];
-             }
-        }];
-        UNUserNotificationCenter.currentNotificationCenter.delegate = self;
-    } else {
-        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound
-                                                                                        categories:nil]];
-    }
-
-#ifdef NEARIT_USE_PUSH_NOTIFICATION
-    NITLogI(TAG, @"registering for push notifications");
-    [application registerForRemoteNotifications];
-#endif
 
 }
 

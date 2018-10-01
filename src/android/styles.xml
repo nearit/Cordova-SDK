@@ -1,5 +1,0 @@
-<resources>
-    <style name="NearDialogTheme" parent="style/Theme.AppCompat.DayNight.Dialog">
-        <item name="windowNoTitle">true</item>
-    </style>
-</resources>

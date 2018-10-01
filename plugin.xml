@@ -26,7 +26,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-nearit"
         name="NearIT"
-        version="2.5.6">
+        version="2.9.5">
 
     <name>NearIT SDK</name>
     <description>Cordova plugin for NearIT SDK</description>
@@ -43,9 +43,8 @@
         <engine name="cordova-android" version=">=6.2.3" />
     </engines>
 
-    <!-- customize config.xml and platform project files -->
-    <hook type="after_plugin_install" src="hooks/01_before_prepare.js" />
-    <hook type="before_prepare" src="hooks/01_before_prepare.js" />
+    <hook type="after_plugin_install" src="hooks/before_prepare.js" />
+    <hook type="after_prepare" src="hooks/before_prepare.js" />
 
     <js-module src="www/nearit.js" name="nearit">
         <runs />
@@ -72,35 +71,18 @@
             NearIT iOS SDK dependency
             https://github.com/nearit/Near-iOS-SDK
             Supporting iOS 9.0 and later
-            Near-iOS-SDK release 2.5.5
+            Near-iOS-SDK release 2.9.5
         -->
         <pod name="NearITSDK" 
              configurations="release,debug"
              git="https://github.com/nearit/iOS-SDK"
-             tag="2.5.5" />
+             tag="2.9.5" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="NearIT">
                 <param name="ios-package" value="CDVNearIT" />
                 <param name="onload" value="true" />
             </feature>
-        </config-file>
-
-        <!-- Required permissions strings -->
-        <config-file platform="ios" target="*-Info.plist" parent="NSBluetoothPeripheralUsageDescription">
-            <string>This app uses Bluetooth communication to detect nearby beacons</string>
-        </config-file>
-        
-        <config-file platform="ios" target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
-	        <string>Location access &apos;Always&apos; is required for Geofences and Beacons to work</string>
-        </config-file>
-        
-        <config-file platform="ios" target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
-	        <string>Location access &apos;Always&apos; is required for Geofences and Beacons to work</string>
-        </config-file>
-        
-        <config-file platform="ios" target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
-	        <string>Location access &apos;Always&apos; is required for Geofences and Beacons to work</string>
         </config-file>
 
         <!-- required background modes -->
@@ -126,12 +108,6 @@
         <header-file src="src/ios/CDVNearIT.h" />
         <source-file src="src/ios/CDVNearIT.m" />
 
-        <!--
-        hook to fix CODE_SIGN_ENTITLEMENTS
-        https://issues.apache.org/jira/browse/CB-12212
-        -->
-        <hook type="before_prepare" src="hooks/02_before_prepare_ios.js"/>
-
     </platform>
 
     <!-- browser platform definition -->
@@ -148,13 +124,10 @@
         </js-module>
     </platform>
 
-    <!-- Android platform definition -->
+    <!--    Android platform definition    -->
     <platform name="android">
 
-        <edit-config file="AndroidManifest.xml" target="/manifest/uses-sdk" mode="merge">
-            <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="26" />
-        </edit-config>
-
+        <!--    Add package to config.xml   -->
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="nearit">
                 <param name="android-package" value="it.near.sdk.cordova.android.CDVNearIT" />
@@ -162,33 +135,25 @@
             </feature>
         </config-file>
 
+        <!--    Add RECEIVE_BOOT_COMPLETED permission to Manifest   -->
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
         </config-file>
 
-        <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <activity android:name="it.near.sdk.cordova.android.PermissionsActivity"
-                      android:theme="@style/NearDialogTheme" />
-        </config-file>
-
-        <source-file src="src/android/PermissionsActivity.java" target-dir="src/it/near/sdk/cordova/android" />
+        <!--    Add source files    -->
         <source-file src="src/android/NITConfig.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearIT.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearITContentListener.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/NITHelper.java" target-dir="src/it/near/sdk/cordova/android" />
 
-        <source-file src="src/android/styles.xml" target-dir="res/values" />
+        <!--    Add strings to res  -->
         <source-file src="src/android/CDVNearITStrings.xml" target-dir="res/values" />
 
+        <!--    Add gradle reference    -->
         <framework src="src/android/nearit.gradle" custom="true" type="gradleReference" />
 
-        <!--
-        To replace android MainActivity
-        -->
-        <hook type="before_prepare" src="hooks/03_before_prepare_android.js"/>
-        <hook type="after_prepare" src="hooks/04_after_prepare_android.js"/>
-        <hook type="before_plugin_uninstall" src="hooks/05_before_plugin_uninstall.js"/>
-
     </platform>
+
+    <hook type="after_prepare" src="hooks/after_prepare_android.js"/>
 
 </plugin>
