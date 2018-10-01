@@ -600,7 +600,7 @@ public class CDVNearIT extends CordovaPlugin {
      */
 	public void sendTrackingForEventCTATapped(JSONArray args, CallbackContext callbackContext) throws Exception {
 		try {
-			NITHelper.validateArgsCount(args, 12);
+			NITHelper.validateArgsCount(args, 1);
 			final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
 			this.sendTracking(trackingInfoJsonString, Recipe.CTA_TAPPED);
 		} catch (Exception e) {
@@ -618,7 +618,7 @@ public class CDVNearIT extends CordovaPlugin {
      */
     public void sendTrackingWithRecipeIdForCustomEvent(JSONArray args, CallbackContext callbackContext) throws Exception {
 		try {
-			NITHelper.validateArgsCount(args, 12);
+			NITHelper.validateArgsCount(args, 2);
 			final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
 			final String eventName = NITHelper.validateStringArgument(args, 1, "eventName");
 			this.sendTracking(trackingInfoJsonString, eventName);
