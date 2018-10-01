@@ -147,7 +147,7 @@ CDVNearIT.prototype.setUserData = function(successCallback, errorCallback, opts)
  * @param {Function} errorCallback The function to call when there is an error
  * @param array opts method arguments
  */
-CDVNearIT.prototype.sendUserFeedback = function(successCallback, errorCallback, opts) {
+CDVNearIT.prototype.sendFeedback = function(successCallback, errorCallback, opts) {
     opts = opts || [];
 
     if (opts.length != 2 && opts.length != 3) {

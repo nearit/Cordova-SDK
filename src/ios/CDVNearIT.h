@@ -85,7 +85,7 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 #pragma mark - Feedback
 
-- (void)sendUserFeedback:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)sendFeedback:( CDVInvokedUrlCommand* _Nonnull )command;
 
 #pragma mark - Coupon
 
@@ -107,7 +107,6 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 - (void)startRadar:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)stopRadar:( CDVInvokedUrlCommand* _Nonnull )command;
-- (void)permissionRequest:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)refreshRecipes:( CDVInvokedUrlCommand* _Nonnull )command DEPRECATED_ATTRIBUTE;
 - (void)disableDefaultRangingNotifications;
 

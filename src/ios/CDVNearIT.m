@@ -337,10 +337,10 @@ __weak CDVNearIT *instance = nil;
 /**
  * Send user feedback
  * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "sendUserFeedback", [feedbackId, rating, comment]);
+    cordova.exec(successCb, errorCb, "nearit", "sendFeedback", [feedbackId, rating, comment]);
 </pre></code>
  */
-- (void)sendUserFeedback:( CDVInvokedUrlCommand* _Nonnull )command
+- (void)sendFeedback:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 

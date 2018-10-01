@@ -113,8 +113,8 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.setUserData(args, callbackContext);
 					} else if (action.equals("setMultichoiceUserData")) {
 						CDVNearIT.this.setMultichoiceUserData(args, callbackContext);
-					} else if (action.equals("sendUserFeedback")) {
-						CDVNearIT.this.sendUserFeedback(args, callbackContext);
+					} else if (action.equals("sendFeedback")) {
+						CDVNearIT.this.sendFeedback(args, callbackContext);
 					} else if (action.equals("getCoupons")) {
 						CDVNearIT.this.getCoupons(args, callbackContext);
 					} else if (action.equals("triggerEvent")) {
@@ -418,13 +418,13 @@ public class CDVNearIT extends CordovaPlugin {
     /**
      * Send user feedback
      * <code><pre>
-        cordova.exec(successCb, errorCb, "nearit", "sendUserFeedback", [feedbackId, rating, comment]);
+        cordova.exec(successCb, errorCb, "nearit", "sendFeedback", [feedbackId, rating, comment]);
      </pre></code>
      * @param args Cordova exec arguments
      * @param callbackContext Cordova callback context
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void sendUserFeedback(JSONArray args, final CallbackContext callbackContext) throws Exception {
+    public void sendFeedback(JSONArray args, final CallbackContext callbackContext) throws Exception {
 
         if (args.length() < 2) {
             throw new Exception("Wrong number of arguments! expected at least 2");
@@ -447,7 +447,7 @@ public class CDVNearIT extends CordovaPlugin {
 					comment = args.getString(2);
 				}
 
-			Log.d(TAG, "NITManager :: sendUserFeedback(" + feedbackId + ", " + rating + ", " + comment + ")");
+			Log.d(TAG, "NITManager :: sendFeedback(" + feedbackId + ", " + rating + ", " + comment + ")");
 
 			Feedback feedback = NITHelper.feedbackFromBase64(feedbackId);
 			FeedbackEvent event = new FeedbackEvent(feedback, rating, comment);
@@ -618,7 +618,7 @@ public class CDVNearIT extends CordovaPlugin {
 
     private void sendTracking(final String trackingInfoBase64, final String eventName) throws Exception {
 		try {
-			final TrackingInfo trackingInfo = trackingInfoFromBase64(trackingInfoBase64);
+			final TrackingInfo trackingInfo = NITHelper.trackingInfoFromBase64(trackingInfoBase64);
 			Log.d(TAG, "NITManager :: track event (" + eventName + ") with trackingInfo (" + trackingInfoBase64 + ")");
 			NearItManager.getInstance().sendTracking(trackingInfo, eventName);
 		} catch (Exception e) {

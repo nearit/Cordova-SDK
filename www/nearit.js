@@ -163,28 +163,26 @@ NearIT.prototype.setMultichoiceUserData = function(key, values, successCallback,
  */
 
 /**
- * Send NearIT user feedback with rating
+ * Send user feedback with rating
  * @param string     feedbacId identifier received with feedback event notification
- * @param string     recipeId identifier received with feedback event notification
  * @param integer    rating must be an integer between 0 and 5
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.sendUserFeedback = function(feedbackId, rating, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackId, rating]);
+NearIT.prototype.sendFeedback = function(feedbackId, rating, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendFeedback", [feedbackId, rating, ""]);
 };
 
 /**
- * Send NearIT user feedback with rating and comment
- * @param string     feedbacId identifier received with feedback event notification
- * @param string     recipeId identifier received with feedback event notification
+ * Send user feedback with rating and comment
+ * @param string     feedbackId identifier received with feedback event notification
  * @param integer    rating must be an integer between 0 and 5
  * @param string     comment
  * @param {Function} successCallback The function to call when the call is successful
  * @param {Function} errorCallback The function to call when there is an error
  */
-NearIT.prototype.sendUserFeedbackWithComment = function(feedbackId, rating, comment, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendUserFeedback", [feedbackId, rating, comment]);
+NearIT.prototype.sendFeedbackWithComment = function(feedbackId, rating, comment, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "sendFeedback", [feedbackId, rating, comment]);
 };
 
 /*
