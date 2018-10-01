@@ -1,8 +1,8 @@
 package it.near.sdk.cordova.android;
 
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Base64;
-import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -10,11 +10,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import it.near.sdk.reactions.couponplugin.model.Claim;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
@@ -145,19 +150,44 @@ public class NITHelper {
 
 	// Feedback
 	public static String feedbackToBase64(final Feedback feedback) throws Exception {
-		// JSONify feedback
-		final String feedbackJson = new Gson().toJson(feedback);
+		String base64;
 
-		// Encode to base64
-		return Base64.encodeToString(feedbackJson.getBytes("UTF-8"), Base64.DEFAULT);
+		final Parcel parcel = Parcel.obtain();
+		try {
+			feedback.writeToParcel(parcel, Parcelable.CONTENTS_FILE_DESCRIPTOR);
+			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			final GZIPOutputStream zos = new GZIPOutputStream(new BufferedOutputStream(bos));
+			zos.write(parcel.marshall());
+			zos.close();
+			base64 = Base64.encodeToString(bos.toByteArray(), 0);
+		} finally {
+			parcel.recycle();
+		}
+
+		return base64;
 	}
 
 	public static Feedback feedbackFromBase64(final String feedbackBase64) throws Exception {
-		// Decode from base64
-		final String feedbackJsonString = new String(Base64.decode(feedbackBase64, Base64.DEFAULT), "UTF-8");
+		Feedback feedback;
+		final Parcel parcel = Parcel.obtain();
+		try {
+			final ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+			final byte[] buffer = new byte[1024];
+			final GZIPInputStream zis = new GZIPInputStream(new ByteArrayInputStream(Base64.decode(feedbackBase64, 0)));
+			int len;
+			while ((len = zis.read(buffer)) != -1) {
+				byteBuffer.write(buffer, 0, len);
+			}
+			zis.close();
+			parcel.unmarshall(byteBuffer.toByteArray(), 0, byteBuffer.size());
+			parcel.setDataPosition(0);
 
-		// DeJSONify Feedback
-		return new Gson().fromJson(feedbackJsonString, Feedback.class);
+			feedback = Feedback.CREATOR.createFromParcel(parcel);
+		} finally {
+			parcel.recycle();
+		}
+
+		return feedback;
 	}
 
 	// TrackingInfo
