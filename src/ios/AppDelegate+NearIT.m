@@ -93,7 +93,7 @@
     return [self customapplication:application didFinishLaunchingWithOptions:launchOptions];
 }
 
-- (BOOL)handleNearContent: (id _Nonnull) content trackingInfo: (NITTrackingInfo* _Nonnull) trackingInfo fromUserAction: (BOOL) fromUserAction
+- (BOOL)handleNearContent: (id _Nonnull) content trackingInfo: (NITTrackingInfo* _Nonnull) trackingInfo
 {
     NSMutableDictionary* arguments = [NSMutableDictionary dictionary];
 
@@ -106,9 +106,6 @@
 
         [arguments setObject:message forKey:@"message"];
     }
-
-    // fromUserAction boolean
-    [arguments setObject:@(fromUserAction) forKey:@"fromUserAction"];
 
     // notification content depending on notification type
     if ([content isKindOfClass:[NITSimpleNotification class]]) {
@@ -329,7 +326,7 @@
         eventWithContent:(id _Nonnull) content
         trackingInfo:(NITTrackingInfo* _Nonnull) trackingInfo
 {
-    [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:NO];
+    [self handleNearContent:content trackingInfo:trackingInfo];
 }
 
 - (void)manager:(NITManager* _Nonnull)manager eventFailureWithError:(NSError* _Nonnull)error
@@ -370,7 +367,7 @@
          if (error) {
              [self manager:[NITManager defaultManager] eventFailureWithError:error];
          } else {
-             [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:YES];
+             [self handleNearContent:content trackingInfo:trackingInfo];
          }
 
     }];
@@ -391,7 +388,7 @@
             if (error) {
                 [self manager:[NITManager defaultManager] eventFailureWithError:error];
             } else {
-                [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:YES];
+                [self handleNearContent:content trackingInfo:trackingInfo];
             }
 
         }];
@@ -411,7 +408,7 @@
             if (error) {
                 [self manager:[NITManager defaultManager] eventFailureWithError:error];
             } else {
-                [self handleNearContent:content trackingInfo:trackingInfo fromUserAction:YES];
+                [self handleNearContent:content trackingInfo:trackingInfo];
             }
 
         }];
