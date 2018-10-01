@@ -41,21 +41,13 @@ import it.near.sdk.logging.*;
 
 public class CDVNearITContentListener implements ContentsListener {
 
-  private boolean fromUserActions = false;
-
-  public CDVNearITContentListener(boolean fromUserActions)
-  {
-    this.fromUserActions = fromUserActions;
-  }
-
   private void forwardEvent(CDVNearIT.CDVEventType eventType, Map<String, Object> args, TrackingInfo trackingInfo, String notificationMessage)
   {
     CDVNearIT.getInstance().fireWindowEvent(
             eventType,
             args,
             trackingInfo,
-            notificationMessage,
-            fromUserActions
+            notificationMessage
     );
   }
 
@@ -132,7 +124,7 @@ public class CDVNearITContentListener implements ContentsListener {
   public void gotSimpleNotification(SimpleNotification notification, TrackingInfo trackingInfo)
   {
     Map<String, Object> args = new HashMap<String, Object>();
-
+    
     forwardEvent(
             CDVNearIT.CDVEventType.CDVNE_Event_Simple,
             args,
