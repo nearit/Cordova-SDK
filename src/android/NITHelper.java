@@ -21,9 +21,10 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import it.near.sdk.reactions.couponplugin.model.Claim;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.reactions.feedbackplugin.model.Feedback;
+import it.near.sdk.recipes.inbox.model.HistoryItem;
+import it.near.sdk.recipes.models.ReactionBundle;
 import it.near.sdk.trackings.TrackingInfo;
 
 /**
@@ -93,42 +94,19 @@ public class NITHelper {
      * @throws JSONException
      */
     public static JSONObject couponToJson(Coupon item) throws JSONException {
-		JSONObject coupon = new JSONObject(couponToMap(item));
+        JSONObject coupon = new JSONObject(NearITUtils.bundleCoupon(item));
+        return coupon;
+    }
 
-		return coupon;
-	}
-
-	/**
-	 * @param item Coupon item
-	 * @return Map<String, Object> result
-	 */
-	public static Map<String, Object> couponToMap(Coupon item) {
-		Map<String, Object> coupon = new HashMap<String, Object>();
-
-		coupon.put("name", item.getTitle());
-		coupon.put("description", item.description);
-		coupon.put("value", item.value);
-		coupon.put("expiresAt", item.expires_at);
-		coupon.put("redeemableFrom", item.redeemable_from);
-
-		List<Map<String, Object>> claims = new ArrayList<Map<String, Object>>();
-		for(Claim item2 : item.claims) {
-			Map<String, Object> claim = new HashMap<String, Object>();
-
-			claim.put("serialNumber", item2.serial_number);
-			claim.put("claimedAt", item2.claimed_at);
-			claim.put("redeemedAt", item2.redeemed_at);
-			claim.put("recipeId", item2.recipe_id);
-
-			claims.add(claim);
-		}
-		coupon.put("claims", claims);
-
-		coupon.put("smallIcon", item.getIconSet().getSmallSize());
-		coupon.put("icon", item.getIconSet().getFullSize());
-
-		return coupon;
-	}
+    /**
+     * @param item HistoryItem
+     * @return JSONObject result
+     * @throws JSONException
+     */
+    public static JSONObject historyItemToJson(HistoryItem item) throws JSONException {
+        JSONObject historyItem = new JSONObject(NearITUtils.bundleHIstoryItem(item));
+        return historyItem;
+    }
 
     /**
      * Retrieve a Feedback object with just recipeId and feedbackId
