@@ -69,31 +69,34 @@ public class NearITUtils {
         return couponMap;
     }
     
-    public static Map<String, Object> bundleHistoryItem(final HistoryItem HistoryItem) {
+    public static Map<String, Object> bundleHistoryItem(final HistoryItem item) {
         final Map<String, Object> itemMap = new HashMap<String, Object>();
 
         itemMap.put("read", item.read);
         itemMap.put("timestamp", item.timestamp);
-        itemMap.put("trackingInfo", bundleTrackingInfo(item.trackingInfo));
-        itemMap.put("message", item.reactionBundle.message);
+        try {
+            itemMap.put("trackingInfo", bundleTrackingInfo(item.trackingInfo));
+        } catch (Exception e) {
+            NearLog.d("NearIT Cordova Plugin", "historyItem encoding error", e);
+        }
+        itemMap.put("message", item.reaction.notificationMessage);
 
-        if (item.reactionBundle instanceof SimpleNotification) {
-            SimpleNotification simpleNotif = (SimpleNotification) item.reactionBundle;
+        if (item.reaction instanceof SimpleNotification) {
             itemMap.put("type", CDVNearIT.CDVEventType.CDVNE_Event_Simple);
-        } else if (item.reactionBundle instanceof Content) {
-            Content content = (Content) item.reactionBundle;
+        } else if (item.reaction instanceof Content) {
+            Content content = (Content) item.reaction;
             itemMap.put("notificationContent", bundleContent(content));
             itemMap.put("type", CDVNearIT.CDVEventType.CDVNE_Event_Content);
-        } else if (item.reactionBundle instanceof Feedback) {
-            Feedback feedback = (Feedback) item.reactionBundle;
+        } else if (item.reaction instanceof Feedback) {
+            Feedback feedback = (Feedback) item.reaction;
             itemMap.put("notificationContent", bundleFeedback(feedback));
             itemMap.put("type", CDVNearIT.CDVEventType.CDVNE_Event_Feedback);
-        } else if (item.reactionBundle instanceof Coupon) {
-            Coupon coupon = (Coupon) item.reactionBundle;
+        } else if (item.reaction instanceof Coupon) {
+            Coupon coupon = (Coupon) item.reaction;
             itemMap.put("notificationContent", bundleCoupon(coupon));
             itemMap.put("type", CDVNearIT.CDVEventType.CDVNE_Event_Coupon);
-        } else if (item.reactionBundle instanceof CustomJSON) {
-            CustomJSON customJson = (CustomJSON) item.reactionBundle;
+        } else if (item.reaction instanceof CustomJSON) {
+            CustomJSON customJson = (CustomJSON) item.reaction;
             itemMap.put("notificationContent", bundleCustomJson(customJson));
             itemMap.put("type", CDVNearIT.CDVEventType.CDVNE_Event_CustomJSON);
         }
@@ -133,12 +136,12 @@ public class NearITUtils {
 
     public static Content unbundleContent(final Map<String, Object> bundledContent) {
         final Content content = new Content();
-        content.title = bundledContent.get("title");
-        content.contentString = bundledContent.get("text");
+        content.title = (String) bundledContent.get("title");
+        content.contentString = (String) bundledContent.get("text");
         final List<ImageSet> images = new ArrayList<ImageSet>();
-        images.add(unbundleImageSet(bundledContent.get("image")));
+        images.add(unbundleImageSet((Map<String, Object>) bundledContent.get("image")));
         content.setImages_links(images);
-        content.setCta(unbundleContentLink(bundledContent.get("cta")));
+        content.setCta(unbundleContentLink((Map<String, Object>) bundledContent.get("cta")));
         return content;
     }
 
@@ -151,8 +154,15 @@ public class NearITUtils {
         }
         bundledFeedback.put("feedbackQuestion", question);
 
-        String feedbackB64 = feedbackToB64(feedback);
-        bundledFeedback.put("feedbackId", feedbackB64);
+        String feedbackB64 = null;
+        try {
+            feedbackB64 = feedbackToB64(feedback);
+        } catch (Exception e) {
+            NearLog.d("NearIT Cordova Plugin", "feedback encoding error", e);
+        }
+        if (feedbackB64 != null) {
+            bundledFeedback.put("feedbackId", feedbackB64);
+        }
 
         return bundledFeedback;
     }
@@ -193,8 +203,8 @@ public class NearITUtils {
 
     public static ImageSet unbundleImageSet(Map<String, Object> bundledImage) {
         final ImageSet imageSet = new ImageSet();
-        imageSet.setFullSize(bundledImage.get("fullSize"));
-        imageSet.setSmallSize(bundledImage.get("squareSize"));
+        imageSet.setFullSize((String) bundledImage.get("fullSize"));
+        imageSet.setSmallSize((String) bundledImage.get("squareSize"));
         return imageSet;
     }
 
@@ -206,7 +216,7 @@ public class NearITUtils {
     }
 
     public static ContentLink unbundleContentLink(Map<String, Object> bundledCta) {
-        final ContentLink contentLink = new ContentLink(bundledCta.get("label"), bundledCta.get("url"));
+        final ContentLink contentLink = new ContentLink((String) bundledCta.get("label"), (String) bundledCta.get("url"));
         return contentLink;
     }
 
@@ -215,7 +225,7 @@ public class NearITUtils {
 
         final Parcel parcel = Parcel.obtain();
         try {
-            feedback.writeToParcel(parcel, Parcelable.CONTENTS_FILE_DESCRIPTOR);
+            feedback.writeToParcel(parcel, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
             final GZIPOutputStream zos = new GZIPOutputStream(new BufferedOutputStream(bos));
             zos.write(parcel.marshall());
