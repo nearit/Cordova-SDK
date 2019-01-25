@@ -91,6 +91,10 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 - (void)getCoupons:( CDVInvokedUrlCommand* _Nonnull )command;
 
+#pragma mark - NotificationHistory
+
+- (void)getNotificationHistory:( CDVInvokedUrlCommand* _Nonnull)command;
+
 #pragma mark - In-app Event
 
 - (void)triggerEvent:( CDVInvokedUrlCommand* _Nonnull )command;

@@ -422,6 +422,36 @@ __weak CDVNearIT *instance = nil;
     }];
 }
 
+#pragma mark - Notification History
+
+/**
+ * Request notification history
+ * <code><pre>
+    cordova.exec(successCb, errorCb, "nearit", "getNotificationHistory", []);
+</pre></code>
+ */
+- (void)getNotificationHistory:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    NSMutableArray *bundledNotificationHistory = [[NSMutableArray alloc] init];
+
+    [[NITManager defaultManager] historyWithCompletion:^(NSArray<NITHistoryItem *> * _Nullable items, NSError * _Nullable error) {
+        
+        CDVPluginResult* pluginResult = nil;
+
+        if (error) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                             messageAsString:[error description]];
+        } else {
+            for (NITHistoryItem *item in items) {
+                [bundledNotificationHistory addObject:[ComNearitUtils bundleNITHistoryItem:item]];
+    		}
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:bundledNotificationHistory];
+        }
+
+        [[self commandDelegate] sendPluginResult:pluginResult callbackId:[command callbackId]];
+    }];
+}
+
 #pragma mark - In-app Event
 /**
  * Trigger in-app event
