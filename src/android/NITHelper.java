@@ -1,29 +1,14 @@
 package it.near.sdk.cordova.android;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Base64;
-
-import com.google.gson.Gson;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.recipes.inbox.model.HistoryItem;
-import it.near.sdk.trackings.TrackingInfo;
 
 /**
  * @author "Fabio Cigliano" on 23/09/17

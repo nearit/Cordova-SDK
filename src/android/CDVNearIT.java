@@ -24,8 +24,10 @@ package it.near.sdk.cordova.android;
     SOFTWARE.
  */
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.apache.cordova.CallbackContext;
@@ -47,7 +49,8 @@ import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.reactions.feedbackplugin.FeedbackEvent;
 import it.near.sdk.reactions.feedbackplugin.model.Feedback;
 import it.near.sdk.recipes.NearITEventHandler;
-import it.near.sdk.recipes.RecipeRefreshListener;
+import it.near.sdk.recipes.inbox.NotificationHistoryManager;
+import it.near.sdk.recipes.inbox.model.HistoryItem;
 import it.near.sdk.recipes.models.Recipe;
 import it.near.sdk.trackings.TrackingInfo;
 import it.near.sdk.utils.NearUtils;
@@ -672,6 +675,7 @@ public class CDVNearIT extends CordovaPlugin {
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
 	 */
+	@SuppressLint("MissingPermission")
 	public void startRadar(JSONArray args, CallbackContext callbackContext) throws Exception {
 	    Log.d(TAG, "NITManager :: start");
 	    NearItManager.getInstance().startRadar();

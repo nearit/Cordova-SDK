@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import it.near.sdk.reactions.contentplugin.model.Content;
-import it.near.sdk.reactions.contentplugin.model.ContentLink;
-import it.near.sdk.reactions.contentplugin.model.ImageSet;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.reactions.customjsonplugin.model.CustomJSON;
 import it.near.sdk.reactions.feedbackplugin.model.Feedback;
