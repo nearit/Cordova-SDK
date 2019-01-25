@@ -94,7 +94,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
               toastr.info(eventType, evtMessage, { onclick: function() {
                   // Send Tracking on Toast tap
                   appendLog(`Send tracking...`)
-                  nearit.trackEngagedEvent(trckInfo, function(){
+                  nearit.trackOpenedEvent(trckInfo, function(){
                     appendLog(`Send tracking... DONE.`)
                   }, function() {
                     appendLog(`Error while sending tracking...`)
@@ -102,7 +102,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
                 }
               });
 
-              nearit.trackNotifiedEvent(trckInfo, function(){
+              nearit.trackReceivedEvent(trckInfo, function(){
                 appendLog(`Send NOTIFIED tracking... DONE.`)
               }, function() {
                 appendLog(`Error while sending tracking...`)

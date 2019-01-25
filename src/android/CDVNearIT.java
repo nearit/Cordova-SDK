@@ -121,16 +121,16 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.getNotificationHistory(args, callbackContext);
 					}else if (action.equals("triggerEvent")) {
 						CDVNearIT.this.triggerEvent(args, callbackContext);
-					} else if (action.equals("sendTrackingWithRecipeIdForEventNotified")
-								|| action.equals("sendTrackingWithRecipeIdForEventReceived")) {
-						CDVNearIT.this.sendTrackingWithRecipeIdForEventReceived(args, callbackContext);
-					} else if (action.equals("sendTrackingWithRecipeIdForEventEngaged")
-								|| action.equals("sendTrackingWithRecipeIdForEventOpened")) {
-						CDVNearIT.this.sendTrackingWithRecipeIdForEventOpened(args, callbackContext);
+					} else if (action.equals("sendTrackingForEventNotified")
+								|| action.equals("sendTrackingForEventReceived")) {
+						CDVNearIT.this.sendTrackingForEventReceived(args, callbackContext);
+					} else if (action.equals("sendTrackingForEventEngaged")
+								|| action.equals("sendTrackingForEventOpened")) {
+						CDVNearIT.this.sendTrackingForEventOpened(args, callbackContext);
 					} else if (action.equals("sendTrackingForEventCTATapped")) {
 						CDVNearIT.this.sendTrackingForEventCTATapped(args, callbackContext);
-					} else if (action.equals("sendTrackingWithRecipeIdForCustomEvent")) {
-						CDVNearIT.this.sendTrackingWithRecipeIdForCustomEvent(args, callbackContext);
+					} else if (action.equals("sendTrackingForCustomEvent")) {
+						CDVNearIT.this.sendTrackingForCustomEvent(args, callbackContext);
 					} else if (action.equals("startRadar")) {
 						CDVNearIT.this.startRadar(args, callbackContext);
 					} else if (action.equals("stopRadar")) {
@@ -577,12 +577,12 @@ public class CDVNearIT extends CordovaPlugin {
 	/**
      * Track an event of type "RECEIVED"
      * <code><pre>
-        cordova.exec("nearit", "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
+        cordova.exec("nearit", "sendTrackingForEventReceived", [trackingInfo]);
     </pre></code>
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void sendTrackingWithRecipeIdForEventReceived(JSONArray args, CallbackContext callbackContext)
+    public void sendTrackingForEventReceived(JSONArray args, CallbackContext callbackContext)
 		    throws Exception {
 		try {
 			NITHelper.validateArgsCount(args, 1);
@@ -596,12 +596,12 @@ public class CDVNearIT extends CordovaPlugin {
 	/**
      * Track an event of type "OPENED"
      * <code><pre>
-        cordova.exec("nearit", "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
+        cordova.exec("nearit", "sendTrackingForEventOpened", [trackingInfo]);
     </pre></code>
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void sendTrackingWithRecipeIdForEventOpened(JSONArray args, CallbackContext callbackContext) throws Exception {
+    public void sendTrackingForEventOpened(JSONArray args, CallbackContext callbackContext) throws Exception {
 		try {
 			NITHelper.validateArgsCount(args, 1);
 			final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
@@ -633,12 +633,12 @@ public class CDVNearIT extends CordovaPlugin {
     /**
      * Track a custom event
      * <code><pre>
-        cordova.exec("nearit", "sendTrackingWithRecipeIdForCustomEvent", [trackingInfo, eventName]);
+        cordova.exec("nearit", "sendTrackingForCustomEvent", [trackingInfo, eventName]);
     </pre></code>
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void sendTrackingWithRecipeIdForCustomEvent(JSONArray args, CallbackContext callbackContext) throws Exception {
+    public void sendTrackingForCustomEvent(JSONArray args, CallbackContext callbackContext) throws Exception {
 		try {
 			NITHelper.validateArgsCount(args, 2);
 			final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");

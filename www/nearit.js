@@ -220,7 +220,7 @@ NearIT.prototype.triggerEvent = function(eventKey, successCallback, errorCallbac
  * @deprecated
  */
 NearIT.prototype.trackNotifiedEvent = function(trackingInfo, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingForEventReceived", [trackingInfo]);
 };
 
 /**
@@ -230,14 +230,14 @@ NearIT.prototype.trackNotifiedEvent = function(trackingInfo, successCallback, er
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.trackReceivedEvent = function(trackingInfo, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingForEventReceived", [trackingInfo]);
 };
 
 /**
  * @deprecated
  */
 NearIT.prototype.trackEngagedEvent = function(trackingInfo, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingForEventOpened", [trackingInfo]);
 };
 
 /**
@@ -247,7 +247,7 @@ NearIT.prototype.trackEngagedEvent = function(trackingInfo, successCallback, err
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.trackOpenedEvent = function(trackingInfo, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingForEventOpened", [trackingInfo]);
 };
 
 /**
@@ -268,7 +268,7 @@ NearIT.prototype.trackCTATappedEvent = function(trackingInfo, successCallback, e
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.trackCustomEvent = function(trackingInfo, eventName, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForCustomEvent", [trackingInfo, eventName]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingForCustomEvent", [trackingInfo, eventName]);
 };
 
 /*

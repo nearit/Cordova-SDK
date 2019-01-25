@@ -20,17 +20,22 @@ angular.module('starter.services', [])
     {
       id: 'trackCustomEvent',
       name: 'track a NearIT event of a custom event type',
-      data: ['prompt:recipeId', 'prompt:eventName'],
+      data: ['prompt:trackingInfo', 'prompt:eventName'],
     },
     {
-      id: 'trackEngagedEvent',
-      name: 'track a NearIT event of a type "Engaged"',
-      data: ['prompt:recipeId'],
+      id: 'trackOpenedEvent',
+      name: 'track a NearIT event of a type "Opened"',
+      data: ['prompt:trackingInfo'],
     },
     {
-      id: 'trackNotifiedEvent',
-      name: 'track a NearIT event of a type "Notified"',
-      data: ['prompt:recipeId'],
+      id: 'trackReceivedEvent',
+      name: 'track a NearIT event of a type "Received"',
+      data: ['prompt:trackingInfo'],
+    },
+    {
+      id: 'trackCTATappedEvent',
+      name: 'track a NearIT event of type "CTA tapped',
+      data: ['prompt:trackingInfo']
     },
 
     {

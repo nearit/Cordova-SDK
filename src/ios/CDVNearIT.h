@@ -101,10 +101,10 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 #pragma mark - Tracking
 
-- (void)sendTrackingWithRecipeIdForEventReceived:( CDVInvokedUrlCommand* _Nonnull )command;
-- (void)sendTrackingWithRecipeIdForEventOpened:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)sendTrackingForEventReceived:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)sendTrackingForEventOpened:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)sendTrackingForEventCTATapped:( CDVInvokedUrlCommand* _Nonnull )command;
-- (void)sendTrackingWithRecipeIdForCustomEvent:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)sendTrackingForCustomEvent:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)sendTrackingWithTrackingInfo:(NSString* _Nonnull) trackingInfoJsonString eventName: (NSString* _Nonnull) eventName;
 
 #pragma mark - NITManager

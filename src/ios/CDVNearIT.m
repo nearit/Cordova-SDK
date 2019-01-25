@@ -484,10 +484,10 @@ __weak CDVNearIT *instance = nil;
 /**
  * Track an event of type "NITRecipeReceived"
  * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
+    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWForEventReceived", [trackingInfo]);
 </pre></code>
  */
-- (void)sendTrackingWithRecipeIdForEventReceived:( CDVInvokedUrlCommand* _Nonnull )command
+- (void)sendTrackingForEventReceived:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 
@@ -508,10 +508,10 @@ __weak CDVNearIT *instance = nil;
 /**
  * Track an event of type "NITRecipeOpened"
  * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
+    cordova.exec(successCb, errorCb, "nearit", "sendTrackingForEventOpened", [trackingInfo]);
 </pre></code>
  */
-- (void)sendTrackingWithRecipeIdForEventOpened:( CDVInvokedUrlCommand* _Nonnull )command
+- (void)sendTrackingForEventOpened:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 
@@ -558,10 +558,10 @@ __weak CDVNearIT *instance = nil;
 /**
  * Track a custom event
  * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForCustomEvent", [trackingInfo, eventName]);
+    cordova.exec(successCb, errorCb, "nearit", "sendTrackingForCustomEvent", [trackingInfo, eventName]);
 </pre></code>
  */
-- (void)sendTrackingWithRecipeIdForCustomEvent:( CDVInvokedUrlCommand* _Nonnull )command
+- (void)sendTrackingForCustomEvent:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 
