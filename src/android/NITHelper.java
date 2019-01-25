@@ -22,9 +22,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import it.near.sdk.reactions.couponplugin.model.Coupon;
-import it.near.sdk.reactions.feedbackplugin.model.Feedback;
 import it.near.sdk.recipes.inbox.model.HistoryItem;
-import it.near.sdk.recipes.models.ReactionBundle;
 import it.near.sdk.trackings.TrackingInfo;
 
 /**
@@ -104,87 +102,8 @@ public class NITHelper {
      * @throws JSONException
      */
     public static JSONObject historyItemToJson(HistoryItem item) throws JSONException {
-        JSONObject historyItem = new JSONObject(NearITUtils.bundleHIstoryItem(item));
+        JSONObject historyItem = new JSONObject(NearITUtils.bundleHistoryItem(item));
         return historyItem;
-    }
-
-    /**
-     * Retrieve a Feedback object with just recipeId and feedbackId
-     *
-     * @param recipeId
-     * @param feedbackId
-     * @return
-     */
-    public static Feedback feedbackFromData(String recipeId, String feedbackId) {
-        Parcel parcel = Parcel.obtain();
-        parcel.writeString("notificationMessage");
-        parcel.writeString("question");
-        parcel.writeString(recipeId);
-        parcel.writeString(feedbackId);
-
-        Feedback feedback = Feedback.CREATOR.createFromParcel(parcel);
-        parcel.recycle();
-
-        return feedback;
-    }
-
-    // Feedback
-    public static String feedbackToBase64(final Feedback feedback) throws Exception {
-        String base64;
-
-        final Parcel parcel = Parcel.obtain();
-        try {
-            feedback.writeToParcel(parcel, Parcelable.CONTENTS_FILE_DESCRIPTOR);
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            final GZIPOutputStream zos = new GZIPOutputStream(new BufferedOutputStream(bos));
-            zos.write(parcel.marshall());
-            zos.close();
-            base64 = Base64.encodeToString(bos.toByteArray(), 0);
-        } finally {
-            parcel.recycle();
-        }
-
-        return base64;
-    }
-
-    public static Feedback feedbackFromBase64(final String feedbackBase64) throws Exception {
-        Feedback feedback;
-        final Parcel parcel = Parcel.obtain();
-        try {
-            final ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-            final byte[] buffer = new byte[1024];
-            final GZIPInputStream zis = new GZIPInputStream(new ByteArrayInputStream(Base64.decode(feedbackBase64, 0)));
-            int len;
-            while ((len = zis.read(buffer)) != -1) {
-                byteBuffer.write(buffer, 0, len);
-            }
-            zis.close();
-            parcel.unmarshall(byteBuffer.toByteArray(), 0, byteBuffer.size());
-            parcel.setDataPosition(0);
-
-            feedback = Feedback.CREATOR.createFromParcel(parcel);
-        } finally {
-            parcel.recycle();
-        }
-
-        return feedback;
-    }
-
-    // TrackingInfo
-    public static String trackingInfoToBase64(final TrackingInfo trackingInfo) throws Exception {
-        // JSONify trackingInfo
-        final String trackingInfoJson = new Gson().toJson(trackingInfo);
-
-        // Encode to base64
-        return Base64.encodeToString(trackingInfoJson.getBytes("UTF-8"), Base64.DEFAULT);
-    }
-
-    public static TrackingInfo trackingInfoFromBase64(final String trackingInfoBase64) throws Exception {
-        // Decode from base64
-        final String trackingInfoJsonString = new String(Base64.decode(trackingInfoBase64, Base64.DEFAULT), "UTF-8");
-
-        // DeJSONify trackingInfo
-        return new Gson().fromJson(trackingInfoJsonString, TrackingInfo.class);
     }
 
 }
