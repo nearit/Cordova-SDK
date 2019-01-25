@@ -25,13 +25,6 @@ Open `config.xml` and insert your NearIT App API Key (the one you can find on [N
 
 ## How to run
 
-Then run browser platform: 
-
-```bash
-$ ionic cordova platform add browser
-$ ionic cordova run --livereload browser
-```
-
 Then run iOS platform: 
 
 ```bash

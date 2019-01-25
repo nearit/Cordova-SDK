@@ -115,20 +115,6 @@
 
     </platform>
 
-    <!-- browser platform definition -->
-    <platform name="browser">
-        <config-file target="config.xml" parent="/*">
-            <feature name="NearIT">
-                <param name="browser-package" value="NearIT" />
-            </feature>
-        </config-file>
-
-        <js-module src="src/browser/CDVNearIT.js" name="CDVNearIT">
-            <runs/>
-            <clobbers target="nearitproxy" />
-        </js-module>
-    </platform>
-
     <!--    Android platform definition    -->
     <platform name="android">
 

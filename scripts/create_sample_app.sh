@@ -38,16 +38,15 @@ cd ./sample
 sed -i -e 's/io.ionic.starter/it.near.sdk.cordova.mysample/g' config.xml
 
 # add the desired platform
-ionic cordova platform add browser ios android
+ionic cordova platform add ios android
 
 # add NearIT Cordova SDK (plugin)
 #ionic cordova plugin add https://github.com/nearit/Cordova-SDK.git
 ionic cordova plugin add cordova-plugin-nearit
 
 # prepare platform projects
-cordova prepare browser ios android
+cordova prepare ios android
 
 # run the desired platform
-#ionic cordova run browser -scl
 #ionic cordova run ios -scl
 #ionic cordova run android -scl
