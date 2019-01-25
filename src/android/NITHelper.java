@@ -33,41 +33,41 @@ import it.near.sdk.trackings.TrackingInfo;
 
 public class NITHelper {
 
-	private static final String TAG = "NITHelper";
+    private static final String TAG = "NITHelper";
 
-	public static void validateArgsCount(JSONArray args, int expectedCount) throws Exception {
-		if (args.length() != expectedCount) {
-			throw new Exception("Wrong number of arguments! expected " + expectedCount);
-		}
-	}
+    public static void validateArgsCount(JSONArray args, int expectedCount) throws Exception {
+        if (args.length() != expectedCount) {
+            throw new Exception("Wrong number of arguments! expected " + expectedCount);
+        }
+    }
 
-	public static String validateStringArgument(JSONArray args, int pos, String name) throws Exception {
-		String value = args.getString(pos);
+    public static String validateStringArgument(JSONArray args, int pos, String name) throws Exception {
+        String value = args.getString(pos);
 
-		if (value == null || value.length() == 0) {
-			throw new Exception("Missing " + name + " parameter!");
-		}
+        if (value == null || value.length() == 0) {
+            throw new Exception("Missing " + name + " parameter!");
+        }
 
-		return value;
-	}
+        return value;
+    }
 
-	public static String validateNullableStringArgument(JSONArray args, int pos, String name) throws Exception {
-		String value = args.getString(pos);
-		if (value == "null") return null;
-		return value;
-	}
+    public static String validateNullableStringArgument(JSONArray args, int pos, String name) throws Exception {
+        String value = args.getString(pos);
+        if (value == "null") return null;
+        return value;
+    }
 
-	public static HashMap<String, Boolean> validateMapArgument(JSONArray args, int pos, String name) throws Exception {
-		HashMap<String, Boolean> map = null;
-        
-		if (args.get(pos).equals(null)) {
-			return null;
-		}
+    public static HashMap<String, Boolean> validateMapArgument(JSONArray args, int pos, String name) throws Exception {
+        HashMap<String, Boolean> map = null;
+
+        if (args.get(pos).equals(null)) {
+            return null;
+        }
 
         try {
             JSONObject object = args.getJSONObject(pos);
             Iterator<String> it = object.keys();
-			map = new HashMap<String, Boolean>();
+            map = new HashMap<String, Boolean>();
             while (it.hasNext()) {
                 String key = it.next();
                 try {
@@ -84,14 +84,15 @@ public class NITHelper {
             throw new Exception("Missing " + name + " parameter!");
         }
 
-		return map;
-	}
-	/**
-	 * @param item Coupon item
-	 * @return JSONObject result
-	 * @throws JSONException
-	 */
-	public static JSONObject couponToJson(Coupon item) throws JSONException {
+        return map;
+    }
+
+    /**
+     * @param item Coupon item
+     * @return JSONObject result
+     * @throws JSONException
+     */
+    public static JSONObject couponToJson(Coupon item) throws JSONException {
 		JSONObject coupon = new JSONObject(couponToMap(item));
 
 		return coupon;
@@ -129,82 +130,83 @@ public class NITHelper {
 		return coupon;
 	}
 
-	/**
-	 * Retrieve a Feedback object with just recipeId and feedbackId
-	 * @param recipeId
-	 * @param feedbackId
-	 * @return
-	 */
-	public static Feedback feedbackFromData(String recipeId, String feedbackId) {
-		Parcel parcel = Parcel.obtain();
-		parcel.writeString("notificationMessage");
-		parcel.writeString("question");
-		parcel.writeString(recipeId);
-		parcel.writeString(feedbackId);
+    /**
+     * Retrieve a Feedback object with just recipeId and feedbackId
+     *
+     * @param recipeId
+     * @param feedbackId
+     * @return
+     */
+    public static Feedback feedbackFromData(String recipeId, String feedbackId) {
+        Parcel parcel = Parcel.obtain();
+        parcel.writeString("notificationMessage");
+        parcel.writeString("question");
+        parcel.writeString(recipeId);
+        parcel.writeString(feedbackId);
 
-		Feedback feedback = Feedback.CREATOR.createFromParcel(parcel);
-		parcel.recycle();
+        Feedback feedback = Feedback.CREATOR.createFromParcel(parcel);
+        parcel.recycle();
 
-		return feedback;
-	}
+        return feedback;
+    }
 
-	// Feedback
-	public static String feedbackToBase64(final Feedback feedback) throws Exception {
-		String base64;
+    // Feedback
+    public static String feedbackToBase64(final Feedback feedback) throws Exception {
+        String base64;
 
-		final Parcel parcel = Parcel.obtain();
-		try {
-			feedback.writeToParcel(parcel, Parcelable.CONTENTS_FILE_DESCRIPTOR);
-			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			final GZIPOutputStream zos = new GZIPOutputStream(new BufferedOutputStream(bos));
-			zos.write(parcel.marshall());
-			zos.close();
-			base64 = Base64.encodeToString(bos.toByteArray(), 0);
-		} finally {
-			parcel.recycle();
-		}
+        final Parcel parcel = Parcel.obtain();
+        try {
+            feedback.writeToParcel(parcel, Parcelable.CONTENTS_FILE_DESCRIPTOR);
+            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            final GZIPOutputStream zos = new GZIPOutputStream(new BufferedOutputStream(bos));
+            zos.write(parcel.marshall());
+            zos.close();
+            base64 = Base64.encodeToString(bos.toByteArray(), 0);
+        } finally {
+            parcel.recycle();
+        }
 
-		return base64;
-	}
+        return base64;
+    }
 
-	public static Feedback feedbackFromBase64(final String feedbackBase64) throws Exception {
-		Feedback feedback;
-		final Parcel parcel = Parcel.obtain();
-		try {
-			final ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-			final byte[] buffer = new byte[1024];
-			final GZIPInputStream zis = new GZIPInputStream(new ByteArrayInputStream(Base64.decode(feedbackBase64, 0)));
-			int len;
-			while ((len = zis.read(buffer)) != -1) {
-				byteBuffer.write(buffer, 0, len);
-			}
-			zis.close();
-			parcel.unmarshall(byteBuffer.toByteArray(), 0, byteBuffer.size());
-			parcel.setDataPosition(0);
+    public static Feedback feedbackFromBase64(final String feedbackBase64) throws Exception {
+        Feedback feedback;
+        final Parcel parcel = Parcel.obtain();
+        try {
+            final ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+            final byte[] buffer = new byte[1024];
+            final GZIPInputStream zis = new GZIPInputStream(new ByteArrayInputStream(Base64.decode(feedbackBase64, 0)));
+            int len;
+            while ((len = zis.read(buffer)) != -1) {
+                byteBuffer.write(buffer, 0, len);
+            }
+            zis.close();
+            parcel.unmarshall(byteBuffer.toByteArray(), 0, byteBuffer.size());
+            parcel.setDataPosition(0);
 
-			feedback = Feedback.CREATOR.createFromParcel(parcel);
-		} finally {
-			parcel.recycle();
-		}
+            feedback = Feedback.CREATOR.createFromParcel(parcel);
+        } finally {
+            parcel.recycle();
+        }
 
-		return feedback;
-	}
+        return feedback;
+    }
 
-	// TrackingInfo
-	public static String trackingInfoToBase64(final TrackingInfo trackingInfo) throws Exception {
-		// JSONify trackingInfo
-		final String trackingInfoJson = new Gson().toJson(trackingInfo);
+    // TrackingInfo
+    public static String trackingInfoToBase64(final TrackingInfo trackingInfo) throws Exception {
+        // JSONify trackingInfo
+        final String trackingInfoJson = new Gson().toJson(trackingInfo);
 
-		// Encode to base64
-		return Base64.encodeToString(trackingInfoJson.getBytes("UTF-8"), Base64.DEFAULT);
-	}
+        // Encode to base64
+        return Base64.encodeToString(trackingInfoJson.getBytes("UTF-8"), Base64.DEFAULT);
+    }
 
-	public static TrackingInfo trackingInfoFromBase64(final String trackingInfoBase64) throws Exception {
-		// Decode from base64
-		final String trackingInfoJsonString = new String(Base64.decode(trackingInfoBase64, Base64.DEFAULT), "UTF-8");
+    public static TrackingInfo trackingInfoFromBase64(final String trackingInfoBase64) throws Exception {
+        // Decode from base64
+        final String trackingInfoJsonString = new String(Base64.decode(trackingInfoBase64, Base64.DEFAULT), "UTF-8");
 
-		// DeJSONify trackingInfo
-		return new Gson().fromJson(trackingInfoJsonString, TrackingInfo.class);
-	}
+        // DeJSONify trackingInfo
+        return new Gson().fromJson(trackingInfoJsonString, TrackingInfo.class);
+    }
 
 }
