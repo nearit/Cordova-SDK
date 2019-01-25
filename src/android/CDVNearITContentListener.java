@@ -50,74 +50,50 @@ public class CDVNearITContentListener implements ContentsListener {
         );
     }
 
-  @Override
-  public void gotContentNotification(Content notification, TrackingInfo trackingInfo)
-  {
-    Map<String, Object> args = new HashMap<String, Object>();
-
-    args.put("title", notification.title);
-    args.put("text", notification.contentString);
-
-    if (notification.getImageLink() != null) {
-      final ImageSet imageSet = notification.getImageLink();
-
-      Map<String, Object> imageDict = new HashMap<String, Object>();
-      imageDict.put("small", imageSet.getSmallSize());
-      imageDict.put("full", imageSet.getFullSize());
-
-      args.put("image", imageDict);
-    }
-
-    if (notification.getCta() != null) {
-      final ContentLink contentLink = notification.getCta();
-
-      Map<String, Object> ctaDict = new HashMap<String, Object>();
-      ctaDict.put("label", contentLink.label);
-      ctaDict.put("url", contentLink.url);
-
-      args.put("cta", ctaDict);
-    }
-
-    forwardEvent(
-            CDVNearIT.CDVEventType.CDVNE_Event_Content,
-            args,
-            trackingInfo,
-            notification.notificationMessage
-    );
-  }
-
-  @Override
-  public void gotCouponNotification(Coupon notification, TrackingInfo trackingInfo)
-  {
-    Map<String, Object> args = new HashMap<String, Object>();
-
-    try {
-        args.put("coupon", NITHelper.couponToMap(notification));
-        forwardEvent(
-                CDVNearIT.CDVEventType.CDVNE_Event_Coupon,
-                args,
+    @Override
+    public void gotContentNotification(Content notification, TrackingInfo trackingInfo) {
+        try {
+            Map<String, Object> bundledContent = NearITUtils.bundleContent(notification);
+            forwardEvent(
+                CDVNearIT.CDVEventType.CDVNE_Event_Content,
+                bundledContent,
                 trackingInfo,
                 notification.notificationMessage
-        );
-    } catch (Exception e) {
-        NearLog.d("NearIT Cordova Plugin", "coupon encoding error", e);
+            );
+        } catch (Exception e) {
+            NearLog.d("NearIT Cordova Plugin", "content encoding error", e);
+        }
     }
-  }
 
-  @Override
-  public void gotCustomJSONNotification(CustomJSON notification, TrackingInfo trackingInfo)
-  {
-    Map<String, Object> args = new HashMap<String, Object>();
+    @Override
+    public void gotCouponNotification(Coupon notification, TrackingInfo trackingInfo) {
+        try {
+            Map<String, Object> bundledCoupon = NearITUtils.bundleCoupon(notification);
+            forwardEvent(
+                    CDVNearIT.CDVEventType.CDVNE_Event_Coupon,
+                    bundledCoupon,
+                    trackingInfo,
+                    notification.notificationMessage
+            );
+        } catch (Exception e) {
+            NearLog.d("NearIT Cordova Plugin", "coupon encoding error", e);
+        }
+    }
 
-    args.put("data", notification.content);
-
-    forwardEvent(
-            CDVNearIT.CDVEventType.CDVNE_Event_CustomJSON,
-            args,
-            trackingInfo,
-            notification.notificationMessage
-    );
-  }
+    @Override
+    public void gotCustomJSONNotification(CustomJSON notification, TrackingInfo trackingInfo) {
+        try {
+            Map<String, Object> bundledCustomJson = NearITUtils.bundleCustomJson(notification);
+            forwardEvent(
+                    CDVNearIT.CDVEventType.CDVNE_Event_CustomJSON,
+                    bundledCustomJson,
+                    trackingInfo,
+                    notification.notificationMessage
+            );
+        } catch (Exception e) {
+            NearLog.d("NearIT Cordova Plugin", "customJSON encoding error", e);
+        }
+    }
 
     @Override
     public void gotSimpleNotification(SimpleNotification notification, TrackingInfo trackingInfo) {
@@ -131,23 +107,18 @@ public class CDVNearITContentListener implements ContentsListener {
         );
     }
 
-  @Override
-  public void gotFeedbackNotification(Feedback feedback, TrackingInfo trackingInfo)
-  {
-    Map<String, Object> args = new HashMap<String, Object>();
-
-    try {
-        args.put("feedbackId", NITHelper.feedbackToBase64(feedback));
-        args.put("question",   feedback.question);
-
-        forwardEvent(
-                CDVNearIT.CDVEventType.CDVNE_Event_Feedback,
-                args,
-                trackingInfo,
-                feedback.notificationMessage
-        );
-    } catch(Exception e) {
-        NearLog.d("NearIT Cordova Plugin", "feeback encoding error", e);
+    @Override
+    public void gotFeedbackNotification(Feedback notification, TrackingInfo trackingInfo) {
+        try {
+            Map<String, Object> bundledFeedback = NearITUtils.bundleFeedback(notification);
+            forwardEvent(
+                    CDVNearIT.CDVEventType.CDVNE_Event_CustomJSON,
+                    bundledFeedback,
+                    trackingInfo,
+                    notification.notificationMessage
+            );
+        } catch (Exception e) {
+            NearLog.d("NearIT Cordova Plugin", "feedback encoding error", e);
+        }
     }
-  }
 }
