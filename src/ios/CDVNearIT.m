@@ -409,7 +409,7 @@ __weak CDVNearIT *instance = nil;
                                              messageAsString:[error description]];
         } else {
             for(NITCoupon *c in coupons) {
-                [bundledCoupons addObject:[ComNearitUtils bundleNITCoupon:c]];
+                [bundledCoupons addObject:[NearITUtils bundleNITCoupon:c]];
             }
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:bundledCoupons];
         }
@@ -439,7 +439,7 @@ __weak CDVNearIT *instance = nil;
                                              messageAsString:[error description]];
         } else {
             for (NITHistoryItem *item in items) {
-                [bundledNotificationHistory addObject:[ComNearitUtils bundleNITHistoryItem:item]];
+                [bundledNotificationHistory addObject:[NearITUtils bundleNITHistoryItem:item]];
     		}
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:bundledNotificationHistory];
         }

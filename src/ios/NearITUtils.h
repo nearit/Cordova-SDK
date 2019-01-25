@@ -31,11 +31,10 @@
 //
 
 
-#import "NearITSDK.h"
-#import "NearITConsts.h"
+#import <NearITSDK/NearITSDK.h>
 
 
-@interface ComNearitUtils
+@interface NearITUtils
 
 - (NITCoupon*)unbundleNITCoupon:(NSDictionary* _Nonnull)bundledCoupon;
 - (NSDictionary*)bundleNITCoupon:(NITCoupon* _Nonnull)coupon;

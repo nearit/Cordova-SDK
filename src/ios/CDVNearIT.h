@@ -34,6 +34,7 @@
 #import <Cordova/CDVPlugin.h>
 
 #import "Macros.h"
+#import "NearITUtils.h"
 #import <NearITSDK/NearITSDK.h>
 
 
