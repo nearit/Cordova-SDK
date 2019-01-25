@@ -113,6 +113,9 @@
         <header-file src="src/ios/CDVNearIT.h" />
         <source-file src="src/ios/CDVNearIT.m" />
 
+        <header-file src="src/ios/NearITUtils.h" />
+        <source-file src="src/ios/NearITUtils.m" />
+
     </platform>
 
     <!--    Android platform definition    -->
@@ -136,6 +139,7 @@
         <source-file src="src/android/CDVNearIT.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearITContentListener.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/NITHelper.java" target-dir="src/it/near/sdk/cordova/android" />
+        <source-file src="src/android/NearITUtils.java" target-dir="src/it/near/sdk/cordova/android" />
 
         <!--    Add strings to res  -->
         <source-file src="src/android/CDVNearITStrings.xml" target-dir="res/values" />
