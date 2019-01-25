@@ -402,94 +402,20 @@ __weak CDVNearIT *instance = nil;
  */
 - (void)getCoupons:( CDVInvokedUrlCommand* _Nonnull )command
 {
-    [[NITManager defaultManager] couponsWithCompletionHandler:^(NSArray<NITCoupon *> * coupons, NSError * error) {
+    NSMutableArray *bundledCoupons = [[NSMutableArray alloc] init];
+
+    [[NITManager defaultManager] couponsWithCompletionHandler:^(NSArray<NITCoupon *> * _Nullable coupons, NSError * _Nullable error) {
+        
         CDVPluginResult* pluginResult = nil;
 
         if (error) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                              messageAsString:[error description]];
         } else {
-            NSMutableArray* couponList = [NSMutableArray array];
-
-            for(NITCoupon* coupon in coupons) {
-
-                // retrieve exported fields
-                NSString* name              = [coupon title];
-                NSString* couponDescription = [coupon couponDescription];
-                NSString* value             = [coupon value];
-                NSString* expiresAt         = [coupon expiresAt];
-                NSString* redeemableFrom    = [coupon redeemableFrom];
-                NSMutableArray* claims      = [NSMutableArray array];
-                NSString* smallIcon         = [[[coupon icon] smallSizeURL] absoluteString];
-                NSString* icon              = [[[coupon icon] url] absoluteString];
-
-                // check on null values
-                if (IS_EMPTY(name)) {
-                    name = @"";
-                }
-                if (IS_EMPTY(couponDescription)) {
-                    couponDescription = @"";
-                }
-                if (IS_EMPTY(value)) {
-                    value = @"";
-                }
-                if (IS_EMPTY(expiresAt)) {
-                    expiresAt = @"";
-                }
-                if (IS_EMPTY(redeemableFrom)) {
-                    redeemableFrom = @"";
-                }
-                for(NITClaim* claim in [coupon claims]) {
-                    NSMutableDictionary* claimDict = [NSMutableDictionary dictionary];
-
-                    NSString* serialNumber = [claim serialNumber];
-                    NSString* claimedAt    = [claim claimedAt];
-                    NSString* redeemedAt   = [claim redeemedAt];
-                    NSString* recipeId     = [claim recipeId];
-
-                    if (IS_EMPTY(serialNumber)) {
-                        serialNumber = @"";
-                    }
-                    if (IS_EMPTY(claimedAt)) {
-                        claimedAt = @"";
-                    }
-                    if (IS_EMPTY(redeemedAt)) {
-                        redeemedAt = @"";
-                    }
-                    if (IS_EMPTY(recipeId)) {
-                        recipeId = @"";
-                    }
-
-                    [claimDict setObject:serialNumber forKey:@"serialNumber"];
-                    [claimDict setObject:claimedAt forKey:@"claimedAt"];
-                    [claimDict setObject:redeemedAt forKey:@"redeemedAt"];
-                    [claimDict setObject:recipeId forKey:@"recipeId"];
-
-                    [claims addObject:claimDict];
-                }
-                if (IS_EMPTY(smallIcon)) {
-                    smallIcon = @"";
-                }
-                if (IS_EMPTY(icon)) {
-                    icon = @"";
-                }
-
-                // fill exported object
-                NSMutableDictionary* couponDict = [NSMutableDictionary dictionary];
-                [couponDict setObject:name              forKey:@"title"];
-                [couponDict setObject:couponDescription forKey:@"description"];
-                [couponDict setObject:value             forKey:@"value"];
-                [couponDict setObject:expiresAt         forKey:@"expiresAt"];
-                [couponDict setObject:redeemableFrom    forKey:@"redeemableFrom"];
-                [couponDict setObject:claims            forKey:@"claims"];
-                [couponDict setObject:smallIcon         forKey:@"smallIcon"];
-                [couponDict setObject:icon              forKey:@"icon"];
-                NITLogI(TAG, @"coupon %@", couponDict);
-
-                [couponList addObject:couponDict];
+            for(NITCoupon *c in coupons) {
+                [bundledCoupons addObject:[ComNearitUtils bundleNITCoupon:c]];
             }
-
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:couponList];
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:bundledCoupons];
         }
 
         [[self commandDelegate] sendPluginResult:pluginResult callbackId:[command callbackId]];
