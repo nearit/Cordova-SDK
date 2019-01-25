@@ -206,7 +206,7 @@ public class CDVNearIT extends CordovaPlugin {
 	public void fireWindowEvent(CDVEventType event, Map<String, Object> args, TrackingInfo trackingInfo) {
 		String trackingInfoData = null;
 		try {
-			trackingInfoData = NITHelper.trackingInfoToBase64(trackingInfo);
+			trackingInfoData = NearITUtils.bundleTrackingInfo(trackingInfo);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -450,7 +450,7 @@ public class CDVNearIT extends CordovaPlugin {
 
 			Log.d(TAG, "NITManager :: sendFeedback(" + feedbackId + ", " + rating + ", " + comment + ")");
 
-			Feedback feedback = NITHelper.feedbackFromBase64(feedbackId);
+			Feedback feedback = NearITUtils.unbundleFeedback(feedbackId);
 			FeedbackEvent event = new FeedbackEvent(feedback, rating, comment);
 
 			NearItManager.getInstance().sendEvent(event, new NearITEventHandler() {
@@ -654,7 +654,7 @@ public class CDVNearIT extends CordovaPlugin {
 
     private void sendTracking(final String trackingInfoBase64, final String eventName) throws Exception {
 		try {
-			final TrackingInfo trackingInfo = NITHelper.trackingInfoFromBase64(trackingInfoBase64);
+			final TrackingInfo trackingInfo = NearITUtils.unbundleTrackingInfo(trackingInfoBase64);
 			Log.d(TAG, "NITManager :: track event (" + eventName + ") with trackingInfo (" + trackingInfoBase64 + ")");
 			NearItManager.getInstance().sendTracking(trackingInfo, eventName);
 		} catch (Exception e) {
