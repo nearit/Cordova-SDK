@@ -293,13 +293,6 @@ NearIT.prototype.stopRadar = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "stopRadar", []);
 };
 
-/**
- * @deprecated
- */
-NearIT.prototype.refreshRecipes = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "refreshRecipes", []);
-};
-
 /*
  * Disable Default Ranging Notifications
  * @param {Function} successCallback The function to call when the call is successful

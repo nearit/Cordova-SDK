@@ -69,11 +69,7 @@ angular.module('starter.services', [])
     },
 
     {
-      id: 'refreshRecipes',
-      name: 'Refresh NearIT recipes',
-      data: [],
-    },
-
+      id: 'sendFeedback',
     {
       id: 'sendUserFeedback',
       name: 'Reply with a Feedback',

@@ -639,26 +639,6 @@ __weak CDVNearIT *instance = nil;
                                   callbackId:[command callbackId]];
 }
 
-/**
- * DEPRECATED
- */
-- (void)refreshRecipes:( CDVInvokedUrlCommand* _Nonnull )command
-{
-    [[NITManager defaultManager] refreshConfigWithCompletionHandler:^(NSError* error) {
-        CDVPluginResult* pluginResult = nil;
-
-        if (error) {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                            messageAsString:[error description]];
-        } else {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        }
-
-        [[self commandDelegate] sendPluginResult:pluginResult
-                                      callbackId:[command callbackId]];
-    }];
-}
-
 // MARK: Customization
 - (void)disableDefaultRangingNotifications {
     [NITManager defaultManager].showForegroundNotification = false;

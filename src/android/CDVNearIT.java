@@ -135,8 +135,6 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.startRadar(args, callbackContext);
 					} else if (action.equals("stopRadar")) {
 						CDVNearIT.this.stopRadar(args, callbackContext);
-					} else if (action.equals("refreshRecipes")) {
-						CDVNearIT.this.refreshRecipes(args, callbackContext);
 					} else {
 						final String message = "unknown action " + action;
 						Log.e(TAG, message);
@@ -690,24 +688,6 @@ public class CDVNearIT extends CordovaPlugin {
     public void stopRadar(JSONArray args, CallbackContext callbackContext) throws Exception {
 	    Log.d(TAG, "NITManager :: stop");
 	    NearItManager.getInstance().stopRadar();
-    }
-
-    /**
-     * @deprecated no need to refresh recipe. This is done automagically by the native SDK
-     */
-    public void refreshRecipes(JSONArray args, final CallbackContext callbackContext) throws Exception {
-	    Log.i(TAG, "NITManager :: refreshing recipes");
-	    NearItManager.getInstance().refreshConfigs(new RecipeRefreshListener() {
-		    @Override
-		    public void onRecipesRefresh() {
-			    callbackContext.success();
-		    }
-
-		    @Override
-		    public void onRecipesRefreshFail() {
-			    callbackContext.error("Could not refresh recipes");
-		    }
-	    });
     }
 
 	public static void disableDefaultRangingNotifications() {
