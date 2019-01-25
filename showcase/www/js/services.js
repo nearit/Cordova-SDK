@@ -7,12 +7,6 @@ angular.module('starter.services', [])
   var actions = [
 
     {
-      id: 'permissionRequest',
-      name: 'Ask user for app permission',
-      data: [],
-    },
-
-    {
       id: 'startRadar',
       name: 'Start location and proximity radar',
       data: [],

@@ -114,13 +114,6 @@ angular.module('starter', ['ionic', 'starter.controllers'])
           appendLog(`Add '<b>${event}</b>' listener... <b>DONE</b>.`)
         })
 
-        // ask user for permissions
-        nearit.permissionRequest(function() {
-          appendLog(`Permissions requested`)
-        }, function() {
-          appendLog(`Failed to request Permissions`)
-        });
-
         // set user profile data
         nearit.setUserData("gender", "M", function() {
         }, function() {

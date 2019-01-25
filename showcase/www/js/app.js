@@ -58,18 +58,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
       });
 
-      // at startup always check permissions
-      appendLog("demo :: calling nearit.permissionRequest ()");
-      nearit.permissionRequest(function() {
-        var args2 = Array.prototype.slice.call(arguments);
-        args2 = ['demo :: <b>permissionRequest successCb</b>'].concat(args2);
-        appendLog.apply(appendLog, args2);
-      }, function() {
-        var args2 = Array.prototype.slice.call(arguments);
-        args2 = ['demo :: <b>permissionRequest errorCb</b>'].concat(args2);
-        appendLog.apply(appendLog, args2);
-      });
-
     }
   });
   // @end nearit-cordova-sdk
