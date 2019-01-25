@@ -117,7 +117,9 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.sendFeedback(args, callbackContext);
 					} else if (action.equals("getCoupons")) {
 						CDVNearIT.this.getCoupons(args, callbackContext);
-					} else if (action.equals("triggerEvent")) {
+					} else if (action.equals("getNotificationHistory")) {
+						CDVNearIT.this.getNotificationHistory(args, callbackContext);
+					}else if (action.equals("triggerEvent")) {
 						CDVNearIT.this.triggerEvent(args, callbackContext);
 					} else if (action.equals("sendTrackingWithRecipeIdForEventNotified")
 								|| action.equals("sendTrackingWithRecipeIdForEventReceived")) {
@@ -250,7 +252,6 @@ public class CDVNearIT extends CordovaPlugin {
 
     /*
      * Profile Id
-	 * @link http://nearit-ios.readthedocs.io/en/latest/user-profilation/
 	 */
 
 	/**
@@ -489,7 +490,6 @@ public class CDVNearIT extends CordovaPlugin {
 				try {
 					for(Coupon item : list) {
 						JSONObject coupon = NITHelper.couponToJson(item);
-
 						coupons.put(coupon);
 					}
 				} catch(JSONException error) {
@@ -501,6 +501,42 @@ public class CDVNearIT extends CordovaPlugin {
 
 			@Override
 			public void onCouponDownloadError(String error) {
+				callbackContext.error(error);
+			}
+		});
+	}
+
+	/*
+	 *	Notification History
+	 */
+
+	/**
+	 * Request notification history
+	 * <code><pre>
+	 	cordova.exec(successCb, errorCb, "nearit", "getNotificationHistory", []);
+	   </pre></code>
+	 */
+	public void getNotificationHistory(JSONArray args, final CallbackContext callbackContext) throws Exception {
+		Log.d(TAG, "NITManager :: getNotificationHistory()");
+
+		NearItManager.getInstance().getHistory(new NotificationHistoryManager.OnNotificationHistoryListener() {
+    		@Override
+			public void onNotifications(@NonNull List<HistoryItem> historyItemList) {
+				JSONArray history = new JSONArray();
+
+				try {
+					for(HistoryItem historyItem : historyItemList) {
+						JSONObject item = NITHelper.historyItemToJson(historyItem);
+						history.put(item);
+					}
+				} catch(JSONException e) {
+					callbackContext.error(e.getMessage());
+				}
+
+				callbackContext.success(history);
+			}
+			@Override
+			public void onError(String error) {
 				callbackContext.error(error);
 			}
 		});
