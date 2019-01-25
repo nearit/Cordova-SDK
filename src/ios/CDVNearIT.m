@@ -57,10 +57,6 @@ __weak CDVNearIT *instance = nil;
     NSString *result = nil;
 
     switch(eventType) {
-
-        case CDVNE_PushNotification_Remote:     result = @"pushReceived.nearit"; break;
-        case CDVNE_PushNotification_Local:      result = @"pushReceived.nearit"; break;
-
         case CDVNE_Event_Simple:     result =   @"eventSimple.nearit"; break;
         case CDVNE_Event_CustomJSON: result =     @"eventJSON.nearit"; break;
         case CDVNE_Event_Content:    result =  @"eventContent.nearit"; break;

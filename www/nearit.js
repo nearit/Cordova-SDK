@@ -40,11 +40,6 @@ function NearIT() {
     var self = this;
 
     self.eventType = {
-        "CDVNE_PushNotification_Granted":    "pushGranted.nearit",
-        "CDVNE_PushNotification_NotGranted": "pushDenied.nearit",
-        "CDVNE_PushNotification_Remote":     "pushReceived.nearit",
-        "CDVNE_PushNotification_Local":      "pushReceived.nearit",
-
         "CDVNE_Event_Simple":     "eventSimple.nearit",
         "CDVNE_Event_CustomJSON": "eventJSON.nearit",
         "CDVNE_Event_Content":    "eventContent.nearit",

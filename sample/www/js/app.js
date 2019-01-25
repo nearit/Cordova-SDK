@@ -64,10 +64,6 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 
         // add an event listener for those nearit events
         var events = [
-          nearit.eventType.CDVNE_PushNotification_Granted,
-          nearit.eventType.CDVNE_PushNotification_NotGranted,
-          nearit.eventType.CDVNE_Location_Granted,
-          nearit.eventType.CDVNE_Location_NotGranted,
           nearit.eventType.CDVNE_Event_Simple,
           nearit.eventType.CDVNE_Event_CustomJSON,
           nearit.eventType.CDVNE_Event_Content,
