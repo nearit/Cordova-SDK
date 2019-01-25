@@ -57,7 +57,12 @@ angular.module('starter.services', [])
 
     {
       id: 'setUserData',
-      name: 'Set user profile data',
+      name: 'Set user data',
+      data: ['prompt:key', 'prompt:value'],
+    },
+    {
+      id: 'setMultichoiceUserData',
+      name: 'Set multichoice user data',
       data: ['prompt:key', 'prompt:value'],
     },
 
@@ -69,21 +74,32 @@ angular.module('starter.services', [])
 
     {
       id: 'sendFeedback',
-    {
-      id: 'sendUserFeedback',
       name: 'Reply with a Feedback',
       data: ['prompt:feedbackId', 'prompt:recipeId', 'prompt:rating'],
     },
 
     {
-      id: 'sendUserFeedbackWithComment',
+      id: 'sendFeedbackWithComment',
       name: 'Reply with a Feedback + Comment',
       data: ['prompt:feedbackId', 'prompt:recipeId', 'prompt:rating', 'prompt:comment'],
     },
 
     {
+      id: 'triggerEvent',
+      name: 'Trigger an in-app event',
+      data: ['prompt:key'],
+    },
+
+    {
       id: 'getCoupons',
       name: 'Get coupon list',
+      data: [],
+      result: 'alert',
+    },
+
+    {
+      id: 'getNotificationHistory',
+      name: 'Get notification history',
       data: [],
       result: 'alert',
     },

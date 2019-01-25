@@ -199,6 +199,19 @@ NearIT.prototype.getCoupons = function(successCallback, errorCallback) {
 };
 
 /*
+ *  Notification history
+ */
+
+ /**
+  * Retrieve NearIT notification history
+  * @param {Function} successCallback The function to call when the call is successful
+  * @param {Function} errorCallback The function to call when there is an error
+  */
+ NearIT.prototype.getNotificationHistory = function(successCallback, errorCallback) {
+     exec(successCallback, errorCallback, this.serviceName, "getNotificationHistory", []);
+ };
+
+/*
  * Custom Triggers
  */
 
