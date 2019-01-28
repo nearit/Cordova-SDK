@@ -42,9 +42,9 @@ public class NITHelper {
     }
 
     public static HashMap<String, Boolean> validateMapArgument(JSONArray args, int pos, String name) throws Exception {
-        HashMap<String, Boolean> map = null;
+        HashMap<String, Boolean> map;
 
-        if (args.get(pos).equals(null)) {
+        if (args.get(pos) == null) {
             return null;
         }
 
@@ -55,7 +55,7 @@ public class NITHelper {
             while (it.hasNext()) {
                 String key = it.next();
                 try {
-                    boolean value = ((Boolean) object.get(key)).booleanValue();
+                    boolean value = (Boolean) object.get(key);
                     map.put(key, value);
                 } catch (ClassCastException e) {
                     throw new Exception("Not boolean value for key " + key + " in " + name + " parameter!");
@@ -64,7 +64,7 @@ public class NITHelper {
         } catch (JSONException e) {
             throw new Exception("Invalid format for " + name + " parameter!");
         }
-        if (map != null && map.isEmpty()) {
+        if (map.isEmpty()) {
             throw new Exception("Missing " + name + " parameter!");
         }
 
@@ -77,8 +77,7 @@ public class NITHelper {
      * @throws JSONException
      */
     public static JSONObject couponToJson(Coupon item) throws JSONException {
-        JSONObject coupon = new JSONObject(NearITUtils.bundleCoupon(item));
-        return coupon;
+        return new JSONObject(NearITUtils.bundleCoupon(item));
     }
 
     /**
@@ -87,8 +86,7 @@ public class NITHelper {
      * @throws JSONException
      */
     public static JSONObject historyItemToJson(HistoryItem item) throws JSONException {
-        JSONObject historyItem = new JSONObject(NearITUtils.bundleHistoryItem(item));
-        return historyItem;
+        return new JSONObject(NearITUtils.bundleHistoryItem(item));
     }
 
 }
