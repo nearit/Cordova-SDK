@@ -216,7 +216,7 @@ public class NearITUtils {
     }
 
     public static ContentLink unbundleContentLink(Map<String, Object> bundledCta) {
-        return new ContentLink((String) bundledCta.get("label"), (String) bundledCta.get("url"));;
+        return new ContentLink((String) bundledCta.get("label"), (String) bundledCta.get("url"));
     }
 
     public static String feedbackToB64(final Feedback feedback) throws Exception {
