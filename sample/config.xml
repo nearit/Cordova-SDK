@@ -44,6 +44,18 @@
         <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
     </platform>
     <platform name="ios">
+        <config-file parent="NSBluetoothPeripheralUsageDescription" platform="ios" target="*-Info.plist">
+            <string>REPLACE THIS --&gt; This app uses Bluetooth communication to detect nearby beacons</string>
+        </config-file>
+        <config-file parent="NSLocationAlwaysAndWhenInUseUsageDescription" platform="ios" target="*-Info.plist">
+            <string>REPLACE THIS --&gt;YOUR MESSAGE FOR 'Always' AND 'WhenInUse' PERMISSION</string>
+        </config-file>
+        <config-file parent="NSLocationAlwaysUsageDescription" platform="ios" target="*-Info.plist">
+            <string>REPLACE THIS --&gt;YOUR MESSAGE FOR 'Always' PERMISSION</string>
+        </config-file>
+        <config-file parent="NSLocationWhenInUseUsageDescription" platform="ios" target="*-Info.plist">
+            <string>REPLACE THIS --&gt;YOUR MESSAGE FOR 'WhenInUse' PERMISSION</string>
+        </config-file>
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
