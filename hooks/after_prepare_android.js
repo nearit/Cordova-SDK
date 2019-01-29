@@ -54,7 +54,7 @@ if (platformDir) {
   }
 
   if (!fs.existsSync(manifestFile)) {
-    throw new Error("! Can't find the AndroidManifest.xml. This shouldn't happen, please contact us for support.\n")
+    throw new Error("! Can't find the AndroidManifest.xml. This shouldn't happen: try running `cordova prepare`, if it doesn\'t fix the issue please contact us for support.\n")
   }
 
   /**
