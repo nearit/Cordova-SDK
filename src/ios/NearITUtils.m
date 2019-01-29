@@ -26,7 +26,7 @@
 //  NearITUtils.m
 //  NearITSDK
 //
-//  Created by Federic Boschini on 24/01/19.
+//  Created by Federico Boschini on 24/01/19.
 //  Copyright © 2018 NearIT. All rights reserved.
 //
 
@@ -90,14 +90,15 @@
 	[historyDictionary setObject:read forKey:@"read"];
 	[historyDictionary setObject:timestamp forKey:@"timestamp"];
 	[historyDictionary setObject:(bundledTrackingInfo ? bundledTrackingInfo : [NSNull null]) forKey:@"trackingInfo"];
+    NSString* message = item.reactionBundle.notificationMessage;
+    if (!message) {
+        message = @"";
+    }
+    [historyDictionary setObject:message forKey:@"message"];
 	
 	if ([item.reactionBundle isKindOfClass:[NITSimpleNotification class]]) {
 	
 		[historyDictionary setObject:EVENT_TYPE_SIMPLE forKey:@"type"];
-		
-		NITSimpleNotification *nearSimple = (NITSimpleNotification*)item.reactionBundle;
-		NSDictionary* content = [self bundleNITSimple:nearSimple];
-		[historyDictionary setObject:content forKey:@"notificationContent"];
 		
 	} else if ([item.reactionBundle isKindOfClass:[NITContent class]]) {
 		
@@ -132,36 +133,18 @@
 	return historyDictionary;
 }
 
-- (NSDictionary*)bundleNITSimple:(NITSimpleNotification * _Nonnull) simple
-{
-	NSString* message = [simple notificationMessage];
-    if (!message) {
-        message = @"";
-    }
-    
-    NSDictionary* bundledSimple = @{
-					EVENT_CONTENT_MESSAGE: message};
-	
-	return bundledSimple;
-}
-
 - (NITContent*)unbundleNITContent:(NSDictionary * _Nonnull)bundledContent
 {
 	NITContent* content = [[NITContent alloc] init];
-	content.title = [bundledContent objectForKey:EVENT_CONTENT_TITLE];
-	content.content = [bundledContent objectForKey:EVENT_CONTENT_TEXT];
-	content.images = @[[self unbundleNITImage: [bundledContent objectForKey:EVENT_CONTENT_IMAGE]]];
-	content.internalLink = [bundledContent objectForKey:EVENT_CONTENT_CTA];
+	content.title = [bundledContent objectForKey:@"title"];
+	content.content = [bundledContent objectForKey:@"text"];
+	content.images = @[[self unbundleNITImage: [bundledContent objectForKey:@"image"]]];
+	content.internalLink = [bundledContent objectForKey:@"cta"];
 	return content;
 }
 
 - (NSDictionary*)bundleNITContent:(NITContent * _Nonnull) content
-{
-	NSString* message = [content notificationMessage];
-    if (!message) {
-        message = @"";
-    }
-	
+{	
 	NSString* title = [content title];
     if (!title) {
         title = @"";
@@ -187,54 +170,41 @@
     }
     
     NSDictionary* bundledContent = @{
-					EVENT_CONTENT_MESSAGE:message,
-					EVENT_CONTENT_TITLE:title,
-					EVENT_CONTENT_TEXT:text,
-					EVENT_CONTENT_IMAGE:image,
-					EVENT_CONTENT_CTA:cta};
+					@"title":title,
+					@"text":text,
+					@"image":image,
+					@"cta":cta};
                                    
   	return bundledContent;
 }
 
 - (NITFeedback*)unbundleNITFeedback:(NSDictionary * _Nonnull) bundledFeedback
 {
-	NSString* feedbackId = [bundledFeedback objectForKey:EVENT_CONTENT_FEEDBACK];
+	NSString* feedbackId = [bundledFeedback objectForKey:@"feedbackId"];
     NSData* feedbackData = [[NSData alloc] initWithBase64EncodedString:feedbackId
                                                                options:NSDataBase64DecodingIgnoreUnknownCharacters];
     
     NITFeedback *feedback = [NSKeyedUnarchiver unarchiveObjectWithData:feedbackData];
-    feedback.question = [bundledFeedback objectForKey:EVENT_CONTENT_QUESTION];
+    feedback.question = [bundledFeedback objectForKey:@"feedbackQuestion"];
     return feedback;
 }
 
 - (NSDictionary*)bundleNITFeedback:(NITFeedback * _Nonnull) feedback
-{
-	NSString* message = [feedback notificationMessage];
-    if (!message) {
-        message = @"";
-    }
-    
+{   
     NSData* feedbackData = [NSKeyedArchiver archivedDataWithRootObject:feedback];
     NSString* feedbackB64 = [feedbackData base64EncodedStringWithOptions:0];
     
     NSDictionary* bundledFeedback = @{
-    					EVENT_CONTENT_MESSAGE: message,
-                    	EVENT_CONTENT_FEEDBACK: feedbackB64,
-                    	EVENT_CONTENT_QUESTION: [feedback question]};
+                    	@"feedbackId": feedbackB64,
+                    	@"feedbackQuestion": [feedback question]};
                     
    	return bundledFeedback;
 }
 
 - (NSDictionary*)bundleNITCustomJSON:(NITCustomJSON* _Nonnull) custom
-{
-	NSString* message = [custom notificationMessage];
-    if (!message) {
-        message = @"";
-    }
-    
+{   
     NSDictionary* customJson = @{
-                       EVENT_CONTENT_MESSAGE: message,
-                       EVENT_CONTENT_DATA: [custom content]};
+                       @"data": [custom content]};
 
 	return customJson;
 }

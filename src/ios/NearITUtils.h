@@ -26,11 +26,11 @@
 //  NearITUtils.h
 //  NearITSDK
 //
-//  Created by Federic Boschini on 24/01/19.
+//  Created by Federico Boschini on 24/01/19.
 //  Copyright © 2018 NearIT. All rights reserved.
 //
 
-
+#import "NearITConsts.h"
 #import <NearITSDK/NearITSDK.h>
 
 
@@ -39,7 +39,6 @@
 - (NITCoupon*)unbundleNITCoupon:(NSDictionary* _Nonnull)bundledCoupon;
 - (NSDictionary*)bundleNITCoupon:(NITCoupon* _Nonnull)coupon;
 - (NSDictionary*)bundleNITHistoryItem:(NITHistoryItem* _Nonnull)item;
-- (NSDictionary*)bundleNITSimple:(NITSimpleNotification * _Nonnull)simple;
 - (NITContent*)unbundleNITContent:(NSDictionary * _Nonnull)bundledContent;
 - (NSDictionary*)bundleNITContent:(NITContent * _Nonnull)content;
 - (NITFeedback*)unbundleNITFeedback:(NSDictionary * _Nonnull)bundledFeedback;

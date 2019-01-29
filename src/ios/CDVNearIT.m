@@ -27,7 +27,7 @@
 //  NearITSDK
 //
 //  Created by Fabio Cigliano on 25/07/17.
-//  Modified by Federic Boschini on 25/09/18.
+//  Modified by Federico Boschini on 25/09/18.
 //  Copyright © 2017 NearIT. All rights reserved.
 //
 
@@ -57,11 +57,11 @@ __weak CDVNearIT *instance = nil;
     NSString *result = nil;
 
     switch(eventType) {
-        case CDVNE_Event_Simple:     result =   @"eventSimple.nearit"; break;
-        case CDVNE_Event_CustomJSON: result =     @"eventJSON.nearit"; break;
-        case CDVNE_Event_Content:    result =  @"eventContent.nearit"; break;
-        case CDVNE_Event_Feedback:   result = @"eventFeedback.nearit"; break;
-        case CDVNE_Event_Coupon:     result =   @"eventCoupon.nearit"; break;
+        case CDVNE_Event_Simple:     result =   EVENT_TYPE_SIMPLE; break;
+        case CDVNE_Event_CustomJSON: result =   EVENT_TYPE_CUSTOM_JSON; break;
+        case CDVNE_Event_Content:    result =   EVENT_TYPE_CONTENT; break;
+        case CDVNE_Event_Feedback:   result =   EVENT_TYPE_FEEDBACK; break;
+        case CDVNE_Event_Coupon:     result =   EVENT_TYPE_COUPON; break;
 
         case CDVNE_Event_Error: result = @"error.nearit"; break;
 
