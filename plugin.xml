@@ -144,5 +144,6 @@
     </platform>
 
     <hook type="after_prepare" src="hooks/after_prepare_android.js"/>
+    <hook type="after_prepare" src="hooks/after_prepare_ios.js" />
 
 </plugin>
