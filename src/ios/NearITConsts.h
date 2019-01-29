@@ -1,9 +1,7 @@
-package it.near.sdk.cordova.android;
-
 /*
     MIT License
 
-    Copyright (c) 2017 nearit.com
+    Copyright (c) 2018 nearit.com
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +22,21 @@ package it.near.sdk.cordova.android;
     SOFTWARE.
  */
 
-public class NITConfig {
+//
+//  NearITConsts.h
+//  NearITSDK
+//
+//  Created by Federic Boschini on 24/01/19.
+//  Copyright © 2018 NearIT. All rights reserved.
+//
+ 
+@interface NearITConsts : NSObject
 
-    /**
-     * This field key is automatically mapped to preference {near_api_key}
-     */
-    public static final String API_KEY = "Your.API.Key";
+// Event types
+extern NSString* EVENT_TYPE_SIMPLE;
+extern NSString* EVENT_TYPE_CUSTOM_JSON;
+extern NSString* EVENT_TYPE_COUPON;
+extern NSString* EVENT_TYPE_CONTENT;
+extern NSString* EVENT_TYPE_FEEDBACK;
 
-}
+@end
