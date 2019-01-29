@@ -84,6 +84,7 @@ if (apiKey) {
   }
 
   fs.writeFileSync(manifestFile, tempManifest.write({ indent: 4 }), 'utf-8');
+  console.log(`* 'near_api_key' correctly added to AndroidManifest.xml\n`)
 } else {
   throw new Error("! Missing `near_api_key` in your `config.xml`\n");
 }
@@ -140,6 +141,7 @@ if (urlScheme) {
     }
   }
   fs.writeFileSync(manifestFile, tempManifest.write({ indent: 4 }), 'utf-8');
+  console.log(`* 'near_url_scheme' correctly added to AndroidManifest.xml\n`)
 } else {
   console.log("! Missing `near_url_scheme` in your `config.xml`\n")
 }
