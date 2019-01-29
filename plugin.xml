@@ -111,6 +111,9 @@
         <header-file src="src/ios/NearITUtils.h" />
         <source-file src="src/ios/NearITUtils.m" />
 
+        <header-file src="src/ios/NearITConsts.h" />
+        <source-file src="src/ios/NearITConsts.m" />
+
     </platform>
 
     <!--    Android platform definition    -->
