@@ -79,7 +79,7 @@
         <icon height="1024" src="resources/ios/icon/icon-1024.png" width="1024" />
         <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
     </platform>
-    <preference name="nearit-api-key" value="Your.Api.Key" />
+    <preference name="near_api_key" value="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJGTVdqVjZvTmFVSUFBMnczMzVHdTU1WVBsNlhZdXpGZkI2enl1Nld2YW0wPSIsImlhdCI6MTUzNzg2MzI0NiwiZXhwIjoxODUzNTM5MTk5LCJkYXRhIjp7ImFjY291bnQiOnsiaWQiOiJhNDdhMTUwOC0yNWZkLTQ4MjYtOTQzZC05NGM5NTgxNDA4YzEiLCJyb2xlX2tleSI6ImFwcCJ9fX0.xCVaDlMyxKXaFDCo7pK-NlkflHlkvxKlbfYAuYnUTIA" />
     <plugin name="cordova-plugin-console" spec="^1.0.7" />
     <plugin name="cordova-plugin-device" spec="^1.1.6" />
     <plugin name="cordova-plugin-nearit" spec="^2.2.0-alpha.9" />

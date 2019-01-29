@@ -4,7 +4,7 @@
  */
 var preferenceMappingData = {
     'generic': {
-        'nearit_api_key': {
+        'near_api_key': {
             target: 'config.xml',
             value: 'Your.API.Key',
             destination: 'preference'
@@ -16,7 +16,7 @@ var preferenceMappingData = {
         }
     },
     'ios': {
-        'nearit_api_key': {
+        'near_api_key': {
             target: '*-Prefix.pch',
             content: '#define NEARIT_APIKEY @"{value}"',
             parent: null,

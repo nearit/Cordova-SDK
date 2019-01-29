@@ -27,7 +27,7 @@ package it.near.sdk.cordova.android;
 public class NITConfig {
 
     /**
-     * This field key is automatically mapped to preference {nearit-api-key}
+     * This field key is automatically mapped to preference {near_api_key}
      */
     public static final String API_KEY = "Your.API.Key";
 

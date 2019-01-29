@@ -20,7 +20,7 @@ $ ionic cordova prepare
 ### Insert NearIT API Key
 Open `config.xml` and insert your NearIT App API Key (the one you can find on [NearIT](go.nearit.com))
 ```xml
-<preference name="nearit-api-key" value="Your.Api.Key" />
+<preference name="near_api_key" value="Your.Api.Key" />
 ```
 
 ## How to run

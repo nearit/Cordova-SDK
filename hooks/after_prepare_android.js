@@ -27,7 +27,7 @@
 /**
  *
  * this code is intended to:
- * - insert `nearit_api_key` into Android manifest
+ * - insert `near_api_key` into Android manifest
  *
  * @author "Mattia Panzeri"
  * @created 31/08/17
@@ -53,9 +53,9 @@ if (!fs.existsSync(manifestFile)) {
 }
 
 /**
- * Inject `nearit-api-key` from Cordova `config.xml` into Android manifest
+ * Inject `near_api_key` from Cordova `config.xml` into Android manifest
  */
-var apiKey = lib.searchPreferenceByName(rootdir, 'android', 'nearit_api_key');
+var apiKey = lib.searchPreferenceByName(rootdir, 'android', 'near_api_key');
 
 if (apiKey) {
   var tempManifest = lib.parseElementtreeSync(manifestFile);
