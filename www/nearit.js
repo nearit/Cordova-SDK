@@ -40,13 +40,13 @@ function NearIT() {
     var self = this;
 
     self.eventType = {
-        "CDVNE_Event_Simple":     "eventSimple.nearit",
-        "CDVNE_Event_CustomJSON": "eventJSON.nearit",
-        "CDVNE_Event_Content":    "eventContent.nearit",
-        "CDVNE_Event_Feedback":   "eventFeedback.nearit",
-        "CDVNE_Event_Coupon":     "eventCoupon.nearit",
+        "CDVNE_Event_Simple"    :   "eventSimple.nearit",
+        "CDVNE_Event_CustomJSON":   "eventJSON.nearit",
+        "CDVNE_Event_Content"   :   "eventContent.nearit",
+        "CDVNE_Event_Feedback"  :   "eventFeedback.nearit",
+        "CDVNE_Event_Coupon"    :   "eventCoupon.nearit",
 
-        "CDVNE_Event_Error": "error.nearit"
+        "CDVNE_Event_Error"     :   "error.nearit"
     };
 
     self.serviceName = "nearit";
