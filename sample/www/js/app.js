@@ -19,10 +19,6 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       cordova.plugins.Keyboard.disableScroll(true);
     }
 
-    if(window.StatusBar) {
-      StatusBar.styleDefault();
-    }
-
     toastr.options = {
       "closeButton": true,
       "debug": false,
