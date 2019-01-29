@@ -92,11 +92,14 @@ if (apiKey) {
     var root = tempManifest.getroot();
     var testDeviceActivityElm = root.find("application/activity[@android:name='it.near.sdk.utils.device.NearTestEnrollActivity']")
     if (testDeviceActivityElm) {
-      var entries = testDeviceActivityElm.find("intent-filter").getchildren()
-      for (var i = 0; i < entries.length; i++) {
-        if (entries[i].tag == "data") {
-          if (entries[i].attrib['android:scheme']) {
-            entries[i].attrib['android:scheme'] = urlScheme
+      var intentFilter = testDeviceActivityElm.find("intent-filter")
+      if (intentFilter) {
+        var entries = intentFilter.getchildren()
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].tag == "data") {
+            if (entries[i].attrib['android:scheme']) {
+              entries[i].attrib['android:scheme'] = urlScheme
+            }
           }
         }
       }
