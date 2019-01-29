@@ -122,10 +122,12 @@ if (apiKey) {
           'android:name': 'it.near.sdk.utils.device.NearTestEnrollActivity',
           'android:theme': '@style/NearTestEnrollStyle'
         })
-        testDevActivity.append(action)
-        testDevActivity.append(category1)
-        testDevActivity.append(category2)
-        testDevActivity.append(data)
+        var intentFilter = et.Element('intent-filter')
+        intentFilter.append(action)
+        intentFilter.append(category1)
+        intentFilter.append(category2)
+        intentFilter.append(data)
+        testDevActivity.append(intentFilter)
         root.find('application').append(testDevActivity)
       } catch (e) {
         console.log("! missing `near_url_scheme` inside AndroidManifest.xml.")
