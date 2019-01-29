@@ -28,6 +28,7 @@
  *
  * this code is intended to:
  * - insert `near_api_key` into Android manifest
+ * - insert `near_url_scheme` into Android manifest
  *
  * @author "Mattia Panzeri"
  * @created 31/08/17
@@ -80,4 +81,54 @@ if (apiKey) {
   }
 
   fs.writeFileSync(manifestFile, tempManifest.write({ indent: 4 }), 'utf-8');
+
+  /**
+   * Inject `near_url_scheme` from Cordova `config.xml` into Android manifest
+   */
+  var urlScheme = lib.searchPreferenceByName(rootdir, 'android', 'near_url_scheme');
+
+  if (urlScheme) {
+    var tempManifest = lib.parseElementtreeSync(manifestFile);
+    var root = tempManifest.getroot();
+    var testDeviceActivityElm = root.find("application/activity[@android:name='it.near.sdk.utils.device.NearTestEnrollActivity']")
+    if (testDeviceActivityElm) {
+      var entries = testDeviceActivityElm.find("intent-filter").getchildren()
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].tag == "data") {
+          if (entries[i].attrib['android:scheme']) {
+            entries[i].attrib['android:scheme'] = urlScheme
+          }
+        }
+      }
+    } else {
+      console.log(`* 'NearTestEnrollActivity' not found. Will try to add`)
+      try {
+        var action = et.Element('action', {
+          'android:name': 'android.intent.action.VIEW'
+        })
+        var category1 = et.Element('category', {
+          'android:name': 'android.intent.category.DEFAULT'
+        })
+        var category2 = et.Element('category', {
+          'android:name': 'android.intent.category.BROWSABLE'
+        })
+        var data = et.Element('data', {
+          'android:scheme': urlScheme
+        })
+        var testDevActivity = et.Element('activity', {
+          'android:name': 'it.near.sdk.utils.device.NearTestEnrollActivity',
+          'android:theme': '@style/NearTestEnrollStyle'
+        })
+        testDevActivity.append(action)
+        testDevActivity.append(category1)
+        testDevActivity.append(category2)
+        testDevActivity.append(data)
+        root.find('application').append(testDevActivity)
+      } catch (e) {
+        console.log("! missing `near_url_scheme` inside AndroidManifest.xml.")
+      }
+    }
+
+    fs.writeFileSync(manifestFile, tempManifest.write({ indent: 4 }), 'utf-8');
+  }
 }

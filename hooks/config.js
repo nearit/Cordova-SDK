@@ -8,11 +8,11 @@ var preferenceMappingData = {
             target: 'config.xml',
             value: 'Your.API.Key',
             destination: 'preference'
-        }
-    },
-    'android': {
-        'nearit_api_key': {
-            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
+        },
+        'near_url_scheme': {
+            target: 'config.xml',
+            value: 'Your.URL.Scheme',
+            destination: 'preference'
         }
     },
     'ios': {
