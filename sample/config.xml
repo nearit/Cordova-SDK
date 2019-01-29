@@ -79,7 +79,8 @@
         <icon height="1024" src="resources/ios/icon/icon-1024.png" width="1024" />
         <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
     </platform>
-    
+    <preference name="near_api_key" value="Your.API.Key" />
+    <preference name="near_url_scheme" value="Your.URL.Scheme" />
     <plugin name="cordova-plugin-console" spec="^1.0.7" />
     <plugin name="cordova-plugin-device" spec="^1.1.6" />
     <plugin name="cordova-plugin-nearit" spec="^2.2.0-alpha.9" />
