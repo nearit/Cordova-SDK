@@ -54,11 +54,20 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }, 1000);
       }
 
-      requestLocation();
-
       if (window.nearit) {
         // ensure that the plugin is initialized
         appendLog('NearIT plugin is READY!')
+
+        cordova.plugins.diagnostic.isLocationAuthorized(function(authorized){
+          if (authorized) {
+              // GRANTED: you can start NearIT radar
+              nearit.startRadar();
+          } else {
+              requestLocation();
+          }
+        }, function(error){
+          console.error("The following error occurred: "+error);
+        });
 
         // add an event listener for those nearit events
         var events = [
@@ -173,7 +182,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
                   case cordova.plugins.diagnostic.permissionStatus.GRANTED:
                   case cordova.plugins.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE:
                       // You can startRadar
-                      nearit.startRadar();
+                      // nearit.startRadar();
                       break;
               }
           }, function(error){
@@ -189,7 +198,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
                       break;
                   case cordova.plugins.diagnostic.permissionStatus.GRANTED:
                       // You can startRadar
-                      nearit.startRadar();
+                      // nearit.startRadar();
                       break;
               }
           }, function(error){
