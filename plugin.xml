@@ -130,7 +130,6 @@
         </config-file>
 
         <!--    Add source files    -->
-        <source-file src="src/android/NITConfig.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearIT.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearITContentListener.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/NITHelper.java" target-dir="src/it/near/sdk/cordova/android" />
