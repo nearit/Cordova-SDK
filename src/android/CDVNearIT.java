@@ -24,10 +24,12 @@ package it.near.sdk.cordova.android;
     SOFTWARE.
  */
 
+import android.app.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.apache.cordova.CallbackContext;
@@ -55,6 +57,9 @@ import it.near.sdk.recipes.models.Recipe;
 import it.near.sdk.trackings.TrackingInfo;
 import it.near.sdk.utils.NearUtils;
 
+import com.nearit.ui_bindings.NearITUIBindings;
+import com.nearit.ui_bindings.NearItLaunchMode;
+
 /**
  * This class implements NearIT plugin interface for Android.
  */
@@ -62,7 +67,11 @@ public class CDVNearIT extends CordovaPlugin {
 
 	private static final String TAG = "CDVNearIT";
 
+	private static final int CDV_NEARIT_PERM_REQ = 6889;
+
 	private static CDVNearIT mInstance = null;
+
+	private CallbackContext permissionsCallbackContext = null;
 
 	public static CDVNearIT getInstance() {
 		return mInstance;
@@ -138,6 +147,8 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.startRadar(args, callbackContext);
 					} else if (action.equals("stopRadar")) {
 						CDVNearIT.this.stopRadar(args, callbackContext);
+					} else if (action.equals("requestPermissions")) {
+						CDVNearIT.this.requestPermissions(args, callbackContext);
 					} else {
 						final String message = "unknown action " + action;
 						Log.e(TAG, message);
@@ -696,6 +707,53 @@ public class CDVNearIT extends CordovaPlugin {
 
 	public static void disableDefaultRangingNotifications() {
         NearItManager.getInstance().disableDefaultRangingNotifications();
-    }
+	}
+	
+	/*
+	 * UIs
+	 */
 
+	/**
+	 * Request permissions (location, notifications, bluetooth)
+	 * <code><pre>
+		 cordova.exec(successCb, errorCB, "nearit", "requestPermissions", []);
+	   </pre></code>
+	 * @param args Cordova exec arguments
+	 * @param callbackContext Cordova callback context
+	 * @throws Exception if there is any validation error or other kind of exception
+	 */
+	public void requestPermissions(JSONArray args, CallbackContext callbackContext) throws Exception {
+		Log.d(TAG, "UIBindings :: request permissions");
+		
+		this.permissionsCallbackContext = callbackContext;
+
+		cordova.setActivityResultCallback(this);
+		Activity activity = this.cordova.getActivity();
+		if (activity != null) {
+			Intent permissionsIntent = NearITUIBindings.getInstance(activity)
+					.permissionsIntentBuilder(NearItLaunchMode.SINGLE_TOP)
+					.build();
+			activity.startActivityForResult(permissionsIntent, CDV_NEARIT_PERM_REQ);
+		}
+	}
+
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		if (requestCode == CDV_NEARIT_PERM_REQ) {
+			if (permissionsCallbackContext != null) {
+				try {
+					if (resultCode == Activity.RESULT_OK) {
+						permissionsCallbackContext.success();
+					} else {
+						permissionsCallbackContext.error("Permissions not (fully) granted");
+					}
+				} catch (Exception e) {
+					Log.e(TAG, "NITManager :: Could handle permissions request callback", e);
+				}
+			}
+		} else {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
 }
