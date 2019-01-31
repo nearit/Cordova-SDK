@@ -147,9 +147,11 @@ public class NearITUtils {
         content.title = getNullableField(bundledContent, "title");
         content.contentString = getNullableField(bundledContent, "text");
         final List<ImageSet> images = new ArrayList<ImageSet>();
-        images.add(unbundleImageSet((Map<String, Object>) bundledContent.get("image")));
+        Map<String, Object> imageSet = new Gson().fromJson(bundledContent.get("image").toString(), HashMap.class);
+        images.add(unbundleImageSet(imageSet));
         content.setImages_links(images);
-        content.setCta(unbundleContentLink((Map<String, Object>) bundledContent.get("cta")));
+        Map<String, Object> bundledCta = new Gson().fromJson(bundledContent.get("cta").toString(), HashMap.class);
+        content.setCta(unbundleContentLink(bundledCta));
         return content;
     }
 
