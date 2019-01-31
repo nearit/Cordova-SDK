@@ -71,6 +71,35 @@ public class NITHelper {
         return map;
     }
 
+    public static HashMap<String, Object> validateMapArgument(JSONArray args, int pos, String name) throws Exception {
+        HashMap<String, Object> map;
+
+        if (args.get(pos) == null) {
+            return null;
+        }
+
+        try {
+            JSONObject object = args.getJSONObject(pos);
+            Iterator<String> it = object.keys();
+            map = new HashMap<String, Object>();
+            while (it.hasNext()) {
+                String key = it.next();
+                try {
+                    Object value = object.get(key);
+                    map.put(key, value);
+                } catch (ClassCastException e) {
+                    throw new Exception("No value for key " + key + " in " + name + " parameter!");
+                }
+            }
+        } catch (JSONException e) {
+            throw new Exception("Invalid format for " + name + " parameter!");
+        }
+        if (map.isEmpty()) {
+            throw new Exception("Missing " + name + " parameter!");
+        }
+        return map;
+    }
+
     /**
      * @param item Coupon item
      * @return JSONObject result
