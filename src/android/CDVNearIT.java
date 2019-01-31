@@ -730,10 +730,10 @@ public class CDVNearIT extends CordovaPlugin {
 		cordova.setActivityResultCallback(this);
 		Activity activity = this.cordova.getActivity();
 		if (activity != null) {
-			Intent permissionsIntent = NearITUIBindings.getInstance(activity)
-					.permissionsIntentBuilder(NearItLaunchMode.SINGLE_TOP)
-					.build();
-			activity.startActivityForResult(permissionsIntent, CDV_NEARIT_PERM_REQ);
+			CDVNearItUI.showPermissionsDialog(activity, CDV_NEARIT_PERM_REQ);
+		}
+	}
+
 		}
 	}
 
