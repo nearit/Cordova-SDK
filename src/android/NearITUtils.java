@@ -144,8 +144,8 @@ public class NearITUtils {
 
     public static Content unbundleContent(final Map<String, Object> bundledContent) {
         final Content content = new Content();
-        content.title = (String) bundledContent.get("title");
-        content.contentString = (String) bundledContent.get("text");
+        content.title = getNullableField(bundledContent, "title");
+        content.contentString = getNullableField(bundledContent, "text");
         final List<ImageSet> images = new ArrayList<ImageSet>();
         images.add(unbundleImageSet((Map<String, Object>) bundledContent.get("image")));
         content.setImages_links(images);
@@ -211,8 +211,8 @@ public class NearITUtils {
 
     public static ImageSet unbundleImageSet(Map<String, Object> bundledImage) {
         final ImageSet imageSet = new ImageSet();
-        imageSet.setFullSize((String) bundledImage.get("fullSize"));
-        imageSet.setSmallSize((String) bundledImage.get("squareSize"));
+        imageSet.setFullSize(getNullableField(bundledImage, "fullSize"));
+        imageSet.setSmallSize(getNullableField(bundledImage, "squareSize"));
         return imageSet;
     }
 
@@ -224,7 +224,7 @@ public class NearITUtils {
     }
 
     public static ContentLink unbundleContentLink(Map<String, Object> bundledCta) {
-        return new ContentLink((String) bundledCta.get("label"), (String) bundledCta.get("url"));
+        return new ContentLink(getNullableField(bundledCta, "label"), getNullableField(bundledCta, "url"));
     }
 
     public static String feedbackToB64(final Feedback feedback) throws Exception {
