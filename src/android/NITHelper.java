@@ -41,7 +41,7 @@ public class NITHelper {
         return value;
     }
 
-    public static HashMap<String, Boolean> validateMapArgument(JSONArray args, int pos, String name) throws Exception {
+    public static HashMap<String, Boolean> validateMapOfBoolArgument(JSONArray args, int pos, String name) throws Exception {
         HashMap<String, Boolean> map;
 
         if (args.get(pos) == null) {
