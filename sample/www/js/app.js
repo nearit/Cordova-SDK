@@ -148,6 +148,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
               evtMessage = event.error
             }
 
+            nearit.showContent(eventType, event);
+
             // Retrieve trackingInfo from the event
             var trckInfo = event.trackingInfo
             if (trckInfo) {
