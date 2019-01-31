@@ -149,6 +149,10 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.stopRadar(args, callbackContext);
 					} else if (action.equals("requestPermissions")) {
 						CDVNearIT.this.requestPermissions(args, callbackContext);
+					} else if (action.equals("showCouponList")) {
+						CDVNearIT.this.showCouponList(args, callbackContext);
+					} else if (action.equals("showNotificationHistory")) {
+						CDVNearIT.this.showNotificationHistory(args, callbackContext);
 					} else {
 						final String message = "unknown action " + action;
 						Log.e(TAG, message);
@@ -734,9 +738,19 @@ public class CDVNearIT extends CordovaPlugin {
 		}
 	}
 
+	public void showCouponList(JSONArray args, CallbackContext callbackContext) throws Exception {
+		Activity activity = this.cordova.getActivity();
+		if (activity != null) {
+			CDVNearItUI.showCouponList(activity);
 		}
 	}
 
+	public void showNotificationHistory(JSONArray args, CallbackContext callbackContext) throws Exception {
+		Activity activity = this.cordova.getActivity();
+		if (activity != null) {
+			CDVNearItUI.showNotificationHistory(activity);
+		}
+	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
