@@ -322,4 +322,8 @@ NearIT.prototype.showNotificationHistory = function(successCallback, errorCallba
     exec(successCallback, errorCallback, this.serviceName, "showNotificationHistory", []);
 };
 
+NearIT.prototype.showContent = function(eventType, event, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "showContent", [eventType, event]);
+};
+
 module.exports = new NearIT();
