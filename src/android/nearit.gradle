@@ -1,6 +1,6 @@
 dependencies {
     compile "it.near.sdk:nearit:2.10.8"
-    compile "it.near.sdk:nearit-ui:2.10.10"
+    compile "it.near.sdk:nearit-ui:2.10.11"
 }
 
 buildscript {
