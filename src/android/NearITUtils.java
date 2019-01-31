@@ -20,6 +20,7 @@ import it.near.sdk.logging.NearLog;
 import it.near.sdk.reactions.contentplugin.model.Content;
 import it.near.sdk.reactions.contentplugin.model.ContentLink;
 import it.near.sdk.reactions.contentplugin.model.ImageSet;
+import it.near.sdk.reactions.couponplugin.model.Claim;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.reactions.customjsonplugin.model.CustomJSON;
 import it.near.sdk.reactions.feedbackplugin.model.Feedback;
@@ -68,7 +69,27 @@ public class NearITUtils {
 
         return couponMap;
     }
-    
+
+    public static Coupon unbundleCoupon(final Map<String, Object> bundledCoupon) {
+        Coupon coupon = new Coupon();
+        coupon.name = getNullableField(bundledCoupon, "title");
+        coupon.description = getNullableField(bundledCoupon, "description");
+        coupon.value = getNullableField(bundledCoupon, "value");
+        coupon.expires_at = getNullableField(bundledCoupon, "expiresAt");
+        coupon.redeemable_from = getNullableField(bundledCoupon, "redeemableFrom");
+        List<Claim> claims = new ArrayList<Claim>();
+        Claim claim = new Claim();
+        claim.serial_number = getNullableField(bundledCoupon, "serial");
+        claim.claimed_at = getNullableField(bundledCoupon, "claimedAt");
+        claim.redeemed_at = getNullableField(bundledCoupon, "redeemedAt");
+        claims.add(claim);
+        coupon.claims = claims;
+        if (bundledCoupon.containsKey("image")) {
+            Map<String, Object> imageSet = new Gson().fromJson(bundledCoupon.get("image").toString(), HashMap.class);
+            coupon.setIconSet(unbundleImageSet(imageSet));
+        }
+        return coupon;
+    }
 
     private static String getNullableField(Map<String, Object> map, String key) {
         if (map.containsKey(key) && !map.get(key).equals(null)) {
