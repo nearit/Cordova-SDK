@@ -46,6 +46,7 @@ import it.near.sdk.NearItManager;
 import it.near.sdk.communication.OptOutNotifier;
 import it.near.sdk.operation.NearItUserProfile;
 import it.near.sdk.operation.values.NearMultipleChoiceDataPoint;
+import it.near.sdk.reactions.contentplugin.model.Content;
 import it.near.sdk.reactions.couponplugin.CouponListener;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.reactions.feedbackplugin.FeedbackEvent;
@@ -153,6 +154,8 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.showCouponList(args, callbackContext);
 					} else if (action.equals("showNotificationHistory")) {
 						CDVNearIT.this.showNotificationHistory(args, callbackContext);
+					} else if (action.equals("showContent")) {
+						CDVNearIT.this.showContent(args, callbackContext);
 					} else {
 						final String message = "unknown action " + action;
 						Log.e(TAG, message);
@@ -748,6 +751,7 @@ public class CDVNearIT extends CordovaPlugin {
 	 * @throws Exception if there is any validation error or other kind of exception
 	 */
 	public void showCouponList(JSONArray args, CallbackContext callbackContext) throws Exception {
+		Log.d(TAG, "UIBindings :: show coupon list");
 		Activity activity = this.cordova.getActivity();
 		if (activity != null) {
 			CDVNearItUI.showCouponList(activity);
@@ -764,9 +768,46 @@ public class CDVNearIT extends CordovaPlugin {
 	 * @throws Exception if there is any validation error or other kind of exception
 	 */
 	public void showNotificationHistory(JSONArray args, CallbackContext callbackContext) throws Exception {
+		Log.d(TAG, "UIBindings :: show notification history");
 		Activity activity = this.cordova.getActivity();
 		if (activity != null) {
 			CDVNearItUI.showNotificationHistory(activity);
+		}
+	}
+
+	public void showContent(JSONArray args, CallbackContext callbackContext) throws Exception {
+		Activity activity = this.cordova.getActivity();
+		if (activity != null) {
+			try {
+				NITHelper.validateArgsCount(args, 2);
+				final String eventType = NITHelper.validateStringArgument(args, 0, "eventType");
+				HashMap<String, Object> event = NITHelper.validateMapArgument(args, 1, "event");
+				if (eventType.equalsIgnoreCase(CDVEventType.CDVNE_Event_Feedback.toString())) {
+					try {
+						Feedback feedback = NearITUtils.unbundleFeedback((String) event.get("feedbackId"));
+						CDVNearItUI.showFeedbackDialog(activity, feedback);
+					} catch (Exception e) {
+						Log.e(TAG, "UIBindings :: can\'t unbundle feedback: ", e);
+					}
+				} else if (eventType.equalsIgnoreCase(CDVEventType.CDVNE_Event_Content.toString())) {
+					try {
+						Content content = NearITUtils.unbundleContent(event);
+						TrackingInfo trackingInfo = NearITUtils.unbundleTrackingInfo((String) event.get("trackingInfo"));
+						CDVNearItUI.showContentDialog(activity, content, trackingInfo);
+					} catch (Exception e) {
+						Log.e(TAG, "UIBindings :: can\'t unbundle content: ", e);
+					}
+				} else if (eventType.equalsIgnoreCase(CDVEventType.CDVNE_Event_Coupon.toString())) {
+					try {
+						Coupon coupon = NearITUtils.unbundleCoupon(event);
+						CDVNearItUI.showCouponDialog(activity, coupon);
+					} catch (Exception e) {
+						Log.e(TAG, "UIBindings :: can\'t unbundle coupon: ", e);
+					}
+				}
+			} catch (Exception e) {
+				Log.e(TAG, "NITManager :: Could not show content: ", e);
+			}
 		}
 	}
 
