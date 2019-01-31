@@ -78,6 +78,11 @@
              git="https://github.com/nearit/iOS-SDK"
              tag="2.10.6" />
 
+        <pod name="NearUIBinding" 
+             configurations="release,debug"
+             git="https://github.com/nearit/iOS-UI-Bindings"
+             tag="2.10.6" />
+
         <config-file target="config.xml" parent="/*">
             <feature name="NearIT">
                 <param name="ios-package" value="CDVNearIT" />
