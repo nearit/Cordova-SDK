@@ -415,7 +415,7 @@ public class CDVNearIT extends CordovaPlugin {
 			NITHelper.validateArgsCount(args, 2);
 			NearMultipleChoiceDataPoint multiChoiceData = null;
 			String key = NITHelper.validateStringArgument(args, 0, "key");
-			HashMap<String, Boolean> values = NITHelper.validateMapArgument(args, 1, "values");
+			HashMap<String, Boolean> values = NITHelper.validateMapOfBoolArgument(args, 1, "values");
 
 			if (values != null) {
 				multiChoiceData = new NearMultipleChoiceDataPoint(values);
@@ -718,7 +718,7 @@ public class CDVNearIT extends CordovaPlugin {
 	 */
 
 	/**
-	 * Request permissions (location, notifications, bluetooth)
+	 * Request permissions (location, notifications, bluetooth) via dedicated UI
 	 * <code><pre>
 		 cordova.exec(successCb, errorCB, "nearit", "requestPermissions", []);
 	   </pre></code>
@@ -738,6 +738,15 @@ public class CDVNearIT extends CordovaPlugin {
 		}
 	}
 
+	/**
+	 * Show coupon list
+	 * <code><pre>
+		 cordova.exec(successCb, errorCb, "nearit", "showCouponList", []);
+	   </pre></code>
+	 * @param args Cordova exec arguments
+	 * @param callbackContext Cordova callback context
+	 * @throws Exception if there is any validation error or other kind of exception
+	 */
 	public void showCouponList(JSONArray args, CallbackContext callbackContext) throws Exception {
 		Activity activity = this.cordova.getActivity();
 		if (activity != null) {
@@ -745,6 +754,15 @@ public class CDVNearIT extends CordovaPlugin {
 		}
 	}
 
+	/**
+	 * Show notification history
+	 * <code><pre>
+		 cordova.exec(successCb, errorCb, "nearit", "showNotificationHistory", []);
+	   </pre></code>
+	 * @param args Cordova exec arguments
+	 * @param callbackContext Cordova callback context
+	 * @throws Exception if there is any validation error or other kind of exception
+	 */
 	public void showNotificationHistory(JSONArray args, CallbackContext callbackContext) throws Exception {
 		Activity activity = this.cordova.getActivity();
 		if (activity != null) {
