@@ -24,10 +24,12 @@ package it.near.sdk.cordova.android;
     SOFTWARE.
  */
 
+import android.app.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.apache.cordova.CallbackContext;
@@ -44,6 +46,7 @@ import it.near.sdk.NearItManager;
 import it.near.sdk.communication.OptOutNotifier;
 import it.near.sdk.operation.NearItUserProfile;
 import it.near.sdk.operation.values.NearMultipleChoiceDataPoint;
+import it.near.sdk.reactions.contentplugin.model.Content;
 import it.near.sdk.reactions.couponplugin.CouponListener;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.reactions.feedbackplugin.FeedbackEvent;
@@ -55,6 +58,9 @@ import it.near.sdk.recipes.models.Recipe;
 import it.near.sdk.trackings.TrackingInfo;
 import it.near.sdk.utils.NearUtils;
 
+import com.nearit.ui_bindings.NearITUIBindings;
+import com.nearit.ui_bindings.NearItLaunchMode;
+
 /**
  * This class implements NearIT plugin interface for Android.
  */
@@ -62,7 +68,11 @@ public class CDVNearIT extends CordovaPlugin {
 
 	private static final String TAG = "CDVNearIT";
 
+	private static final int CDV_NEARIT_PERM_REQ = 6889;
+
 	private static CDVNearIT mInstance = null;
+
+	private CallbackContext permissionsCallbackContext = null;
 
 	public static CDVNearIT getInstance() {
 		return mInstance;
@@ -138,6 +148,14 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.startRadar(args, callbackContext);
 					} else if (action.equals("stopRadar")) {
 						CDVNearIT.this.stopRadar(args, callbackContext);
+					} else if (action.equals("requestPermissions")) {
+						CDVNearIT.this.requestPermissions(args, callbackContext);
+					} else if (action.equals("showCouponList")) {
+						CDVNearIT.this.showCouponList(args, callbackContext);
+					} else if (action.equals("showNotificationHistory")) {
+						CDVNearIT.this.showNotificationHistory(args, callbackContext);
+					} else if (action.equals("showContent")) {
+						CDVNearIT.this.showContent(args, callbackContext);
 					} else {
 						final String message = "unknown action " + action;
 						Log.e(TAG, message);
@@ -400,7 +418,7 @@ public class CDVNearIT extends CordovaPlugin {
 			NITHelper.validateArgsCount(args, 2);
 			NearMultipleChoiceDataPoint multiChoiceData = null;
 			String key = NITHelper.validateStringArgument(args, 0, "key");
-			HashMap<String, Boolean> values = NITHelper.validateMapArgument(args, 1, "values");
+			HashMap<String, Boolean> values = NITHelper.validateMapOfBoolArgument(args, 1, "values");
 
 			if (values != null) {
 				multiChoiceData = new NearMultipleChoiceDataPoint(values);
@@ -696,6 +714,119 @@ public class CDVNearIT extends CordovaPlugin {
 
 	public static void disableDefaultRangingNotifications() {
         NearItManager.getInstance().disableDefaultRangingNotifications();
-    }
+	}
+	
+	/*
+	 * UIs
+	 */
 
+	/**
+	 * Request permissions (location, notifications, bluetooth) via dedicated UI
+	 * <code><pre>
+		 cordova.exec(successCb, errorCB, "nearit", "requestPermissions", []);
+	   </pre></code>
+	 * @param args Cordova exec arguments
+	 * @param callbackContext Cordova callback context
+	 * @throws Exception if there is any validation error or other kind of exception
+	 */
+	public void requestPermissions(JSONArray args, CallbackContext callbackContext) throws Exception {
+		Log.d(TAG, "UIBindings :: request permissions");
+		
+		this.permissionsCallbackContext = callbackContext;
+
+		cordova.setActivityResultCallback(this);
+		Activity activity = this.cordova.getActivity();
+		if (activity != null) {
+			CDVNearItUI.showPermissionsDialog(activity, CDV_NEARIT_PERM_REQ);
+		}
+	}
+
+	/**
+	 * Show coupon list
+	 * <code><pre>
+		 cordova.exec(successCb, errorCb, "nearit", "showCouponList", []);
+	   </pre></code>
+	 * @param args Cordova exec arguments
+	 * @param callbackContext Cordova callback context
+	 * @throws Exception if there is any validation error or other kind of exception
+	 */
+	public void showCouponList(JSONArray args, CallbackContext callbackContext) throws Exception {
+		Log.d(TAG, "UIBindings :: show coupon list");
+		Activity activity = this.cordova.getActivity();
+		if (activity != null) {
+			CDVNearItUI.showCouponList(activity);
+		}
+	}
+
+	/**
+	 * Show notification history
+	 * <code><pre>
+		 cordova.exec(successCb, errorCb, "nearit", "showNotificationHistory", []);
+	   </pre></code>
+	 * @param args Cordova exec arguments
+	 * @param callbackContext Cordova callback context
+	 * @throws Exception if there is any validation error or other kind of exception
+	 */
+	public void showNotificationHistory(JSONArray args, CallbackContext callbackContext) throws Exception {
+		Log.d(TAG, "UIBindings :: show notification history");
+		Activity activity = this.cordova.getActivity();
+		if (activity != null) {
+			CDVNearItUI.showNotificationHistory(activity);
+		}
+	}
+
+	public void showContent(JSONArray args, CallbackContext callbackContext) throws Exception {
+		Activity activity = this.cordova.getActivity();
+		if (activity != null) {
+			try {
+				NITHelper.validateArgsCount(args, 2);
+				final String eventType = NITHelper.validateStringArgument(args, 0, "eventType");
+				HashMap<String, Object> event = NITHelper.validateMapArgument(args, 1, "event");
+				if (eventType.equalsIgnoreCase(CDVEventType.CDVNE_Event_Feedback.toString())) {
+					try {
+						Feedback feedback = NearITUtils.unbundleFeedback((String) event.get("feedbackId"));
+						CDVNearItUI.showFeedbackDialog(activity, feedback);
+					} catch (Exception e) {
+						Log.e(TAG, "UIBindings :: can\'t unbundle feedback: ", e);
+					}
+				} else if (eventType.equalsIgnoreCase(CDVEventType.CDVNE_Event_Content.toString())) {
+					try {
+						Content content = NearITUtils.unbundleContent(event);
+						TrackingInfo trackingInfo = NearITUtils.unbundleTrackingInfo((String) event.get("trackingInfo"));
+						CDVNearItUI.showContentDialog(activity, content, trackingInfo);
+					} catch (Exception e) {
+						Log.e(TAG, "UIBindings :: can\'t unbundle content: ", e);
+					}
+				} else if (eventType.equalsIgnoreCase(CDVEventType.CDVNE_Event_Coupon.toString())) {
+					try {
+						Coupon coupon = NearITUtils.unbundleCoupon(event);
+						CDVNearItUI.showCouponDialog(activity, coupon);
+					} catch (Exception e) {
+						Log.e(TAG, "UIBindings :: can\'t unbundle coupon: ", e);
+					}
+				}
+			} catch (Exception e) {
+				Log.e(TAG, "NITManager :: Could not show content: ", e);
+			}
+		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		if (requestCode == CDV_NEARIT_PERM_REQ) {
+			if (permissionsCallbackContext != null) {
+				try {
+					if (resultCode == Activity.RESULT_OK) {
+						permissionsCallbackContext.success();
+					} else {
+						permissionsCallbackContext.error("Permissions not (fully) granted");
+					}
+				} catch (Exception e) {
+					Log.e(TAG, "NITManager :: Could handle permissions request callback", e);
+				}
+			}
+		} else {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
 }

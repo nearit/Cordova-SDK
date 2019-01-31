@@ -20,6 +20,7 @@ import it.near.sdk.logging.NearLog;
 import it.near.sdk.reactions.contentplugin.model.Content;
 import it.near.sdk.reactions.contentplugin.model.ContentLink;
 import it.near.sdk.reactions.contentplugin.model.ImageSet;
+import it.near.sdk.reactions.couponplugin.model.Claim;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.reactions.customjsonplugin.model.CustomJSON;
 import it.near.sdk.reactions.feedbackplugin.model.Feedback;
@@ -67,6 +68,34 @@ public class NearITUtils {
         }
 
         return couponMap;
+    }
+
+    public static Coupon unbundleCoupon(final Map<String, Object> bundledCoupon) {
+        Coupon coupon = new Coupon();
+        coupon.name = getNullableField(bundledCoupon, "title");
+        coupon.description = getNullableField(bundledCoupon, "description");
+        coupon.value = getNullableField(bundledCoupon, "value");
+        coupon.expires_at = getNullableField(bundledCoupon, "expiresAt");
+        coupon.redeemable_from = getNullableField(bundledCoupon, "redeemableFrom");
+        List<Claim> claims = new ArrayList<Claim>();
+        Claim claim = new Claim();
+        claim.serial_number = getNullableField(bundledCoupon, "serial");
+        claim.claimed_at = getNullableField(bundledCoupon, "claimedAt");
+        claim.redeemed_at = getNullableField(bundledCoupon, "redeemedAt");
+        claims.add(claim);
+        coupon.claims = claims;
+        if (bundledCoupon.containsKey("image")) {
+            Map<String, Object> imageSet = new Gson().fromJson(bundledCoupon.get("image").toString(), HashMap.class);
+            coupon.setIconSet(unbundleImageSet(imageSet));
+        }
+        return coupon;
+    }
+
+    private static String getNullableField(Map<String, Object> map, String key) {
+        if (map.containsKey(key) && !map.get(key).equals(null)) {
+            return (String) map.get(key);
+        }
+        return null;
     }
     
     public static Map<String, Object> bundleHistoryItem(final HistoryItem item) {
@@ -136,12 +165,14 @@ public class NearITUtils {
 
     public static Content unbundleContent(final Map<String, Object> bundledContent) {
         final Content content = new Content();
-        content.title = (String) bundledContent.get("title");
-        content.contentString = (String) bundledContent.get("text");
+        content.title = getNullableField(bundledContent, "title");
+        content.contentString = getNullableField(bundledContent, "text");
         final List<ImageSet> images = new ArrayList<ImageSet>();
-        images.add(unbundleImageSet((Map<String, Object>) bundledContent.get("image")));
+        Map<String, Object> imageSet = new Gson().fromJson(bundledContent.get("image").toString(), HashMap.class);
+        images.add(unbundleImageSet(imageSet));
         content.setImages_links(images);
-        content.setCta(unbundleContentLink((Map<String, Object>) bundledContent.get("cta")));
+        Map<String, Object> bundledCta = new Gson().fromJson(bundledContent.get("cta").toString(), HashMap.class);
+        content.setCta(unbundleContentLink(bundledCta));
         return content;
     }
 
@@ -203,8 +234,8 @@ public class NearITUtils {
 
     public static ImageSet unbundleImageSet(Map<String, Object> bundledImage) {
         final ImageSet imageSet = new ImageSet();
-        imageSet.setFullSize((String) bundledImage.get("fullSize"));
-        imageSet.setSmallSize((String) bundledImage.get("squareSize"));
+        imageSet.setFullSize(getNullableField(bundledImage, "fullSize"));
+        imageSet.setSmallSize(getNullableField(bundledImage, "squareSize"));
         return imageSet;
     }
 
@@ -216,7 +247,7 @@ public class NearITUtils {
     }
 
     public static ContentLink unbundleContentLink(Map<String, Object> bundledCta) {
-        return new ContentLink((String) bundledCta.get("label"), (String) bundledCta.get("url"));
+        return new ContentLink(getNullableField(bundledCta, "label"), getNullableField(bundledCta, "url"));
     }
 
     public static String feedbackToB64(final Feedback feedback) throws Exception {

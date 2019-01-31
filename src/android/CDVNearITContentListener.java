@@ -110,7 +110,7 @@ public class CDVNearITContentListener implements ContentsListener {
         try {
             Map<String, Object> bundledFeedback = NearITUtils.bundleFeedback(notification);
             forwardEvent(
-                    CDVNearIT.CDVEventType.CDVNE_Event_CustomJSON,
+                    CDVNearIT.CDVEventType.CDVNE_Event_Feedback,
                     bundledFeedback,
                     trackingInfo,
                     notification.notificationMessage

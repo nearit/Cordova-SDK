@@ -63,7 +63,12 @@ angular.module('starter', ['ionic', 'starter.controllers'])
               // GRANTED: you can start NearIT radar
               nearit.startRadar();
           } else {
-              requestLocation();
+            nearit.requestPermissions(function() {
+              appendLog('Permissions granted')
+              nearit.startRadar();
+            }, function() {
+              appendLog('Permissions not (fully) granted')
+            });
           }
         }, function(error){
           console.error("The following error occurred: "+error);
@@ -142,6 +147,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             } else if (event.error) {
               evtMessage = event.error
             }
+
+            nearit.showContent(eventType, event);
 
             // Retrieve trackingInfo from the event
             var trckInfo = event.trackingInfo

@@ -137,6 +137,7 @@
         <source-file src="src/android/CDVNearITContentListener.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/NITHelper.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/NearITUtils.java" target-dir="src/it/near/sdk/cordova/android" />
+        <source-file src="src/android/CDVNearItUI.java" target-dir="src/it/near/sdk/cordova/android" />
 
         <!--    Add strings to res  -->
         <source-file src="src/android/CDVNearITStrings.xml" target-dir="res/values" />
