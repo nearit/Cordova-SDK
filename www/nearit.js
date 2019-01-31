@@ -312,14 +312,14 @@ NearIT.prototype.disableDefaultRangingNotifications = function(successCallback, 
 
 NearIT.prototype.requestPermissions = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "requestPermissions", []);
-}
+};
 
 NearIT.prototype.showCouponList = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "showCouponList", []);
-}
+};
 
 NearIT.prototype.showNotificationHistory = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "showNotificationHistory", []);
-}
+};
 
 module.exports = new NearIT();
