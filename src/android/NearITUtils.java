@@ -69,6 +69,14 @@ public class NearITUtils {
         return couponMap;
     }
     
+
+    private static String getNullableField(Map<String, Object> map, String key) {
+        if (map.containsKey(key) && !map.get(key).equals(null)) {
+            return (String) map.get(key);
+        }
+        return null;
+    }
+    
     public static Map<String, Object> bundleHistoryItem(final HistoryItem item) {
         final Map<String, Object> itemMap = new HashMap<String, Object>();
 
