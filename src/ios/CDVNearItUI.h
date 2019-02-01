@@ -1,5 +1,4 @@
-#import "NearITSDK.h"
-
+#import <NearITSDK/NearITSDK.h>
 #import <NearUIBinding/NearUIBinding-Swift.h>
 
 @interface CDVNearItUI: NSObject
