@@ -3,6 +3,18 @@
     <ion-grid>
       <ion-row align-items-stretch>
         <ion-col align-self-stretch>
+          <button class="button button-block button-stable" ng-click="requestPermissions()">
+            Request permissions
+          </button>
+          <button class="button button-block button-stable" ng-click="showNotificationHistory()">
+            Show notification history
+          </button>
+          <button class="button button-block button-stable" ng-click="showCouponList()">
+            Show coupon list
+          </button>
+          <button class="button button-block button-stable" ng-click="triggerInAppEvent()">
+            Trigger in-app event
+          </button>
           <div class="no-margin">
             <div id="js_logs" style="width: 100%;"></div>
           </div>
