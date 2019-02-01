@@ -65,7 +65,7 @@
             https://issues.apache.org/jira/browse/CB-10072
         -->
         <pods-config ios-min-version="9.0"
-                     use-frameworks="false" />
+                     use-frameworks="true" />
 
         <!--
             NearIT iOS SDK dependency
