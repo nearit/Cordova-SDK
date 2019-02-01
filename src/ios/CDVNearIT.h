@@ -34,6 +34,7 @@
 #import <Cordova/CDVPlugin.h>
 
 #import "Macros.h"
+#import "CDVNearItUI.h"
 #import "NearITUtils.h"
 #import "NearITConsts.h"
 #import <NearITSDK/NearITSDK.h>
@@ -111,5 +112,10 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 - (void)startRadar:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)stopRadar:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)disableDefaultRangingNotifications;
+
+#pragma mark - UIs
+
+- (void)showCouponList:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)showNotificationHistory:( CDVInvokedUrlCommand* _Nonnull )command;
 
 @end

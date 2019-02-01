@@ -640,4 +640,32 @@ __weak CDVNearIT *instance = nil;
     [NITManager defaultManager].showForegroundNotification = false;
 }
 
+#pragma mark - UIs
+
+- (void)showCouponList:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+
+    NITLogD(TAG, @"UIBindings :: show coupon list");
+    [[CDVNearItUI sharedInstance] showCouponList];
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                  callbackId:[command callbackId]];
+}
+
+- (void)showNotificationHistory:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+    
+    NITLogD(TAG, @"UIBindings :: show notification history");
+    [[CDVNearItUI sharedInstance] showNotificationHistory];
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                callbackId:[command callbackId]];
+}
+
 @end
