@@ -806,7 +806,7 @@ public class CDVNearIT extends CordovaPlugin {
 					}
 				}
 			} catch (Exception e) {
-				Log.e(TAG, "NITManager :: Could not show content: ", e);
+				Log.e(TAG, "UIBindings :: Could not show content: ", e);
 			}
 		}
 	}
