@@ -117,6 +117,7 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 - (void)showCouponList:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)showNotificationHistory:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)showContent:( CDVInvokedUrlCommand* _Nonnull)command;
 - (void)requestPermissions:( CDVInvokedUrlCommand* _Nonnull )command;
 
 @end

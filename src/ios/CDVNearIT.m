@@ -669,6 +669,31 @@ __weak CDVNearIT *instance = nil;
                                 callbackId:[command callbackId]];
 }
 
+- (void)showContent:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+
+    NITLogD(TAG, @"UIBindings :: show content");
+    NSString* eventType   = [[command arguments] objectAtIndex:0];
+    NSMutableDictionary* event = [[command arguments] objectAtIndex:1];
+
+    if ([eventType isEqualToString:EVENT_TYPE_CONTENT]) {
+        NITContent* nearContent = [NearITUtils unbundleNITContent:event];
+        NITTrackingInfo* trackingInfo = [NearITUtils unbundleTrackingInfo:[event objectForKey:@"trackingInfo"]];
+        [[CDVNearItUI sharedInstance] showContentDialogWithContent:nearContent trackingInfo:trackingInfo];
+    } else if ([eventType isEqualToString:EVENT_TYPE_COUPON]) {
+        NITCoupon* coupon = [NearITUtils unbundleNITCoupon:event];
+        [[CDVNearItUI sharedInstance] showCouponDialogWithCoupon:coupon];
+    } else if ([eventType isEqualToString:EVENT_TYPE_FEEDBACK]) {
+        NITFeedback* feedback = [NearITUtils unbundleNITFeedback:event];
+        [[CDVNearItUI sharedInstance] showFeedbackDialogWithFeedback:feedback];
+    }
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                callbackId:[command callbackId]];
+}
 
 - (void)requestPermissions:( CDVInvokedUrlCommand* _Nonnull )command
 {
