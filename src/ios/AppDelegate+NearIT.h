@@ -36,6 +36,8 @@
 #import "Macros.h"
 #import <NearITSDK/NearITSDK.h>
 
+#import "NearITUtils.h"
+
 #import <UserNotifications/UserNotifications.h>
 #import <CoreLocation/CoreLocation.h>
 
