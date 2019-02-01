@@ -55,24 +55,11 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       }
 
       if (window.nearit) {
+
+        nearit.onDeviceReady();
+
         // ensure that the plugin is initialized
         appendLog('NearIT plugin is READY!')
-
-        cordova.plugins.diagnostic.isLocationAuthorized(function(authorized){
-          if (authorized) {
-              // GRANTED: you can start NearIT radar
-              nearit.startRadar();
-          } else {
-            nearit.requestPermissions(function() {
-              appendLog('Permissions granted')
-              nearit.startRadar();
-            }, function() {
-              appendLog('Permissions not (fully) granted')
-            });
-          }
-        }, function(error){
-          console.error("The following error occurred: "+error);
-        });
 
         // add an event listener for those nearit events
         var events = [
@@ -83,9 +70,6 @@ angular.module('starter', ['ionic', 'starter.controllers'])
           nearit.eventType.CDVNE_Event_Coupon,
           nearit.eventType.CDVNE_Event_Error,
         ]
-
-        // Trigger an in-app event
-        nearit.triggerEvent("your_in_app_event");
 
         // Get coupons
         nearit.getCoupons(function(coupons) {
