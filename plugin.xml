@@ -113,6 +113,9 @@
         <header-file src="src/ios/CDVNearIT.h" />
         <source-file src="src/ios/CDVNearIT.m" />
 
+        <header-file src="src/ios/CDVNearItUI.h" />
+        <source-file src="src/ios/CDVNearItUI.m" />
+
         <header-file src="src/ios/NearITUtils.h" />
         <source-file src="src/ios/NearITUtils.m" />
 
