@@ -52,7 +52,7 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 };
 
-@interface CDVNearIT : CDVPlugin
+@interface CDVNearIT : CDVPlugin<NITPermissionsViewControllerDelegate>
 {
 
 }
@@ -117,5 +117,6 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 - (void)showCouponList:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)showNotificationHistory:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)requestPermissions:( CDVInvokedUrlCommand* _Nonnull )command;
 
 @end

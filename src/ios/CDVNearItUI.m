@@ -44,4 +44,13 @@
     [couponsVC show];
 }
 
+- (void)showPermissionsDialogWithExplanation:(NSString*)explanation delegate:(id<NITPermissionsViewControllerDelegate>)delegate
+{
+	NITPermissionsViewController *controller = [[NITPermissionsViewController alloc] init];
+	controller.delegate = delegate;
+    controller.explainText = explanation;
+    controller.closeText = @"Close";
+	[controller show];
+}
+
 @end

@@ -38,7 +38,9 @@
 
 __weak CDVNearIT *instance = nil;
 
-@implementation CDVNearIT
+@implementation CDVNearIT {
+    CDVInvokedUrlCommand* permissionInvokedUrlCommand;
+}
 
 + ( CDVNearIT * _Nullable )instance
 {
@@ -311,7 +313,6 @@ __weak CDVNearIT *instance = nil;
 
     NSString* key   = [[command arguments] objectAtIndex:0];
     NSMutableDictionary* values = [[command arguments] objectAtIndex:1];
-    // NSMutableDictionary* data = nil;
 
     if (IS_EMPTY(key)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
@@ -658,7 +659,7 @@ __weak CDVNearIT *instance = nil;
 - (void)showNotificationHistory:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
-    
+
     NITLogD(TAG, @"UIBindings :: show notification history");
     [[CDVNearItUI sharedInstance] showNotificationHistory];
 
@@ -666,6 +667,40 @@ __weak CDVNearIT *instance = nil;
 
     [[self commandDelegate] sendPluginResult:pluginResult
                                 callbackId:[command callbackId]];
+}
+
+
+- (void)requestPermissions:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    permissionInvokedUrlCommand = command;
+    NITLogD(TAG, @"UIBindings :: request permissions");
+    NSString* explanation = [[command arguments] objectAtIndex:0];
+    [[CDVNearItUI sharedInstance] showPermissionsDialogWithExplanation:explanation ? explanation : nil delegate:self];
+}
+
+#pragma NITPermissionsViewControllerDelegate
+
+- (void)dialogClosedWithLocationGranted:(BOOL)locationGranted notificationsGranted:(BOOL)notificationsGranted {
+    if (permissionInvokedUrlCommand != nil) {
+        NSMutableDictionary* result = @{
+            @"location": [NSNumber numberWithBool:locationGranted],
+            @"notifications": [NSNumber numberWithBool:notificationsGranted]
+        };
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
+        [[self commandDelegate] sendPluginResult:pluginResult callbackId:[permissionInvokedUrlCommand callbackId]];
+    }
+}
+
+- (void)locationGranted:(BOOL)granted {
+    if (permissionInvokedUrlCommand != nil) {
+        
+    }
+}
+
+- (void)notificationsGranted:(BOOL)granted {
+    if (permissionInvokedUrlCommand != nil) {
+        
+    }
 }
 
 @end

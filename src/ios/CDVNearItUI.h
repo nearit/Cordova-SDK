@@ -10,5 +10,6 @@
 - (void)showCouponDialogWithCoupon:(NITCoupon * _Nonnull)coupon;
 - (void)showNotificationHistory;
 - (void)showCouponList;
+- (void)showPermissionsDialogWithExplanation:(NSString * _Nullable)explanation delegate:(id<NITPermissionsViewControllerDelegate> _Nonnull)delegate;
 
 @end
