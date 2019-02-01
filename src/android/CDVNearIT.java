@@ -78,11 +78,11 @@ public class CDVNearIT extends CordovaPlugin {
 		return mInstance;
 	}
 
-	public static void onPostCreate(Context context, Intent intent) {
-		if (NearUtils.carriesNearItContent(intent)) {
-			NearUtils.parseContents(intent, new CDVNearITContentListener());
-		}
-	}
+	// public static void onPostCreate(Context context, Intent intent) {
+	// 	if (NearUtils.carriesNearItContent(intent)) {
+	// 		NearUtils.parseContents(intent, new CDVNearITContentListener());
+	// 	}
+	// }
 
 	@Override
 	protected void pluginInitialize() {
@@ -112,7 +112,9 @@ public class CDVNearIT extends CordovaPlugin {
 			@Override
 			public void run() {
 				try {
-					if (action.equals("fireEvent")) {
+					if (action.equals("onDeviceReady")) {
+						CDVNearIT.this.onDeviceReady(args, callbackContext);
+					} else if (action.equals("fireEvent")) {
 						CDVNearIT.this.fireEvent(args, callbackContext);
 					} else if (action.equals("resetProfileId")) {
 						CDVNearIT.this.resetProfileId(args, callbackContext);
@@ -827,6 +829,29 @@ public class CDVNearIT extends CordovaPlugin {
 			}
 		} else {
 			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
+
+	public void onDeviceReady(JSONArray args, CallbackContext callbackContext) throws Exception {
+		Log.e(TAG, "onDeviceReady");
+		Activity activity = cordova.getActivity();
+		if (activity != null) {
+			Intent intent = activity.getIntent();
+			if (intent != null) {
+				CDVNearIT.this.onNewIntent(intent);
+			} else {
+				Log.e(TAG, "null intent");
+			}
+		} else {
+			Log.e(TAG, "null activity");
+		}
+	}
+
+	@Override
+	public void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		if (NearUtils.carriesNearItContent(intent)) {
+			NearUtils.parseContents(intent, new CDVNearITContentListener());
 		}
 	}
 }

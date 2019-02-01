@@ -120,4 +120,6 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 - (void)showContent:( CDVInvokedUrlCommand* _Nonnull)command;
 - (void)requestPermissions:( CDVInvokedUrlCommand* _Nonnull )command;
 
+- (void)onDeviceReady:( CDVInvokedUrlCommand* _Nonnull)command;
+
 @end

@@ -326,4 +326,8 @@ NearIT.prototype.showContent = function(eventType, event, successCallback, error
     exec(successCallback, errorCallback, this.serviceName, "showContent", [eventType, event]);
 };
 
+NearIT.prototype.onDeviceReady = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "onDeviceReady", []);
+};
+
 module.exports = new NearIT();

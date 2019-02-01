@@ -703,6 +703,11 @@ __weak CDVNearIT *instance = nil;
     [[CDVNearItUI sharedInstance] showPermissionsDialogWithExplanation:explanation ? explanation : nil delegate:self];
 }
 
+- (void)onDeviceReady:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    
+}
+
 #pragma NITPermissionsViewControllerDelegate
 
 - (void)dialogClosedWithLocationGranted:(BOOL)locationGranted notificationsGranted:(BOOL)notificationsGranted {
