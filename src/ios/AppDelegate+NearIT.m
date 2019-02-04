@@ -40,6 +40,7 @@
 
 #define TAG @"AppDelegate+NearIT"
 
+static char savedUserInfoKey;
 
 @implementation AppDelegate (NearIT)
 
@@ -171,6 +172,8 @@
 
         return NO;
     }
+
+    self.savedUserInfo = nil;
 }
 
 // MARK: - Near Manager Delegate
@@ -212,18 +215,15 @@
 {
     NITLogV(TAG, @"didReceiveRemoteNotification");
 
-    [[NITManager defaultManager] processRecipeWithUserInfo:userInfo completion:^(id  _Nullable content, NITTrackingInfo * _Nullable trackingInfo, NSError * _Nullable error) {
-         // Handle push notification message
-         NITLogD(TAG, @"didReceiveRemoteNotification content=%@ trackingInfo=%@ error=%@", content, trackingInfo, error);
+    // app is in the background or inactive
+    if (application.applicationState != UIApplicationStateActive) {
+        // save it for later
+        self.savedUserInfo = userInfo;
+    }
 
-         if (error) {
-             [self manager:[NITManager defaultManager] eventFailureWithError:error];
-         } else {
-             [self handleNearContent:content trackingInfo:trackingInfo];
-         }
-
-    }];
-
+    // Process notification and fire event, no matter which UIApplicationState
+    // this "hack" will make it work for both "app swiped/killed" and "app closed with home button" scenarios.
+    [self processNotificationWithUserInfo:userInfo];
     completionHandler(UIBackgroundFetchResultNoData);
 }
 
@@ -232,18 +232,15 @@
 {
     NITLogV(TAG, @"didReceiveLocalNotification");
 
-    [[NITManager defaultManager] processRecipeWithUserInfo:notification.userInfo
-        completion:^(id _Nullable content, NITTrackingInfo * _Nullable trackingInfo, NSError * _Nullable error) {
-            // Handle push notification message
-            NITLogD(TAG, @"didReceiveLocalNotification content=%@ trackingInfo=%@ error=%@", content, trackingInfo, error);
+    // app is in the background or inactive
+    if (application.applicationState != UIApplicationStateActive) {
+        // save it for later
+        self.savedUserInfo = notification.userInfo;
+    }
 
-            if (error) {
-                [self manager:[NITManager defaultManager] eventFailureWithError:error];
-            } else {
-                [self handleNearContent:content trackingInfo:trackingInfo];
-            }
-
-        }];
+    // Process notification and fire event, no matter which UIApplicationState
+    // this "hack" will make it work for both "app swiped/killed" and "app closed with home button" scenarios.
+    [self processNotificationWithUserInfo:notification.userInfo];
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
@@ -252,19 +249,35 @@
 {
     NITLogV(TAG, @"didReceiveNotificationResponse");
 
-    [[NITManager defaultManager] processRecipeWithUserInfo:response.notification.request.content.userInfo
-        completion:^(id  _Nullable content, NITTrackingInfo * _Nullable trackingInfo, NSError * _Nullable error) {
-            // Handle push notification message
-            NITLogD(TAG, @"didReceiveNotification content=%@ trackingInfo=%@ error=%@", content, trackingInfo, error);
+    // app is in the background or inactive
+    if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
+        // save it for later
+        self.savedUserInfo = response.notification.request.content.userInfo;
+    }
+    // Process notification and fire event, no matter which UIApplicationState
+    // this "hack" will make it work for both "app swiped/killed" and "app closed with home button" scenarios.
+    [self processNotificationWithUserInfo:response.notification.request.content.userInfo];
+    completionHandler(UIBackgroundFetchResultNoData);
+}
 
+- (void)eventuallyRestoreNotification
+{
+    if (self.savedUserInfo) {
+        [self processNotificationWithUserInfo:self.savedUserInfo];
+    }
+}
+
+- (void)processNotificationWithUserInfo:(NSDictionary<NSString *,id> * _Nonnull)userInfo
+{
+    [[NITManager defaultManager] processRecipeWithUserInfo:userInfo
+        completion:^(id  _Nullable content, NITTrackingInfo * _Nullable trackingInfo, NSError * _Nullable error) {
+            NITLogD(TAG, @"didReceiveNotification content=%@ trackingInfo=%@ error=%@", content, trackingInfo, error);
             if (error) {
                 [self manager:[NITManager defaultManager] eventFailureWithError:error];
             } else {
                 [self handleNearContent:content trackingInfo:trackingInfo];
             }
-
-        }];
-
+    }];
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
@@ -283,6 +296,24 @@
 + (void)application:(UIApplication* _Nonnull)application performFetchWithCompletionHandler:(void (^_Nonnull)(UIBackgroundFetchResult))completionHandler {
     [[NITManager defaultManager] application:application
            performFetchWithCompletionHandler:completionHandler];
+}
+
+
+// The accessors use an Associative Reference since you can't define a iVar in a category
+// http://developer.apple.com/library/ios/#documentation/cocoa/conceptual/objectivec/Chapters/ocAssociativeReferences.html
+- (NSDictionary *)savedUserInfo
+{
+    return objc_getAssociatedObject(self, &savedUserInfoKey);
+}
+
+- (void)setSavedUserInfo:(NSDictionary *)aDictionary
+{
+    objc_setAssociatedObject(self, &savedUserInfoKey, aDictionary, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (void)dealloc
+{
+    self.savedUserInfo = nil; // clear the association and release the object
 }
 
 @end

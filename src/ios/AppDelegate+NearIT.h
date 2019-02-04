@@ -44,5 +44,8 @@
 @interface AppDelegate (NearIT) <UNUserNotificationCenterDelegate, NITManagerDelegate>
 
 
+- (void)eventuallyRestoreNotification;
+
+@property (nonatomic, retain) NSDictionary *savedUserInfo;
 
 @end
