@@ -271,35 +271,12 @@
     [[NITManager defaultManager] application:app openURL:url options:options];
 }
 
-// MARK: - Location Manager Handling
 
-@dynamic locationManager;
-static char key2;
 
-- (CLLocationManager *)locationManager
-{
-    return [self associatedObject:&key2];
-}
 
-- (void)setLocationManager:(CLLocationManager *)locationManager
-{
-    [self setAssociatedObject:locationManager forKey:&key2];
-}
 
-- (void)locationManager:(CLLocationManager *)manager
-        didChangeAuthorizationStatus:(CLAuthorizationStatus)status
-{
-    NITLogV(TAG, @"didChangeAuthorizationStatus status=%d", status);
 
-    if (status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse) {
-        NITLogI(TAG, @"NITManager start");
-        [[NITManager defaultManager] start];
-    } else {
-        NITLogI(TAG, @"NITManager stop");
-        [[NITManager defaultManager] stop];
-    }
 
-}
 
 # pragma mark Background Fetch
 
