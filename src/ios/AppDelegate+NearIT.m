@@ -285,12 +285,6 @@ static char savedUserInfoKey;
 }
 
 
-
-
-
-
-
-
 # pragma mark Background Fetch
 
 + (void)application:(UIApplication* _Nonnull)application performFetchWithCompletionHandler:(void (^_Nonnull)(UIBackgroundFetchResult))completionHandler {
