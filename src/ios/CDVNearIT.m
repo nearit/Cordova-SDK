@@ -712,7 +712,7 @@ __weak CDVNearIT *instance = nil;
 
 - (void)dialogClosedWithLocationGranted:(BOOL)locationGranted notificationsGranted:(BOOL)notificationsGranted {
     if (permissionInvokedUrlCommand != nil) {
-        NSMutableDictionary* result = @{
+        NSDictionary* result = @{
             @"location": [NSNumber numberWithBool:locationGranted],
             @"notifications": [NSNumber numberWithBool:notificationsGranted]
         };
