@@ -74,6 +74,7 @@ static char savedUserInfoKey;
     [NITManager setupWithApiKey:NEARIT_APIKEY];
     [NITManager setFrameworkName:@"cordova"];
     [[NITManager defaultManager] setDelegate:self];
+    [application registerForRemoteNotifications];
     UNUserNotificationCenter.currentNotificationCenter.delegate = self;
 
     #ifdef DEBUG
