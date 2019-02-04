@@ -704,7 +704,7 @@ __weak CDVNearIT *instance = nil;
 
 - (void)onDeviceReady:( CDVInvokedUrlCommand* _Nonnull)command
 {
-    
+    [((AppDelegate*) UIApplication.sharedApplication.delegate) eventuallyRestoreNotification];
 }
 
 #pragma NITPermissionsViewControllerDelegate
