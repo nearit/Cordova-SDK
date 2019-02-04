@@ -158,7 +158,6 @@ __weak CDVNearIT *instance = nil;
 
 /**
  * NearIT User profilation
- * @link http://nearit-ios.readthedocs.io/en/latest/user-profilation/
  */
 
 /**
