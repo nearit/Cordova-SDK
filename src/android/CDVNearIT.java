@@ -240,6 +240,7 @@ public class CDVNearIT extends CordovaPlugin {
 		Map<String, Object> args = new HashMap<String, Object>();
 
 		args.put("message", message);
+		args.put("type", event.toString());
 
 		fireWindowEvent(event, args);
 	}
@@ -766,7 +767,7 @@ public class CDVNearIT extends CordovaPlugin {
 		if (activity != null) {
 			try {
 				NITHelper.validateArgsCount(args, 2);
-				final String eventType = NITHelper.validateStringArgument(args, 0, "eventType");
+				final String eventType = NITHelper.validateStringArgument(args, 0, "type");
 				HashMap<String, Object> event = NITHelper.validateMapArgument(args, 1, "event");
 				if (eventType.equalsIgnoreCase(CDVEventType.CDVNE_Event_Feedback.toString())) {
 					try {
