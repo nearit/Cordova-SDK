@@ -74,8 +74,12 @@ static char savedUserInfoKey;
     [NITManager setupWithApiKey:NEARIT_APIKEY];
     [NITManager setFrameworkName:@"cordova"];
     [[NITManager defaultManager] setDelegate:self];
+    if (@available(iOS 10.0, *)) {
+        UNUserNotificationCenter.currentNotificationCenter.delegate = self;
+    } else {
+        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil]];
+    }
     [application registerForRemoteNotifications];
-    UNUserNotificationCenter.currentNotificationCenter.delegate = self;
 
     #ifdef DEBUG
         [NITLog setLogEnabled:YES];
@@ -183,6 +187,12 @@ static char savedUserInfoKey;
         trackingInfo:(NITTrackingInfo* _Nonnull) trackingInfo
 {
     [self handleNearContent:content trackingInfo:trackingInfo];
+}
+
+// For iOS 9 only
+- (void)manager:(NITManager *)manager alertWantsToShowContent:(id)content {
+    // Currently is not fully supported as this method delivers content only without trackingInfo
+    [self handleNearContent:content trackingInfo:nil];
 }
 
 - (void)manager:(NITManager* _Nonnull)manager eventFailureWithError:(NSError* _Nonnull)error
