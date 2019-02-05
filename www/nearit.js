@@ -69,7 +69,7 @@ NearIT.prototype.addEventListener = function(eventCallback) {
             callback.apply(this, arguments);
         });
     });
-}
+};
 
 /**
  * Fire NearIT event from UI (just for testing)
