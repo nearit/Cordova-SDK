@@ -60,6 +60,7 @@ import it.near.sdk.utils.NearUtils;
 
 import com.nearit.ui_bindings.NearITUIBindings;
 import com.nearit.ui_bindings.NearItLaunchMode;
+import com.nearit.ui_bindings.utils.PermissionsUtils;
 
 /**
  * This class implements NearIT plugin interface for Android.
@@ -801,13 +802,15 @@ public class CDVNearIT extends CordovaPlugin {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 		if (requestCode == CDV_NEARIT_PERM_REQ) {
-			if (permissionsCallbackContext != null) {
+			Activity activity = this.cordova.getActivity();
+			if (permissionsCallbackContext != null && activity != null) {
 				try {
-					if (resultCode == Activity.RESULT_OK) {
-						permissionsCallbackContext.success();
-					} else {
-						permissionsCallbackContext.error("Permissions not (fully) granted");
-					}
+					Map<String, Object> res = new HashMap<String,Object>();
+					res.put("location", (PermissionsUtils.checkLocationPermission(activity) && PermissionsUtils.checkLocationServices(activity)));
+					res.put("notifications", PermissionsUtils.areNotificationsEnabled(activity));
+					res.put("bluetooth", PermissionsUtils.checkBluetooth(activity));
+					JSONObject result = new JSONObject(res);
+					permissionsCallbackContext.success(result);
 				} catch (Exception e) {
 					Log.e(TAG, "NITManager :: Could handle permissions request callback", e);
 				}
