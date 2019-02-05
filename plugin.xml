@@ -65,7 +65,7 @@
             https://issues.apache.org/jira/browse/CB-10072
         -->
         <pods-config ios-min-version="9.0"
-                     use-frameworks="false" />
+                     use-frameworks="true" />
 
         <!--
             NearIT iOS SDK dependency
@@ -76,6 +76,11 @@
         <pod name="NearITSDK" 
              configurations="release,debug"
              git="https://github.com/nearit/iOS-SDK"
+             tag="2.10.6" />
+
+        <pod name="NearUIBinding" 
+             configurations="release,debug"
+             git="https://github.com/nearit/iOS-UI-Bindings"
              tag="2.10.6" />
 
         <config-file target="config.xml" parent="/*">
@@ -107,6 +112,9 @@
 
         <header-file src="src/ios/CDVNearIT.h" />
         <source-file src="src/ios/CDVNearIT.m" />
+
+        <header-file src="src/ios/CDVNearItUI.h" />
+        <source-file src="src/ios/CDVNearItUI.m" />
 
         <header-file src="src/ios/NearITUtils.h" />
         <source-file src="src/ios/NearITUtils.m" />

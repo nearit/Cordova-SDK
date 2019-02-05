@@ -38,7 +38,9 @@
 
 __weak CDVNearIT *instance = nil;
 
-@implementation CDVNearIT
+@implementation CDVNearIT {
+    CDVInvokedUrlCommand* permissionInvokedUrlCommand;
+}
 
 + ( CDVNearIT * _Nullable )instance
 {
@@ -156,7 +158,6 @@ __weak CDVNearIT *instance = nil;
 
 /**
  * NearIT User profilation
- * @link http://nearit-ios.readthedocs.io/en/latest/user-profilation/
  */
 
 /**
@@ -311,7 +312,6 @@ __weak CDVNearIT *instance = nil;
 
     NSString* key   = [[command arguments] objectAtIndex:0];
     NSMutableDictionary* values = [[command arguments] objectAtIndex:1];
-    // NSMutableDictionary* data = nil;
 
     if (IS_EMPTY(key)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
@@ -638,6 +638,98 @@ __weak CDVNearIT *instance = nil;
 // MARK: Customization
 - (void)disableDefaultRangingNotifications {
     [NITManager defaultManager].showForegroundNotification = false;
+}
+
+#pragma mark - UIs
+
+- (void)showCouponList:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+
+    NITLogD(TAG, @"UIBindings :: show coupon list");
+    [[CDVNearItUI sharedInstance] showCouponList];
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                  callbackId:[command callbackId]];
+}
+
+- (void)showNotificationHistory:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+
+    NITLogD(TAG, @"UIBindings :: show notification history");
+    [[CDVNearItUI sharedInstance] showNotificationHistory];
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                callbackId:[command callbackId]];
+}
+
+- (void)showContent:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+
+    NITLogD(TAG, @"UIBindings :: show content");
+    NSString* eventType   = [[command arguments] objectAtIndex:0];
+    NSMutableDictionary* event = [[command arguments] objectAtIndex:1];
+
+    if ([eventType isEqualToString:EVENT_TYPE_CONTENT]) {
+        NITContent* nearContent = [NearITUtils unbundleNITContent:event];
+        NITTrackingInfo* trackingInfo = [NearITUtils unbundleTrackingInfo:[event objectForKey:@"trackingInfo"]];
+        [[CDVNearItUI sharedInstance] showContentDialogWithContent:nearContent trackingInfo:trackingInfo];
+    } else if ([eventType isEqualToString:EVENT_TYPE_COUPON]) {
+        NITCoupon* coupon = [NearITUtils unbundleNITCoupon:event];
+        [[CDVNearItUI sharedInstance] showCouponDialogWithCoupon:coupon];
+    } else if ([eventType isEqualToString:EVENT_TYPE_FEEDBACK]) {
+        NITFeedback* feedback = [NearITUtils unbundleNITFeedback:event];
+        [[CDVNearItUI sharedInstance] showFeedbackDialogWithFeedback:feedback];
+    }
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                callbackId:[command callbackId]];
+}
+
+- (void)requestPermissions:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    permissionInvokedUrlCommand = command;
+    NITLogD(TAG, @"UIBindings :: request permissions");
+    NSString* explanation = [[command arguments] objectAtIndex:0];
+    [[CDVNearItUI sharedInstance] showPermissionsDialogWithExplanation:explanation ? explanation : nil delegate:self];
+}
+
+- (void)onDeviceReady:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    [((AppDelegate*) UIApplication.sharedApplication.delegate) eventuallyRestoreNotification];
+}
+
+#pragma NITPermissionsViewControllerDelegate
+
+- (void)dialogClosedWithLocationGranted:(BOOL)locationGranted notificationsGranted:(BOOL)notificationsGranted {
+    if (permissionInvokedUrlCommand != nil) {
+        NSDictionary* result = @{
+            @"location": [NSNumber numberWithBool:locationGranted],
+            @"notifications": [NSNumber numberWithBool:notificationsGranted]
+        };
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
+        [[self commandDelegate] sendPluginResult:pluginResult callbackId:[permissionInvokedUrlCommand callbackId]];
+    }
+}
+
+- (void)locationGranted:(BOOL)granted {
+    if (permissionInvokedUrlCommand != nil) {
+        
+    }
+}
+
+- (void)notificationsGranted:(BOOL)granted {
+    if (permissionInvokedUrlCommand != nil) {
+        
+    }
 }
 
 @end

@@ -36,11 +36,16 @@
 #import "Macros.h"
 #import <NearITSDK/NearITSDK.h>
 
+#import "NearITUtils.h"
+
 #import <UserNotifications/UserNotifications.h>
 #import <CoreLocation/CoreLocation.h>
 
-@interface AppDelegate (NearIT) <UNUserNotificationCenterDelegate, CLLocationManagerDelegate, NITManagerDelegate>
+@interface AppDelegate (NearIT) <UNUserNotificationCenterDelegate, NITManagerDelegate>
 
-@property (nonatomic, strong) CLLocationManager *locationManager;
+
+- (void)eventuallyRestoreNotification;
+
+@property (nonatomic, retain) NSDictionary *savedUserInfo;
 
 @end
