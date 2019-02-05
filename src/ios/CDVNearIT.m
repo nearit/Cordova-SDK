@@ -713,7 +713,8 @@ __weak CDVNearIT *instance = nil;
     if (permissionInvokedUrlCommand != nil) {
         NSDictionary* result = @{
             @"location": [NSNumber numberWithBool:locationGranted],
-            @"notifications": [NSNumber numberWithBool:notificationsGranted]
+            @"notifications": [NSNumber numberWithBool:notificationsGranted],
+            @"bluetooth": @YES
         };
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
         [[self commandDelegate] sendPluginResult:pluginResult callbackId:[permissionInvokedUrlCommand callbackId]];
