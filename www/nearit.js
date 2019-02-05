@@ -322,8 +322,8 @@ NearIT.prototype.showNotificationHistory = function(successCallback, errorCallba
     exec(successCallback, errorCallback, this.serviceName, "showNotificationHistory", []);
 };
 
-NearIT.prototype.showContent = function(eventType, event, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "showContent", [eventType, event]);
+NearIT.prototype.showContent = function(event, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "showContent", [event.type, event]);
 };
 
 NearIT.prototype.onDeviceReady = function(successCallback, errorCallback) {
