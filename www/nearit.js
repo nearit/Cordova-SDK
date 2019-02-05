@@ -58,12 +58,15 @@ function NearIT() {
 
 /**
  * Wrapper method to attach an event listener specific for NearIT Events
- * @param string     eventType see NearIT.eventTYpe
  * @param {Function} eventCallback callback function
  */
 NearIT.prototype.addEventListener = function(eventCallback) {
     var callback = eventCallback;
-    Object.values(this.eventType).forEach(function(type) {
+    var event = this.eventType;
+    var vals = Object.keys(event).map(function(key) {
+        return event[key];
+    });
+    vals.forEach(function(type) {
         window.addEventListener(type, function() {
             console.log("NearIT :: event " + type + " triggered ", arguments);
             callback.apply(this, arguments);
