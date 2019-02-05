@@ -102,6 +102,9 @@ __weak CDVNearIT *instance = nil;
     if ([eventContent objectForKey:@"data"] == nil) {
         [eventContent setObject:[NSDictionary dictionary] forKey:@"data"];
     }
+    if ([eventContent objectForKey:@"type"] == nil) {
+        [eventContent setObject:eventName forKey:@"type"];
+    }
     
     if (trackingInfo) {
         NSData* trackingInfoData = [NSKeyedArchiver archivedDataWithRootObject:trackingInfo];
