@@ -61,16 +61,15 @@ function NearIT() {
  * @param string     eventType see NearIT.eventTYpe
  * @param {Function} eventCallback callback function
  */
-NearIT.prototype.addEventListener = function(eventType, eventCallback) {
-    if (this.eventType.hasOwnProperty(eventType)) {
-        eventType = this.eventType[eventType];
-    }
-
-    window.addEventListener(eventType, function() {
-        console.log("NearIT :: event " + eventType + " triggered ", arguments);
-        eventCallback.apply(this, arguments);
+NearIT.prototype.addEventListener = function(eventCallback) {
+    var callback = eventCallback;
+    Object.values(this.eventType).forEach(function(type) {
+        window.addEventListener(type, function() {
+            console.log("NearIT :: event " + type + " triggered ", arguments);
+            callback.apply(this, arguments);
+        });
     });
-};
+}
 
 /**
  * Fire NearIT event from UI (just for testing)
