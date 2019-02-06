@@ -43,8 +43,8 @@
         <engine name="cordova-android" version=">=6.2.3" />
     </engines>
 
-    <hook type="after_plugin_install" src="hooks/before_prepare.js" />
-    <hook type="after_prepare" src="hooks/before_prepare.js" />
+    <hook type="after_plugin_add" src="hooks/before_prepare.js" />
+    <hook type="before_prepare" src="hooks/before_prepare.js" />
 
     <js-module src="www/nearit.js" name="nearit">
         <runs />
