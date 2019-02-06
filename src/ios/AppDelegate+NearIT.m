@@ -292,7 +292,7 @@ static char savedUserInfoKey;
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-    [[NITManager defaultManager] application:app openURL:url options:options];
+    return [[NITManager defaultManager] application:app openURL:url options:options];
 }
 
 
