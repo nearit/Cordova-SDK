@@ -190,9 +190,9 @@ static char savedUserInfoKey;
 }
 
 // For iOS 9 only
-- (void)manager:(NITManager *)manager alertWantsToShowContent:(id)content {
-    // Currently is not fully supported as this method delivers content only without trackingInfo
-    [self handleNearContent:content trackingInfo:nil];
+- (void)manager:(NITManager *)manager alertWantsToShowContent:(id)content trackingInfo:(NITTrackingInfo *)trackingInfo
+{
+    [self handleNearContent:content trackingInfo:trackingInfo];
 }
 
 - (void)manager:(NITManager* _Nonnull)manager eventFailureWithError:(NSError* _Nonnull)error
