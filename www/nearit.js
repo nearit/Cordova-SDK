@@ -58,17 +58,19 @@ function NearIT() {
 
 /**
  * Wrapper method to attach an event listener specific for NearIT Events
- * @param string     eventType see NearIT.eventTYpe
  * @param {Function} eventCallback callback function
  */
-NearIT.prototype.addEventListener = function(eventType, eventCallback) {
-    if (this.eventType.hasOwnProperty(eventType)) {
-        eventType = this.eventType[eventType];
-    }
-
-    window.addEventListener(eventType, function() {
-        console.log("NearIT :: event " + eventType + " triggered ", arguments);
-        eventCallback.apply(this, arguments);
+NearIT.prototype.addEventListener = function(eventCallback) {
+    var callback = eventCallback;
+    var event = this.eventType;
+    var vals = Object.keys(event).map(function(key) {
+        return event[key];
+    });
+    vals.forEach(function(type) {
+        window.addEventListener(type, function() {
+            console.log("NearIT :: event " + type + " triggered ", arguments);
+            callback.apply(this, arguments);
+        });
     });
 };
 
@@ -322,8 +324,8 @@ NearIT.prototype.showNotificationHistory = function(successCallback, errorCallba
     exec(successCallback, errorCallback, this.serviceName, "showNotificationHistory", []);
 };
 
-NearIT.prototype.showContent = function(eventType, event, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "showContent", [eventType, event]);
+NearIT.prototype.showContent = function(event, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "showContent", [event.type, event]);
 };
 
 NearIT.prototype.onDeviceReady = function(successCallback, errorCallback) {

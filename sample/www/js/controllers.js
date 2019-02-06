@@ -2,34 +2,49 @@ angular.module('starter.controllers', [])
 
 .controller('MainCtrl', function($scope, $ionicPlatform) {
 
-  // $ionicPlatform.ready(function() {
-  //   toastr.info("Welcome to NearIT sample");
-  // });
+  var appendLog = function() {
+    var args = Array.prototype.slice.call(arguments);
+    args = [new Date().toLocaleTimeString()].concat(args);
+    var logLine = args.join(' - ') + "<br/>\n";
+
+    var logDiv = document.getElementById("js_logs");
+    if (logDiv) {
+        logDiv.innerHTML = logLine + logDiv.innerHTML;
+    }
+
+    setTimeout(function() {
+      window.location = '#/tab/dash';
+    }, 1000);
+  }
 
   $scope.requestPermissions = function() {
     if (window.nearit) {
       nearit.requestPermissions(
         "YOUR MESSAGE THAT EXPLAINS WHY YOU ARE REQUESTING THESE PERMISSIONS",
         function(result) {
-          if (result.location) {
-            appendLog('Location permission granted')
+          if (result.location && result.bluetooth && result.notifications) {
             nearit.startRadar();
           }
-
-          if (result.notifications) {
-            appendLog('Notifications permission granted')
-          }
-        },
-        function() {
-          appendLog('Permissions dialog closed')
-        }
-      );
+          appendLog(`Location permission granted: ${result.location}`);
+          appendLog(`Notifications permission granted: ${result.notifications}`);
+          appendLog(`Bluetooth enabled: ${result.bluetooth}`);
+        });
     }
   };
 
   $scope.showNotificationHistory = function() {
     if (window.nearit) {
       nearit.showNotificationHistory();
+    }
+  };
+
+  $scope.getProfileId = function() {
+    if (window.nearit) {
+      nearit.getProfileId(function(profileId) {
+        appendLog(`ProfileId: <b>${profileId}</b>`);
+      }, function(errorMsg) {
+        appendLog(errorMsg);
+      });
     }
   };
   
@@ -42,6 +57,7 @@ angular.module('starter.controllers', [])
   $scope.triggerInAppEvent = function() {
     if (window.nearit) {
       nearit.triggerEvent("feedback");
+      nearit.triggerEvent("your_in_app_event");
     }
   };
 

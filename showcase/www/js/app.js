@@ -14,25 +14,18 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     if (window.nearit) {
       // ensure that the plugin is initialized
 
-      // add an event listener for every nearit event
-      Object.keys(nearit.eventType).forEach(function(eventType) {
-        appendLog("demo :: attaching event listener for " + eventType);
-        nearit.addEventListener(eventType, function(event) {
-          try {
-            event = JSON.stringify(event);
-          } catch(err) {
-            // doing nothing
-          }
-          var args2 = ['demo :: <b>' + eventType + '</b>'].concat(event);
-          appendLog.apply(appendLog, args2);
-        });
-      });
-      //
+      // add an event listener for nearit events
+      nearit.addEventListener(function(event) {
+        try {
+          event = JSON.stringify(event);
+        } catch(err) {
+          // doing nothing
+        }
+        var args2 = ['demo :: <b>' + eventType + '</b>'].concat(event);
+        appendLog.apply(appendLog, args2);
 
-      // demo listener for a feedback event
-      nearit.addEventListener(nearit.eventType.CDVNE_Event_Feedback, function(event) {
-
-        // retain feedback information
+        if (event.type == nearit.eventType.CDVNE_Event_Feedback) {
+          // retain feedback information
         var recipeId = event.recipeId;
         var feedbackId = event.feedbackId;
         var question = event.question;
@@ -55,7 +48,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
             appendLog.apply(appendLog, args2);
           });
         }
-
+        } 
       });
 
     }
