@@ -1,7 +1,7 @@
 /*
     MIT License
 
-    Copyright (c) 2018 nearit.com
+    Copyright (c) 2019 nearit.com
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@
 //  NearITSDK
 //
 //  Created by Federico Boschini on 24/01/19.
-//  Copyright © 2018 NearIT. All rights reserved.
+//  Copyright © 2019 NearIT. All rights reserved.
 //
 
 #import "NearITConsts.h"

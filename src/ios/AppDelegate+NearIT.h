@@ -1,7 +1,7 @@
 /*
     MIT License
 
-    Copyright (c) 2017 nearit.com
+    Copyright (c) 2019 nearit.com
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@
 //
 //  Created by Fabio Cigliano on 25/07/17.
 //  Modified by Federico Boschini on 28/09/18.
-//  Copyright © 2017 NearIT. All rights reserved.
+//  Copyright © 2019 NearIT. All rights reserved.
 //
 
 #import "AppDelegate.h"
