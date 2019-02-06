@@ -58,6 +58,15 @@ lib = extend(lib, {
 });
 
 function main(rootdir) {
+    try {
+        require("shelljs");
+        require("elementtree");
+        require("plist");
+        require("xml2js");
+    } catch (e) {
+        console.log("\x1b[31m%s\x1b[0m", '\nNearIT :: Plugin not added: missing Node dependencies. Please run `npm install shelljs elementtree plist xml2js --save`\n');
+        return;
+    }
     if (rootdir && fs.existsSync(rootdir)) {
         console.log("\n---------------------");
         console.log(
