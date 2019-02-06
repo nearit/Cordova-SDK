@@ -2,7 +2,7 @@
 <!--
     MIT License
 
-    Copyright (c) 2017 nearit.com
+    Copyright (c) 2019 nearit.com
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-nearit"
         name="NearIT"
-        version="2.9.5">
+        version="2.10.0">
 
     <name>NearIT SDK</name>
     <description>Cordova plugin for NearIT SDK</description>
