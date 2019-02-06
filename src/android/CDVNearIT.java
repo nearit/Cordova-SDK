@@ -3,7 +3,7 @@ package it.near.sdk.cordova.android;
 /*
     MIT License
 
-    Copyright (c) 2017 nearit.com
+    Copyright (c) 2019 nearit.com
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,12 @@ package it.near.sdk.cordova.android;
     SOFTWARE.
  */
 
+import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.apache.cordova.CallbackContext;
@@ -42,15 +46,21 @@ import it.near.sdk.NearItManager;
 import it.near.sdk.communication.OptOutNotifier;
 import it.near.sdk.operation.NearItUserProfile;
 import it.near.sdk.operation.values.NearMultipleChoiceDataPoint;
+import it.near.sdk.reactions.contentplugin.model.Content;
 import it.near.sdk.reactions.couponplugin.CouponListener;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
 import it.near.sdk.reactions.feedbackplugin.FeedbackEvent;
 import it.near.sdk.reactions.feedbackplugin.model.Feedback;
 import it.near.sdk.recipes.NearITEventHandler;
-import it.near.sdk.recipes.RecipeRefreshListener;
+import it.near.sdk.recipes.inbox.NotificationHistoryManager;
+import it.near.sdk.recipes.inbox.model.HistoryItem;
 import it.near.sdk.recipes.models.Recipe;
 import it.near.sdk.trackings.TrackingInfo;
 import it.near.sdk.utils.NearUtils;
+
+import com.nearit.ui_bindings.NearITUIBindings;
+import com.nearit.ui_bindings.NearItLaunchMode;
+import com.nearit.ui_bindings.utils.PermissionsUtils;
 
 /**
  * This class implements NearIT plugin interface for Android.
@@ -59,16 +69,14 @@ public class CDVNearIT extends CordovaPlugin {
 
 	private static final String TAG = "CDVNearIT";
 
+	private static final int CDV_NEARIT_PERM_REQ = 6889;
+
 	private static CDVNearIT mInstance = null;
+
+	private CallbackContext permissionsCallbackContext = null;
 
 	public static CDVNearIT getInstance() {
 		return mInstance;
-	}
-
-	public static void onPostCreate(Context context, Intent intent) {
-		if (NearUtils.carriesNearItContent(intent)) {
-			NearUtils.parseContents(intent, new CDVNearITContentListener());
-		}
 	}
 
 	@Override
@@ -99,42 +107,52 @@ public class CDVNearIT extends CordovaPlugin {
 			@Override
 			public void run() {
 				try {
-					if (action.equals("fireEvent")) {
+					if (action.equals("onDeviceReady")) {
+						CDVNearIT.this.onDeviceReady();
+					} else if (action.equals("fireEvent")) {
 						CDVNearIT.this.fireEvent(args, callbackContext);
 					} else if (action.equals("resetProfileId")) {
-						CDVNearIT.this.resetProfileId(args, callbackContext);
+						CDVNearIT.this.resetProfileId(callbackContext);
 					} else if (action.equals("getProfileId")) {
-						CDVNearIT.this.getProfileId(args, callbackContext);
+						CDVNearIT.this.getProfileId(callbackContext);
 					} else if (action.equals("setProfileId")) {
-						CDVNearIT.this.setProfileId(args, callbackContext);
+						CDVNearIT.this.setProfileId(args);
 					} else if (action.equals("optOut")) {
-						CDVNearIT.this.optOut(args, callbackContext);
+						CDVNearIT.this.optOut(callbackContext);
 					} else if (action.equals("setUserData")) {
-						CDVNearIT.this.setUserData(args, callbackContext);
+						CDVNearIT.this.setUserData(args);
 					} else if (action.equals("setMultichoiceUserData")) {
-						CDVNearIT.this.setMultichoiceUserData(args, callbackContext);
+						CDVNearIT.this.setMultichoiceUserData(args);
 					} else if (action.equals("sendFeedback")) {
 						CDVNearIT.this.sendFeedback(args, callbackContext);
 					} else if (action.equals("getCoupons")) {
-						CDVNearIT.this.getCoupons(args, callbackContext);
-					} else if (action.equals("triggerEvent")) {
-						CDVNearIT.this.triggerEvent(args, callbackContext);
-					} else if (action.equals("sendTrackingWithRecipeIdForEventNotified")
-								|| action.equals("sendTrackingWithRecipeIdForEventReceived")) {
-						CDVNearIT.this.sendTrackingWithRecipeIdForEventReceived(args, callbackContext);
-					} else if (action.equals("sendTrackingWithRecipeIdForEventEngaged")
-								|| action.equals("sendTrackingWithRecipeIdForEventOpened")) {
-						CDVNearIT.this.sendTrackingWithRecipeIdForEventOpened(args, callbackContext);
+						CDVNearIT.this.getCoupons(callbackContext);
+					} else if (action.equals("getNotificationHistory")) {
+						CDVNearIT.this.getNotificationHistory(callbackContext);
+					}else if (action.equals("triggerEvent")) {
+						CDVNearIT.this.triggerEvent(args);
+					} else if (action.equals("sendTrackingForEventNotified")
+								|| action.equals("sendTrackingForEventReceived")) {
+						CDVNearIT.this.sendTrackingForEventReceived(args);
+					} else if (action.equals("sendTrackingForEventEngaged")
+								|| action.equals("sendTrackingForEventOpened")) {
+						CDVNearIT.this.sendTrackingForEventOpened(args);
 					} else if (action.equals("sendTrackingForEventCTATapped")) {
-						CDVNearIT.this.sendTrackingForEventCTATapped(args, callbackContext);
-					} else if (action.equals("sendTrackingWithRecipeIdForCustomEvent")) {
-						CDVNearIT.this.sendTrackingWithRecipeIdForCustomEvent(args, callbackContext);
+						CDVNearIT.this.sendTrackingForEventCTATapped(args);
+					} else if (action.equals("sendTrackingForCustomEvent")) {
+						CDVNearIT.this.sendTrackingForCustomEvent(args);
 					} else if (action.equals("startRadar")) {
-						CDVNearIT.this.startRadar(args, callbackContext);
+						CDVNearIT.this.startRadar();
 					} else if (action.equals("stopRadar")) {
-						CDVNearIT.this.stopRadar(args, callbackContext);
-					} else if (action.equals("refreshRecipes")) {
-						CDVNearIT.this.refreshRecipes(args, callbackContext);
+						CDVNearIT.this.stopRadar();
+					} else if (action.equals("requestPermissions")) {
+						CDVNearIT.this.requestPermissions(callbackContext);
+					} else if (action.equals("showCouponList")) {
+						CDVNearIT.this.showCouponList();
+					} else if (action.equals("showNotificationHistory")) {
+						CDVNearIT.this.showNotificationHistory();
+					} else if (action.equals("showContent")) {
+						CDVNearIT.this.showContent(args);
 					} else {
 						final String message = "unknown action " + action;
 						Log.e(TAG, message);
@@ -204,7 +222,7 @@ public class CDVNearIT extends CordovaPlugin {
 	public void fireWindowEvent(CDVEventType event, Map<String, Object> args, TrackingInfo trackingInfo) {
 		String trackingInfoData = null;
 		try {
-			trackingInfoData = NITHelper.trackingInfoToBase64(trackingInfo);
+			trackingInfoData = NearITUtils.bundleTrackingInfo(trackingInfo);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -223,6 +241,7 @@ public class CDVNearIT extends CordovaPlugin {
 		Map<String, Object> args = new HashMap<String, Object>();
 
 		args.put("message", message);
+		args.put("type", event.toString());
 
 		fireWindowEvent(event, args);
 	}
@@ -250,7 +269,6 @@ public class CDVNearIT extends CordovaPlugin {
 
     /*
      * Profile Id
-	 * @link http://nearit-ios.readthedocs.io/en/latest/user-profilation/
 	 */
 
 	/**
@@ -258,11 +276,10 @@ public class CDVNearIT extends CordovaPlugin {
 	 * <code><pre>
 	 cordova.exec(successCb, errorCb, "nearit", "resetProfileId", []);
 	 </pre></code>
-	 * @param args Cordova exec arguments
 	 * @param callbackContext Cordova callback context
 	 * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void resetProfileId(JSONArray args, final CallbackContext callbackContext) throws Exception {
+	public void resetProfileId(final CallbackContext callbackContext) throws Exception {
 		Log.d(TAG, "NITManager :: resetProfile");
 
 		cordova.getThreadPool().execute(new Runnable() {
@@ -288,11 +305,10 @@ public class CDVNearIT extends CordovaPlugin {
 	 * <code><pre>
 	 cordova.exec(successCb, errorCb, "nearit", "getProfileId", []);
 	 </pre></code>
-	 * @param args Cordova exec arguments
 	 * @param callbackContext Cordova callback context
 	 * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void getProfileId(JSONArray args, final CallbackContext callbackContext) throws Exception {
+	public void getProfileId(final CallbackContext callbackContext) throws Exception {
 		Log.d(TAG, "NITManager :: getProfileId");
 
 		cordova.getThreadPool().execute(new Runnable() {
@@ -321,7 +337,7 @@ public class CDVNearIT extends CordovaPlugin {
 	 * @param args Cordova exec arguments
 	 * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void setProfileId(JSONArray args, CallbackContext callbackContext) throws Exception {
+	public void setProfileId(JSONArray args) throws Exception {
 		try {
 			NITHelper.validateArgsCount(args, 1);
 	    	String profileId = NITHelper.validateStringArgument(args, 0, "profileId");
@@ -341,11 +357,10 @@ public class CDVNearIT extends CordovaPlugin {
 		* <code><pre>
 			cordova.exec(successCb, errorCb, "nearit", "optOut", []);
 			</pre></code>
-		* @param args Cordova exec arguments
 		* @param callbackContext Cordova callback context
 		* @throws Exception if there is any validation error or other kind of exception
 		*/
-	public void optOut(JSONArray args, final CallbackContext callbackContext) throws Exception {
+	public void optOut(final CallbackContext callbackContext) throws Exception {
 		Log.i(TAG, "NITManager :: optOut");
 
 		NearItManager.getInstance().optOut(new OptOutNotifier() {
@@ -373,7 +388,7 @@ public class CDVNearIT extends CordovaPlugin {
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void setUserData(JSONArray args, CallbackContext callbackContext) throws Exception {
+    public void setUserData(JSONArray args) throws Exception {
     	try {
 			NITHelper.validateArgsCount(args, 2);
 			String key = NITHelper.validateStringArgument(args, 0, "key");
@@ -393,12 +408,12 @@ public class CDVNearIT extends CordovaPlugin {
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void setMultichoiceUserData(JSONArray args, CallbackContext callbackContext) throws Exception {
+    public void setMultichoiceUserData(JSONArray args) throws Exception {
     	try {
 			NITHelper.validateArgsCount(args, 2);
 			NearMultipleChoiceDataPoint multiChoiceData = null;
 			String key = NITHelper.validateStringArgument(args, 0, "key");
-			HashMap<String, Boolean> values = NITHelper.validateMapArgument(args, 1, "values");
+			HashMap<String, Boolean> values = NITHelper.validateMapOfBoolArgument(args, 1, "values");
 
 			if (values != null) {
 				multiChoiceData = new NearMultipleChoiceDataPoint(values);
@@ -449,7 +464,7 @@ public class CDVNearIT extends CordovaPlugin {
 
 			Log.d(TAG, "NITManager :: sendFeedback(" + feedbackId + ", " + rating + ", " + comment + ")");
 
-			Feedback feedback = NITHelper.feedbackFromBase64(feedbackId);
+			Feedback feedback = NearITUtils.unbundleFeedback(feedbackId);
 			FeedbackEvent event = new FeedbackEvent(feedback, rating, comment);
 
 			NearItManager.getInstance().sendEvent(event, new NearITEventHandler() {
@@ -478,7 +493,7 @@ public class CDVNearIT extends CordovaPlugin {
 	    cordova.exec(successCb, errorCb, "nearit", "getCoupons", []);
 	 </pre></code>
 	 */
-	public void getCoupons(JSONArray args, final CallbackContext callbackContext) throws Exception {
+	public void getCoupons(final CallbackContext callbackContext) throws Exception {
 		Log.d(TAG, "NITManager :: getCoupons()");
 
 		NearItManager.getInstance().getCoupons(new CouponListener() {
@@ -489,7 +504,6 @@ public class CDVNearIT extends CordovaPlugin {
 				try {
 					for(Coupon item : list) {
 						JSONObject coupon = NITHelper.couponToJson(item);
-
 						coupons.put(coupon);
 					}
 				} catch(JSONException error) {
@@ -507,6 +521,42 @@ public class CDVNearIT extends CordovaPlugin {
 	}
 
 	/*
+	 *	Notification History
+	 */
+
+	/**
+	 * Request notification history
+	 * <code><pre>
+	 	cordova.exec(successCb, errorCb, "nearit", "getNotificationHistory", []);
+	   </pre></code>
+	 */
+	public void getNotificationHistory(final CallbackContext callbackContext) throws Exception {
+		Log.d(TAG, "NITManager :: getNotificationHistory()");
+
+		NearItManager.getInstance().getHistory(new NotificationHistoryManager.OnNotificationHistoryListener() {
+    		@Override
+			public void onNotifications(@NonNull List<HistoryItem> historyItemList) {
+				JSONArray history = new JSONArray();
+
+				try {
+					for(HistoryItem historyItem : historyItemList) {
+						JSONObject item = NITHelper.historyItemToJson(historyItem);
+						history.put(item);
+					}
+				} catch(JSONException e) {
+					callbackContext.error(e.getMessage());
+				}
+
+				callbackContext.success(history);
+			}
+			@Override
+			public void onError(String error) {
+				callbackContext.error(error);
+			}
+		});
+	}
+
+	/*
 	*	 In-app Events
 	*/
 
@@ -518,7 +568,7 @@ public class CDVNearIT extends CordovaPlugin {
 	 * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-	public void triggerEvent(JSONArray args, CallbackContext callbackContext) throws Exception {
+	public void triggerEvent(JSONArray args) throws Exception {
 
 		if (args.length() < 1) {
 			throw new Exception("Wrong number of arguments! expected 'eventKey' arg");
@@ -543,12 +593,12 @@ public class CDVNearIT extends CordovaPlugin {
 	/**
      * Track an event of type "RECEIVED"
      * <code><pre>
-        cordova.exec("nearit", "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
+        cordova.exec("nearit", "sendTrackingForEventReceived", [trackingInfo]);
     </pre></code>
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void sendTrackingWithRecipeIdForEventReceived(JSONArray args, CallbackContext callbackContext)
+    public void sendTrackingForEventReceived(JSONArray args)
 		    throws Exception {
 		try {
 			NITHelper.validateArgsCount(args, 1);
@@ -562,12 +612,12 @@ public class CDVNearIT extends CordovaPlugin {
 	/**
      * Track an event of type "OPENED"
      * <code><pre>
-        cordova.exec("nearit", "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
+        cordova.exec("nearit", "sendTrackingForEventOpened", [trackingInfo]);
     </pre></code>
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void sendTrackingWithRecipeIdForEventOpened(JSONArray args, CallbackContext callbackContext) throws Exception {
+    public void sendTrackingForEventOpened(JSONArray args) throws Exception {
 		try {
 			NITHelper.validateArgsCount(args, 1);
 			final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
@@ -586,7 +636,7 @@ public class CDVNearIT extends CordovaPlugin {
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-	public void sendTrackingForEventCTATapped(JSONArray args, CallbackContext callbackContext) throws Exception {
+	public void sendTrackingForEventCTATapped(JSONArray args) throws Exception {
 		try {
 			NITHelper.validateArgsCount(args, 1);
 			final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
@@ -599,12 +649,12 @@ public class CDVNearIT extends CordovaPlugin {
     /**
      * Track a custom event
      * <code><pre>
-        cordova.exec("nearit", "sendTrackingWithRecipeIdForCustomEvent", [trackingInfo, eventName]);
+        cordova.exec("nearit", "sendTrackingForCustomEvent", [trackingInfo, eventName]);
     </pre></code>
      * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void sendTrackingWithRecipeIdForCustomEvent(JSONArray args, CallbackContext callbackContext) throws Exception {
+    public void sendTrackingForCustomEvent(JSONArray args) throws Exception {
 		try {
 			NITHelper.validateArgsCount(args, 2);
 			final String trackingInfoJsonString = NITHelper.validateStringArgument(args, 0, "trackingInfoJsonString");
@@ -618,7 +668,7 @@ public class CDVNearIT extends CordovaPlugin {
 
     private void sendTracking(final String trackingInfoBase64, final String eventName) throws Exception {
 		try {
-			final TrackingInfo trackingInfo = NITHelper.trackingInfoFromBase64(trackingInfoBase64);
+			final TrackingInfo trackingInfo = NearITUtils.unbundleTrackingInfo(trackingInfoBase64);
 			Log.d(TAG, "NITManager :: track event (" + eventName + ") with trackingInfo (" + trackingInfoBase64 + ")");
 			NearItManager.getInstance().sendTracking(trackingInfo, eventName);
 		} catch (Exception e) {
@@ -635,10 +685,10 @@ public class CDVNearIT extends CordovaPlugin {
      * <code><pre>
         cordova.exec("nearit", "startRadar", []);
      </pre></code>
-     * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void startRadar(JSONArray args, CallbackContext callbackContext) throws Exception {
+	@SuppressLint("MissingPermission")
+	public void startRadar() throws Exception {
 	    Log.d(TAG, "NITManager :: start");
 	    NearItManager.getInstance().startRadar();
     }
@@ -648,34 +698,147 @@ public class CDVNearIT extends CordovaPlugin {
      * <code><pre>
         cordova.exec("nearit", "stopRadar", []);
      </pre></code>
-     * @param args Cordova exec arguments
      * @throws Exception if there is any validation error or other kind of exception
      */
-    public void stopRadar(JSONArray args, CallbackContext callbackContext) throws Exception {
+    public void stopRadar() throws Exception {
 	    Log.d(TAG, "NITManager :: stop");
 	    NearItManager.getInstance().stopRadar();
     }
 
-    /**
-     * @deprecated no need to refresh recipe. This is done automagically by the native SDK
-     */
-    public void refreshRecipes(JSONArray args, final CallbackContext callbackContext) throws Exception {
-	    Log.i(TAG, "NITManager :: refreshing recipes");
-	    NearItManager.getInstance().refreshConfigs(new RecipeRefreshListener() {
-		    @Override
-		    public void onRecipesRefresh() {
-			    callbackContext.success();
-		    }
-
-		    @Override
-		    public void onRecipesRefreshFail() {
-			    callbackContext.error("Could not refresh recipes");
-		    }
-	    });
-    }
-
 	public static void disableDefaultRangingNotifications() {
         NearItManager.getInstance().disableDefaultRangingNotifications();
-    }
+	}
+	
+	/*
+	 * UIs
+	 */
 
+	/**
+	 * Request permissions (location, notifications, bluetooth) via dedicated UI
+	 * <code><pre>
+		 cordova.exec(successCb, errorCB, "nearit", "requestPermissions", []);
+	   </pre></code>
+	 * @param callbackContext Cordova callback context
+	 * @throws Exception if there is any validation error or other kind of exception
+	 */
+	public void requestPermissions(CallbackContext callbackContext) throws Exception {
+		Log.d(TAG, "UIBindings :: request permissions");
+		
+		this.permissionsCallbackContext = callbackContext;
+
+		cordova.setActivityResultCallback(this);
+		Activity activity = this.cordova.getActivity();
+		if (activity != null) {
+			CDVNearItUI.showPermissionsDialog(activity, CDV_NEARIT_PERM_REQ);
+		}
+	}
+
+	/**
+	 * Show coupon list
+	 * <code><pre>
+		 cordova.exec(successCb, errorCb, "nearit", "showCouponList", []);
+	   </pre></code>
+	 * @throws Exception if there is any validation error or other kind of exception
+	 */
+	public void showCouponList() throws Exception {
+		Log.d(TAG, "UIBindings :: show coupon list");
+		Activity activity = this.cordova.getActivity();
+		if (activity != null) {
+			CDVNearItUI.showCouponList(activity);
+		}
+	}
+
+	/**
+	 * Show notification history
+	 * <code><pre>
+		 cordova.exec(successCb, errorCb, "nearit", "showNotificationHistory", []);
+	   </pre></code>
+	 * @throws Exception if there is any validation error or other kind of exception
+	 */
+	public void showNotificationHistory() throws Exception {
+		Log.d(TAG, "UIBindings :: show notification history");
+		Activity activity = this.cordova.getActivity();
+		if (activity != null) {
+			CDVNearItUI.showNotificationHistory(activity);
+		}
+	}
+
+	public void showContent(JSONArray args) throws Exception {
+		Activity activity = this.cordova.getActivity();
+		if (activity != null) {
+			try {
+				NITHelper.validateArgsCount(args, 2);
+				final String eventType = NITHelper.validateStringArgument(args, 0, "type");
+				HashMap<String, Object> event = NITHelper.validateMapArgument(args, 1, "event");
+				if (eventType.equalsIgnoreCase(CDVEventType.CDVNE_Event_Feedback.toString())) {
+					try {
+						Feedback feedback = NearITUtils.unbundleFeedback((String) event.get("feedbackId"));
+						CDVNearItUI.showFeedbackDialog(activity, feedback);
+					} catch (Exception e) {
+						Log.e(TAG, "UIBindings :: can\'t unbundle feedback: ", e);
+					}
+				} else if (eventType.equalsIgnoreCase(CDVEventType.CDVNE_Event_Content.toString())) {
+					try {
+						Content content = NearITUtils.unbundleContent(event);
+						TrackingInfo trackingInfo = NearITUtils.unbundleTrackingInfo((String) event.get("trackingInfo"));
+						CDVNearItUI.showContentDialog(activity, content, trackingInfo);
+					} catch (Exception e) {
+						Log.e(TAG, "UIBindings :: can\'t unbundle content: ", e);
+					}
+				} else if (eventType.equalsIgnoreCase(CDVEventType.CDVNE_Event_Coupon.toString())) {
+					try {
+						Coupon coupon = NearITUtils.unbundleCoupon(event);
+						CDVNearItUI.showCouponDialog(activity, coupon);
+					} catch (Exception e) {
+						Log.e(TAG, "UIBindings :: can\'t unbundle coupon: ", e);
+					}
+				}
+			} catch (Exception e) {
+				Log.e(TAG, "UIBindings :: Could not show content: ", e);
+			}
+		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		if (requestCode == CDV_NEARIT_PERM_REQ) {
+			Activity activity = this.cordova.getActivity();
+			if (permissionsCallbackContext != null && activity != null) {
+				try {
+					Map<String, Object> res = new HashMap<String,Object>();
+					res.put("location", (PermissionsUtils.checkLocationPermission(activity) && PermissionsUtils.checkLocationServices(activity)));
+					res.put("notifications", PermissionsUtils.areNotificationsEnabled(activity));
+					res.put("bluetooth", PermissionsUtils.checkBluetooth(activity));
+					JSONObject result = new JSONObject(res);
+					permissionsCallbackContext.success(result);
+				} catch (Exception e) {
+					Log.e(TAG, "NITManager :: Could handle permissions request callback", e);
+				}
+			}
+		} else {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
+
+	public void onDeviceReady() throws Exception {
+		Activity activity = cordova.getActivity();
+		if (activity != null) {
+			Intent intent = activity.getIntent();
+			if (intent != null) {
+				CDVNearIT.this.onNewIntent(intent);
+			} else {
+				Log.e(TAG, "NITManager :: onDeviceReady error, null intent");
+			}
+		} else {
+			Log.e(TAG, "NITManager :: onDeviceReady error, null activity");
+		}
+	}
+
+	@Override
+	public void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		if (NearUtils.carriesNearItContent(intent)) {
+			NearUtils.parseContents(intent, new CDVNearITContentListener());
+		}
+	}
 }

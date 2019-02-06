@@ -4,19 +4,19 @@
  */
 var preferenceMappingData = {
     'generic': {
-        'nearit_api_key': {
+        'near_api_key': {
             target: 'config.xml',
             value: 'Your.API.Key',
             destination: 'preference'
-        }
-    },
-    'android': {
-        'nearit_api_key': {
-            target: 'src/it/near/sdk/cordova/android/NITConfig.java'
+        },
+        'near_url_scheme': {
+            target: 'config.xml',
+            value: 'Your.URL.Scheme',
+            destination: 'preference'
         }
     },
     'ios': {
-        'nearit_api_key': {
+        'near_api_key': {
             target: '*-Prefix.pch',
             content: '#define NEARIT_APIKEY @"{value}"',
             parent: null,

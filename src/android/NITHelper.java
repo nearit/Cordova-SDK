@@ -1,30 +1,14 @@
 package it.near.sdk.cordova.android;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Base64;
-
-import com.google.gson.Gson;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
-import it.near.sdk.reactions.couponplugin.model.Claim;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
-import it.near.sdk.reactions.feedbackplugin.model.Feedback;
-import it.near.sdk.trackings.TrackingInfo;
+import it.near.sdk.recipes.inbox.model.HistoryItem;
 
 /**
  * @author "Fabio Cigliano" on 23/09/17
@@ -33,45 +17,45 @@ import it.near.sdk.trackings.TrackingInfo;
 
 public class NITHelper {
 
-	private static final String TAG = "NITHelper";
+    private static final String TAG = "NITHelper";
 
-	public static void validateArgsCount(JSONArray args, int expectedCount) throws Exception {
-		if (args.length() != expectedCount) {
-			throw new Exception("Wrong number of arguments! expected " + expectedCount);
-		}
-	}
+    public static void validateArgsCount(JSONArray args, int expectedCount) throws Exception {
+        if (args.length() != expectedCount) {
+            throw new Exception("Wrong number of arguments! expected " + expectedCount);
+        }
+    }
 
-	public static String validateStringArgument(JSONArray args, int pos, String name) throws Exception {
-		String value = args.getString(pos);
+    public static String validateStringArgument(JSONArray args, int pos, String name) throws Exception {
+        String value = args.getString(pos);
 
-		if (value == null || value.length() == 0) {
-			throw new Exception("Missing " + name + " parameter!");
-		}
+        if (value == null || value.length() == 0) {
+            throw new Exception("Missing " + name + " parameter!");
+        }
 
-		return value;
-	}
+        return value;
+    }
 
-	public static String validateNullableStringArgument(JSONArray args, int pos, String name) throws Exception {
-		String value = args.getString(pos);
-		if (value == "null") return null;
-		return value;
-	}
+    public static String validateNullableStringArgument(JSONArray args, int pos, String name) throws Exception {
+        String value = args.getString(pos);
+        if (value == "null") return null;
+        return value;
+    }
 
-	public static HashMap<String, Boolean> validateMapArgument(JSONArray args, int pos, String name) throws Exception {
-		HashMap<String, Boolean> map = null;
-        
-		if (args.get(pos).equals(null)) {
-			return null;
-		}
+    public static HashMap<String, Boolean> validateMapOfBoolArgument(JSONArray args, int pos, String name) throws Exception {
+        HashMap<String, Boolean> map;
+
+        if (args.get(pos) == null) {
+            return null;
+        }
 
         try {
             JSONObject object = args.getJSONObject(pos);
             Iterator<String> it = object.keys();
-			map = new HashMap<String, Boolean>();
+            map = new HashMap<String, Boolean>();
             while (it.hasNext()) {
                 String key = it.next();
                 try {
-                    boolean value = ((Boolean) object.get(key)).booleanValue();
+                    boolean value = (Boolean) object.get(key);
                     map.put(key, value);
                 } catch (ClassCastException e) {
                     throw new Exception("Not boolean value for key " + key + " in " + name + " parameter!");
@@ -80,131 +64,58 @@ public class NITHelper {
         } catch (JSONException e) {
             throw new Exception("Invalid format for " + name + " parameter!");
         }
-        if (map != null && map.isEmpty()) {
+        if (map.isEmpty()) {
             throw new Exception("Missing " + name + " parameter!");
         }
 
-		return map;
-	}
-	/**
-	 * @param item Coupon item
-	 * @return JSONObject result
-	 * @throws JSONException
-	 */
-	public static JSONObject couponToJson(Coupon item) throws JSONException {
-		JSONObject coupon = new JSONObject(couponToMap(item));
+        return map;
+    }
 
-		return coupon;
-	}
+    public static HashMap<String, Object> validateMapArgument(JSONArray args, int pos, String name) throws Exception {
+        HashMap<String, Object> map;
 
-	/**
-	 * @param item Coupon item
-	 * @return Map<String, Object> result
-	 */
-	public static Map<String, Object> couponToMap(Coupon item) {
-		Map<String, Object> coupon = new HashMap<String, Object>();
+        if (args.get(pos) == null) {
+            return null;
+        }
 
-		coupon.put("name", item.getTitle());
-		coupon.put("description", item.description);
-		coupon.put("value", item.value);
-		coupon.put("expiresAt", item.expires_at);
-		coupon.put("redeemableFrom", item.redeemable_from);
+        try {
+            JSONObject object = args.getJSONObject(pos);
+            Iterator<String> it = object.keys();
+            map = new HashMap<String, Object>();
+            while (it.hasNext()) {
+                String key = it.next();
+                try {
+                    Object value = object.get(key);
+                    map.put(key, value);
+                } catch (ClassCastException e) {
+                    throw new Exception("No value for key " + key + " in " + name + " parameter!");
+                }
+            }
+        } catch (JSONException e) {
+            throw new Exception("Invalid format for " + name + " parameter!");
+        }
+        if (map.isEmpty()) {
+            throw new Exception("Missing " + name + " parameter!");
+        }
+        return map;
+    }
 
-		List<Map<String, Object>> claims = new ArrayList<Map<String, Object>>();
-		for(Claim item2 : item.claims) {
-			Map<String, Object> claim = new HashMap<String, Object>();
+    /**
+     * @param item Coupon item
+     * @return JSONObject result
+     * @throws JSONException
+     */
+    public static JSONObject couponToJson(Coupon item) throws JSONException {
+        return new JSONObject(NearITUtils.bundleCoupon(item));
+    }
 
-			claim.put("serialNumber", item2.serial_number);
-			claim.put("claimedAt", item2.claimed_at);
-			claim.put("redeemedAt", item2.redeemed_at);
-			claim.put("recipeId", item2.recipe_id);
-
-			claims.add(claim);
-		}
-		coupon.put("claims", claims);
-
-		coupon.put("smallIcon", item.getIconSet().getSmallSize());
-		coupon.put("icon", item.getIconSet().getFullSize());
-
-		return coupon;
-	}
-
-	/**
-	 * Retrieve a Feedback object with just recipeId and feedbackId
-	 * @param recipeId
-	 * @param feedbackId
-	 * @return
-	 */
-	public static Feedback feedbackFromData(String recipeId, String feedbackId) {
-		Parcel parcel = Parcel.obtain();
-		parcel.writeString("notificationMessage");
-		parcel.writeString("question");
-		parcel.writeString(recipeId);
-		parcel.writeString(feedbackId);
-
-		Feedback feedback = Feedback.CREATOR.createFromParcel(parcel);
-		parcel.recycle();
-
-		return feedback;
-	}
-
-	// Feedback
-	public static String feedbackToBase64(final Feedback feedback) throws Exception {
-		String base64;
-
-		final Parcel parcel = Parcel.obtain();
-		try {
-			feedback.writeToParcel(parcel, Parcelable.CONTENTS_FILE_DESCRIPTOR);
-			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			final GZIPOutputStream zos = new GZIPOutputStream(new BufferedOutputStream(bos));
-			zos.write(parcel.marshall());
-			zos.close();
-			base64 = Base64.encodeToString(bos.toByteArray(), 0);
-		} finally {
-			parcel.recycle();
-		}
-
-		return base64;
-	}
-
-	public static Feedback feedbackFromBase64(final String feedbackBase64) throws Exception {
-		Feedback feedback;
-		final Parcel parcel = Parcel.obtain();
-		try {
-			final ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-			final byte[] buffer = new byte[1024];
-			final GZIPInputStream zis = new GZIPInputStream(new ByteArrayInputStream(Base64.decode(feedbackBase64, 0)));
-			int len;
-			while ((len = zis.read(buffer)) != -1) {
-				byteBuffer.write(buffer, 0, len);
-			}
-			zis.close();
-			parcel.unmarshall(byteBuffer.toByteArray(), 0, byteBuffer.size());
-			parcel.setDataPosition(0);
-
-			feedback = Feedback.CREATOR.createFromParcel(parcel);
-		} finally {
-			parcel.recycle();
-		}
-
-		return feedback;
-	}
-
-	// TrackingInfo
-	public static String trackingInfoToBase64(final TrackingInfo trackingInfo) throws Exception {
-		// JSONify trackingInfo
-		final String trackingInfoJson = new Gson().toJson(trackingInfo);
-
-		// Encode to base64
-		return Base64.encodeToString(trackingInfoJson.getBytes("UTF-8"), Base64.DEFAULT);
-	}
-
-	public static TrackingInfo trackingInfoFromBase64(final String trackingInfoBase64) throws Exception {
-		// Decode from base64
-		final String trackingInfoJsonString = new String(Base64.decode(trackingInfoBase64, Base64.DEFAULT), "UTF-8");
-
-		// DeJSONify trackingInfo
-		return new Gson().fromJson(trackingInfoJsonString, TrackingInfo.class);
-	}
+    /**
+     * @param item HistoryItem
+     * @return JSONObject result
+     * @throws JSONException
+     */
+    public static JSONObject historyItemToJson(HistoryItem item) throws JSONException {
+        return new JSONObject(NearITUtils.bundleHistoryItem(item));
+    }
 
 }

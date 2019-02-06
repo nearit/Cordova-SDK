@@ -19,10 +19,6 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       cordova.plugins.Keyboard.disableScroll(true);
     }
 
-    if(window.StatusBar) {
-      StatusBar.styleDefault();
-    }
-
     toastr.options = {
       "closeButton": true,
       "debug": false,
@@ -59,86 +55,31 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       }
 
       if (window.nearit) {
+
+        nearit.onDeviceReady();
+
         // ensure that the plugin is initialized
         appendLog('NearIT plugin is READY!')
 
-        // add an event listener for those nearit events
-        var events = [
-          nearit.eventType.CDVNE_PushNotification_Granted,
-          nearit.eventType.CDVNE_PushNotification_NotGranted,
-          nearit.eventType.CDVNE_Location_Granted,
-          nearit.eventType.CDVNE_Location_NotGranted,
-          nearit.eventType.CDVNE_Event_Simple,
-          nearit.eventType.CDVNE_Event_CustomJSON,
-          nearit.eventType.CDVNE_Event_Content,
-          nearit.eventType.CDVNE_Event_Feedback,
-          nearit.eventType.CDVNE_Event_Coupon,
-          nearit.eventType.CDVNE_Event_Error,
-        ]
+        nearit.addEventListener(function(event) {
+          var evtMessage = ''
+          if (event.message) {
+            evtMessage = event.message
+          } else if (event.data) {
+            evtMessage = event.data
+          } else if (event.error) {
+            evtMessage = event.error
+          }
+          appendLog(`Event: '<b>${event.type}</b>' - Content: "${evtMessage}"`)
 
-        events.forEach(function(event, index) {
-          appendLog(`Add <b>'${event}'</b> listener...`)
-          var eventType = event
-          nearit.addEventListener(event, function(event) {
-            var evtMessage = ''
-            if (event.message) {
-              evtMessage = event.message
-            } else if (event.data) {
-              evtMessage = event.data
-            } else if (event.error) {
-              evtMessage = event.error
-            }
-
-            var trckInfo = event.trackingInfo
-            if (trckInfo) {
-              toastr.info(eventType, evtMessage, { onclick: function() {
-                  // Send Tracking on Toast tap
-                  appendLog(`Send tracking...`)
-                  nearit.trackEngagedEvent(trckInfo, function(){
-                    appendLog(`Send tracking... DONE.`)
-                  }, function() {
-                    appendLog(`Error while sending tracking...`)
-                  })
-                }
-              });
-
-              nearit.trackNotifiedEvent(trckInfo, function(){
-                appendLog(`Send NOTIFIED tracking... DONE.`)
-              }, function() {
-                appendLog(`Error while sending tracking...`)
-              })
-            }
-
-            appendLog(`Event: '<b>${eventType}</b>' - Content: "${evtMessage}"`)
-          });
-          appendLog(`Add '<b>${event}</b>' listener... <b>DONE</b>.`)
-        })
-
-        // ask user for permissions
-        nearit.permissionRequest(function() {
-          appendLog(`Permissions requested`)
-        }, function() {
-          appendLog(`Failed to request Permissions`)
+          nearit.showContent(event);
         });
-
-        // set user profile data
-        nearit.setUserData("gender", "M", function() {
-        }, function() {
-        });
-
-        appendLog('Start radar...')
-        nearit.startRadar(function() {
-          appendLog('Start radar... DONE.')
-        }, function () {
-          appendLog('Start radar... FAILED.')
-        });
-
-        //
       }
+
     });
     // @end nearit-cordova-sdk
 
-  });
+    });
 })
 
 .config(function($stateProvider, $urlRouterProvider) {

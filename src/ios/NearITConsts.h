@@ -23,29 +23,20 @@
  */
 
 //
-//  AppDelegate+NearIT.h
+//  NearITConsts.h
 //  NearITSDK
 //
-//  Created by Fabio Cigliano on 25/07/17.
-//  Modified by Federico Boschini on 28/09/18.
+//  Created by Federic Boschini on 24/01/19.
 //  Copyright © 2019 NearIT. All rights reserved.
 //
+ 
+@interface NearITConsts : NSObject
 
-#import "AppDelegate.h"
-
-#import "Macros.h"
-#import <NearITSDK/NearITSDK.h>
-
-#import "NearITUtils.h"
-
-#import <UserNotifications/UserNotifications.h>
-#import <CoreLocation/CoreLocation.h>
-
-@interface AppDelegate (NearIT) <UNUserNotificationCenterDelegate, NITManagerDelegate>
-
-
-- (void)eventuallyRestoreNotification;
-
-@property (nonatomic, retain) NSDictionary *savedUserInfo;
+// Event types
+extern NSString* EVENT_TYPE_SIMPLE;
+extern NSString* EVENT_TYPE_CUSTOM_JSON;
+extern NSString* EVENT_TYPE_COUPON;
+extern NSString* EVENT_TYPE_CONTENT;
+extern NSString* EVENT_TYPE_FEEDBACK;
 
 @end

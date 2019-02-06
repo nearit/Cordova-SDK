@@ -4,7 +4,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2017 nearit.com
+ * Copyright (c) 2019 nearit.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,18 +40,13 @@ function NearIT() {
     var self = this;
 
     self.eventType = {
-        "CDVNE_PushNotification_Granted":    "pushGranted.nearit",
-        "CDVNE_PushNotification_NotGranted": "pushDenied.nearit",
-        "CDVNE_PushNotification_Remote":     "pushReceived.nearit",
-        "CDVNE_PushNotification_Local":      "pushReceived.nearit",
+        "CDVNE_Event_Simple"    :   "eventSimple.nearit",
+        "CDVNE_Event_CustomJSON":   "eventJSON.nearit",
+        "CDVNE_Event_Content"   :   "eventContent.nearit",
+        "CDVNE_Event_Feedback"  :   "eventFeedback.nearit",
+        "CDVNE_Event_Coupon"    :   "eventCoupon.nearit",
 
-        "CDVNE_Event_Simple":     "eventSimple.nearit",
-        "CDVNE_Event_CustomJSON": "eventJSON.nearit",
-        "CDVNE_Event_Content":    "eventContent.nearit",
-        "CDVNE_Event_Feedback":   "eventFeedback.nearit",
-        "CDVNE_Event_Coupon":     "eventCoupon.nearit",
-
-        "CDVNE_Event_Error": "error.nearit"
+        "CDVNE_Event_Error"     :   "error.nearit"
     };
 
     self.serviceName = "nearit";
@@ -63,17 +58,19 @@ function NearIT() {
 
 /**
  * Wrapper method to attach an event listener specific for NearIT Events
- * @param string     eventType see NearIT.eventTYpe
  * @param {Function} eventCallback callback function
  */
-NearIT.prototype.addEventListener = function(eventType, eventCallback) {
-    if (this.eventType.hasOwnProperty(eventType)) {
-        eventType = this.eventType[eventType];
-    }
-
-    window.addEventListener(eventType, function() {
-        console.log("NearIT :: event " + eventType + " triggered ", arguments);
-        eventCallback.apply(this, arguments);
+NearIT.prototype.addEventListener = function(eventCallback) {
+    var callback = eventCallback;
+    var event = this.eventType;
+    var vals = Object.keys(event).map(function(key) {
+        return event[key];
+    });
+    vals.forEach(function(type) {
+        window.addEventListener(type, function() {
+            console.log("NearIT :: event " + type + " triggered ", arguments);
+            callback.apply(this, arguments);
+        });
     });
 };
 
@@ -199,6 +196,19 @@ NearIT.prototype.getCoupons = function(successCallback, errorCallback) {
 };
 
 /*
+ *  Notification history
+ */
+
+ /**
+  * Retrieve NearIT notification history
+  * @param {Function} successCallback The function to call when the call is successful
+  * @param {Function} errorCallback The function to call when there is an error
+  */
+ NearIT.prototype.getNotificationHistory = function(successCallback, errorCallback) {
+     exec(successCallback, errorCallback, this.serviceName, "getNotificationHistory", []);
+ };
+
+/*
  * Custom Triggers
  */
 
@@ -220,7 +230,7 @@ NearIT.prototype.triggerEvent = function(eventKey, successCallback, errorCallbac
  * @deprecated
  */
 NearIT.prototype.trackNotifiedEvent = function(trackingInfo, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingForEventReceived", [trackingInfo]);
 };
 
 /**
@@ -230,14 +240,14 @@ NearIT.prototype.trackNotifiedEvent = function(trackingInfo, successCallback, er
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.trackReceivedEvent = function(trackingInfo, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingForEventReceived", [trackingInfo]);
 };
 
 /**
  * @deprecated
  */
 NearIT.prototype.trackEngagedEvent = function(trackingInfo, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingForEventOpened", [trackingInfo]);
 };
 
 /**
@@ -247,7 +257,7 @@ NearIT.prototype.trackEngagedEvent = function(trackingInfo, successCallback, err
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.trackOpenedEvent = function(trackingInfo, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingForEventOpened", [trackingInfo]);
 };
 
 /**
@@ -268,7 +278,7 @@ NearIT.prototype.trackCTATappedEvent = function(trackingInfo, successCallback, e
  * @param {Function} errorCallback The function to call when there is an error
  */
 NearIT.prototype.trackCustomEvent = function(trackingInfo, eventName, successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "sendTrackingWithRecipeIdForCustomEvent", [trackingInfo, eventName]);
+    exec(successCallback, errorCallback, this.serviceName, "sendTrackingForCustomEvent", [trackingInfo, eventName]);
 };
 
 /*
@@ -293,13 +303,6 @@ NearIT.prototype.stopRadar = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "stopRadar", []);
 };
 
-/**
- * @deprecated
- */
-NearIT.prototype.refreshRecipes = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "refreshRecipes", []);
-};
-
 /*
  * Disable Default Ranging Notifications
  * @param {Function} successCallback The function to call when the call is successful
@@ -307,6 +310,26 @@ NearIT.prototype.refreshRecipes = function(successCallback, errorCallback) {
  */
 NearIT.prototype.disableDefaultRangingNotifications = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "disableDefaultRangingNotifications", []);
+};
+
+NearIT.prototype.requestPermissions = function(explanation, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "requestPermissions", [explanation]);
+};
+
+NearIT.prototype.showCouponList = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "showCouponList", []);
+};
+
+NearIT.prototype.showNotificationHistory = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "showNotificationHistory", []);
+};
+
+NearIT.prototype.showContent = function(event, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "showContent", [event.type, event]);
+};
+
+NearIT.prototype.onDeviceReady = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "onDeviceReady", []);
 };
 
 module.exports = new NearIT();

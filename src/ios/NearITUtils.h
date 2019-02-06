@@ -23,29 +23,31 @@
  */
 
 //
-//  AppDelegate+NearIT.h
+//  NearITUtils.h
 //  NearITSDK
 //
-//  Created by Fabio Cigliano on 25/07/17.
-//  Modified by Federico Boschini on 28/09/18.
+//  Created by Federico Boschini on 24/01/19.
 //  Copyright © 2019 NearIT. All rights reserved.
 //
 
-#import "AppDelegate.h"
-
-#import "Macros.h"
+#import "NearITConsts.h"
 #import <NearITSDK/NearITSDK.h>
 
-#import "NearITUtils.h"
 
-#import <UserNotifications/UserNotifications.h>
-#import <CoreLocation/CoreLocation.h>
+@interface NearITUtils
 
-@interface AppDelegate (NearIT) <UNUserNotificationCenterDelegate, NITManagerDelegate>
-
-
-- (void)eventuallyRestoreNotification;
-
-@property (nonatomic, retain) NSDictionary *savedUserInfo;
+- (NITCoupon*)unbundleNITCoupon:(NSDictionary* _Nonnull)bundledCoupon;
+- (NSDictionary*)bundleNITCoupon:(NITCoupon* _Nonnull)coupon;
+- (NSDictionary*)bundleNITHistoryItem:(NITHistoryItem* _Nonnull)item;
+- (NITContent*)unbundleNITContent:(NSDictionary * _Nonnull)bundledContent;
+- (NSDictionary*)bundleNITContent:(NITContent * _Nonnull)content;
+- (NITFeedback*)unbundleNITFeedback:(NSDictionary * _Nonnull)bundledFeedback;
+- (NSDictionary*)bundleNITFeedback:(NITFeedback * _Nonnull)feedback;
+- (NSDictionary*)bundleNITCustomJSON:(NITCustomJSON* _Nonnull)custom;
+- (NITImage*)unbundleNITImage:(NSDictionary* _Nonnull)bundledImage;
+- (NSDictionary*)bundleNITImage:(NITImage* _Nonnull)image;
+- (NSDictionary*)bundleNITContentLink:(NITContentLink* _Nonnull)cta;
+- (NITTrackingInfo*)unbundleTrackingInfo:(NSString * _Nullable)bundledTrackingInfo;
+- (NSString*)bundleTrackingInfo:(NITTrackingInfo* _Nullable)trackingInfo;
 
 @end

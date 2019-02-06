@@ -1,7 +1,7 @@
 /*
     MIT License
 
-    Copyright (c) 2017 nearit.com
+    Copyright (c) 2019 nearit.com
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -27,21 +27,21 @@
 //  NearITSDK
 //
 //  Created by Fabio Cigliano on 25/07/17.
-//  Modified by Federic Boschini on 25/09/18.
-//  Copyright © 2017 NearIT. All rights reserved.
+//  Modified by Federico Boschini on 25/09/18.
+//  Copyright © 2019 NearIT. All rights reserved.
 //
 
 #import <Cordova/CDVPlugin.h>
 
 #import "Macros.h"
+#import "CDVNearItUI.h"
+#import "NearITUtils.h"
+#import "NearITConsts.h"
 #import <NearITSDK/NearITSDK.h>
 
 
 typedef NS_ENUM(NSUInteger, CDVEventType) {
     CDVNE_Null,
-
-    CDVNE_PushNotification_Remote,
-    CDVNE_PushNotification_Local,
 
     CDVNE_Event_Simple,
     CDVNE_Event_CustomJSON,
@@ -52,7 +52,7 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 };
 
-@interface CDVNearIT : CDVPlugin
+@interface CDVNearIT : CDVPlugin<NITPermissionsViewControllerDelegate>
 {
 
 }
@@ -91,23 +91,35 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 - (void)getCoupons:( CDVInvokedUrlCommand* _Nonnull )command;
 
+#pragma mark - NotificationHistory
+
+- (void)getNotificationHistory:( CDVInvokedUrlCommand* _Nonnull)command;
+
 #pragma mark - In-app Event
 
 - (void)triggerEvent:( CDVInvokedUrlCommand* _Nonnull )command;
 
 #pragma mark - Tracking
 
-- (void)sendTrackingWithRecipeIdForEventReceived:( CDVInvokedUrlCommand* _Nonnull )command;
-- (void)sendTrackingWithRecipeIdForEventOpened:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)sendTrackingForEventReceived:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)sendTrackingForEventOpened:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)sendTrackingForEventCTATapped:( CDVInvokedUrlCommand* _Nonnull )command;
-- (void)sendTrackingWithRecipeIdForCustomEvent:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)sendTrackingForCustomEvent:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)sendTrackingWithTrackingInfo:(NSString* _Nonnull) trackingInfoJsonString eventName: (NSString* _Nonnull) eventName;
 
 #pragma mark - NITManager
 
 - (void)startRadar:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)stopRadar:( CDVInvokedUrlCommand* _Nonnull )command;
-- (void)refreshRecipes:( CDVInvokedUrlCommand* _Nonnull )command DEPRECATED_ATTRIBUTE;
 - (void)disableDefaultRangingNotifications;
+
+#pragma mark - UIs
+
+- (void)showCouponList:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)showNotificationHistory:( CDVInvokedUrlCommand* _Nonnull )command;
+- (void)showContent:( CDVInvokedUrlCommand* _Nonnull)command;
+- (void)requestPermissions:( CDVInvokedUrlCommand* _Nonnull )command;
+
+- (void)onDeviceReady:( CDVInvokedUrlCommand* _Nonnull)command;
 
 @end

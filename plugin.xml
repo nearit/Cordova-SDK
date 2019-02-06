@@ -2,7 +2,7 @@
 <!--
     MIT License
 
-    Copyright (c) 2017 nearit.com
+    Copyright (c) 2019 nearit.com
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-nearit"
         name="NearIT"
-        version="2.9.5">
+        version="2.10.0">
 
     <name>NearIT SDK</name>
     <description>Cordova plugin for NearIT SDK</description>
@@ -39,12 +39,12 @@
 
     <engines>
         <engine name="cordova" version=">=6.0.0" />
-        <engine name="cordova-ios" version=">=4.0.0" />
+        <engine name="cordova-ios" version=">=4.4.0" />
         <engine name="cordova-android" version=">=6.2.3" />
     </engines>
 
-    <hook type="after_plugin_install" src="hooks/before_prepare.js" />
-    <hook type="after_prepare" src="hooks/before_prepare.js" />
+    <hook type="after_plugin_add" src="hooks/before_prepare.js" />
+    <hook type="before_prepare" src="hooks/before_prepare.js" />
 
     <js-module src="www/nearit.js" name="nearit">
         <runs />
@@ -65,18 +65,23 @@
             https://issues.apache.org/jira/browse/CB-10072
         -->
         <pods-config ios-min-version="9.0"
-                     use-frameworks="false" />
+                     use-frameworks="true" />
 
         <!--
             NearIT iOS SDK dependency
             https://github.com/nearit/Near-iOS-SDK
             Supporting iOS 9.0 and later
-            Near-iOS-SDK release 2.9.5
+            Near-iOS-SDK release 2.10.7
         -->
         <pod name="NearITSDK" 
              configurations="release,debug"
              git="https://github.com/nearit/iOS-SDK"
-             tag="2.9.5" />
+             tag="2.10.7" />
+
+        <pod name="NearUIBinding" 
+             configurations="release,debug"
+             git="https://github.com/nearit/iOS-UI-Bindings"
+             tag="2.10.6" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="NearIT">
@@ -108,20 +113,15 @@
         <header-file src="src/ios/CDVNearIT.h" />
         <source-file src="src/ios/CDVNearIT.m" />
 
-    </platform>
+        <header-file src="src/ios/CDVNearItUI.h" />
+        <source-file src="src/ios/CDVNearItUI.m" />
 
-    <!-- browser platform definition -->
-    <platform name="browser">
-        <config-file target="config.xml" parent="/*">
-            <feature name="NearIT">
-                <param name="browser-package" value="NearIT" />
-            </feature>
-        </config-file>
+        <header-file src="src/ios/NearITUtils.h" />
+        <source-file src="src/ios/NearITUtils.m" />
 
-        <js-module src="src/browser/CDVNearIT.js" name="CDVNearIT">
-            <runs/>
-            <clobbers target="nearitproxy" />
-        </js-module>
+        <header-file src="src/ios/NearITConsts.h" />
+        <source-file src="src/ios/NearITConsts.m" />
+
     </platform>
 
     <!--    Android platform definition    -->
@@ -141,10 +141,11 @@
         </config-file>
 
         <!--    Add source files    -->
-        <source-file src="src/android/NITConfig.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearIT.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/CDVNearITContentListener.java" target-dir="src/it/near/sdk/cordova/android" />
         <source-file src="src/android/NITHelper.java" target-dir="src/it/near/sdk/cordova/android" />
+        <source-file src="src/android/NearITUtils.java" target-dir="src/it/near/sdk/cordova/android" />
+        <source-file src="src/android/CDVNearItUI.java" target-dir="src/it/near/sdk/cordova/android" />
 
         <!--    Add strings to res  -->
         <source-file src="src/android/CDVNearITStrings.xml" target-dir="res/values" />
@@ -155,5 +156,6 @@
     </platform>
 
     <hook type="after_prepare" src="hooks/after_prepare_android.js"/>
+    <hook type="after_prepare" src="hooks/after_prepare_ios.js" />
 
 </plugin>

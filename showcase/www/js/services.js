@@ -7,12 +7,6 @@ angular.module('starter.services', [])
   var actions = [
 
     {
-      id: 'permissionRequest',
-      name: 'Ask user for app permission',
-      data: [],
-    },
-
-    {
       id: 'startRadar',
       name: 'Start location and proximity radar',
       data: [],
@@ -26,17 +20,22 @@ angular.module('starter.services', [])
     {
       id: 'trackCustomEvent',
       name: 'track a NearIT event of a custom event type',
-      data: ['prompt:recipeId', 'prompt:eventName'],
+      data: ['prompt:trackingInfo', 'prompt:eventName'],
     },
     {
-      id: 'trackEngagedEvent',
-      name: 'track a NearIT event of a type "Engaged"',
-      data: ['prompt:recipeId'],
+      id: 'trackOpenedEvent',
+      name: 'track a NearIT event of a type "Opened"',
+      data: ['prompt:trackingInfo'],
     },
     {
-      id: 'trackNotifiedEvent',
-      name: 'track a NearIT event of a type "Notified"',
-      data: ['prompt:recipeId'],
+      id: 'trackReceivedEvent',
+      name: 'track a NearIT event of a type "Received"',
+      data: ['prompt:trackingInfo'],
+    },
+    {
+      id: 'trackCTATappedEvent',
+      name: 'track a NearIT event of type "CTA tapped',
+      data: ['prompt:trackingInfo']
     },
 
     {
@@ -58,7 +57,12 @@ angular.module('starter.services', [])
 
     {
       id: 'setUserData',
-      name: 'Set user profile data',
+      name: 'Set user data',
+      data: ['prompt:key', 'prompt:value'],
+    },
+    {
+      id: 'setMultichoiceUserData',
+      name: 'Set multichoice user data',
       data: ['prompt:key', 'prompt:value'],
     },
 
@@ -69,26 +73,33 @@ angular.module('starter.services', [])
     },
 
     {
-      id: 'refreshRecipes',
-      name: 'Refresh NearIT recipes',
-      data: [],
-    },
-
-    {
-      id: 'sendUserFeedback',
+      id: 'sendFeedback',
       name: 'Reply with a Feedback',
       data: ['prompt:feedbackId', 'prompt:recipeId', 'prompt:rating'],
     },
 
     {
-      id: 'sendUserFeedbackWithComment',
+      id: 'sendFeedbackWithComment',
       name: 'Reply with a Feedback + Comment',
       data: ['prompt:feedbackId', 'prompt:recipeId', 'prompt:rating', 'prompt:comment'],
     },
 
     {
+      id: 'triggerEvent',
+      name: 'Trigger an in-app event',
+      data: ['prompt:key'],
+    },
+
+    {
       id: 'getCoupons',
       name: 'Get coupon list',
+      data: [],
+      result: 'alert',
+    },
+
+    {
+      id: 'getNotificationHistory',
+      name: 'Get notification history',
       data: [],
       result: 'alert',
     },

@@ -1,7 +1,7 @@
 /*
     MIT License
 
-    Copyright (c) 2017 nearit.com
+    Copyright (c) 2019 nearit.com
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -27,8 +27,8 @@
 //  NearITSDK
 //
 //  Created by Fabio Cigliano on 25/07/17.
-//  Modified by Federic Boschini on 25/09/18.
-//  Copyright © 2017 NearIT. All rights reserved.
+//  Modified by Federico Boschini on 25/09/18.
+//  Copyright © 2019 NearIT. All rights reserved.
 //
 
 #include "CDVNearIT.h"
@@ -38,7 +38,9 @@
 
 __weak CDVNearIT *instance = nil;
 
-@implementation CDVNearIT
+@implementation CDVNearIT {
+    CDVInvokedUrlCommand* permissionInvokedUrlCommand;
+}
 
 + ( CDVNearIT * _Nullable )instance
 {
@@ -57,15 +59,11 @@ __weak CDVNearIT *instance = nil;
     NSString *result = nil;
 
     switch(eventType) {
-
-        case CDVNE_PushNotification_Remote:     result = @"pushReceived.nearit"; break;
-        case CDVNE_PushNotification_Local:      result = @"pushReceived.nearit"; break;
-
-        case CDVNE_Event_Simple:     result =   @"eventSimple.nearit"; break;
-        case CDVNE_Event_CustomJSON: result =     @"eventJSON.nearit"; break;
-        case CDVNE_Event_Content:    result =  @"eventContent.nearit"; break;
-        case CDVNE_Event_Feedback:   result = @"eventFeedback.nearit"; break;
-        case CDVNE_Event_Coupon:     result =   @"eventCoupon.nearit"; break;
+        case CDVNE_Event_Simple:     result =   EVENT_TYPE_SIMPLE; break;
+        case CDVNE_Event_CustomJSON: result =   EVENT_TYPE_CUSTOM_JSON; break;
+        case CDVNE_Event_Content:    result =   EVENT_TYPE_CONTENT; break;
+        case CDVNE_Event_Feedback:   result =   EVENT_TYPE_FEEDBACK; break;
+        case CDVNE_Event_Coupon:     result =   EVENT_TYPE_COUPON; break;
 
         case CDVNE_Event_Error: result = @"error.nearit"; break;
 
@@ -103,6 +101,9 @@ __weak CDVNearIT *instance = nil;
     }
     if ([eventContent objectForKey:@"data"] == nil) {
         [eventContent setObject:[NSDictionary dictionary] forKey:@"data"];
+    }
+    if ([eventContent objectForKey:@"type"] == nil) {
+        [eventContent setObject:eventName forKey:@"type"];
     }
     
     if (trackingInfo) {
@@ -160,7 +161,6 @@ __weak CDVNearIT *instance = nil;
 
 /**
  * NearIT User profilation
- * @link http://nearit-ios.readthedocs.io/en/latest/user-profilation/
  */
 
 /**
@@ -315,7 +315,6 @@ __weak CDVNearIT *instance = nil;
 
     NSString* key   = [[command arguments] objectAtIndex:0];
     NSMutableDictionary* values = [[command arguments] objectAtIndex:1];
-    // NSMutableDictionary* data = nil;
 
     if (IS_EMPTY(key)) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
@@ -402,94 +401,50 @@ __weak CDVNearIT *instance = nil;
  */
 - (void)getCoupons:( CDVInvokedUrlCommand* _Nonnull )command
 {
-    [[NITManager defaultManager] couponsWithCompletionHandler:^(NSArray<NITCoupon *> * coupons, NSError * error) {
+    NSMutableArray *bundledCoupons = [[NSMutableArray alloc] init];
+
+    [[NITManager defaultManager] couponsWithCompletionHandler:^(NSArray<NITCoupon *> * _Nullable coupons, NSError * _Nullable error) {
+        
         CDVPluginResult* pluginResult = nil;
 
         if (error) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                              messageAsString:[error description]];
         } else {
-            NSMutableArray* couponList = [NSMutableArray array];
-
-            for(NITCoupon* coupon in coupons) {
-
-                // retrieve exported fields
-                NSString* name              = [coupon title];
-                NSString* couponDescription = [coupon couponDescription];
-                NSString* value             = [coupon value];
-                NSString* expiresAt         = [coupon expiresAt];
-                NSString* redeemableFrom    = [coupon redeemableFrom];
-                NSMutableArray* claims      = [NSMutableArray array];
-                NSString* smallIcon         = [[[coupon icon] smallSizeURL] absoluteString];
-                NSString* icon              = [[[coupon icon] url] absoluteString];
-
-                // check on null values
-                if (IS_EMPTY(name)) {
-                    name = @"";
-                }
-                if (IS_EMPTY(couponDescription)) {
-                    couponDescription = @"";
-                }
-                if (IS_EMPTY(value)) {
-                    value = @"";
-                }
-                if (IS_EMPTY(expiresAt)) {
-                    expiresAt = @"";
-                }
-                if (IS_EMPTY(redeemableFrom)) {
-                    redeemableFrom = @"";
-                }
-                for(NITClaim* claim in [coupon claims]) {
-                    NSMutableDictionary* claimDict = [NSMutableDictionary dictionary];
-
-                    NSString* serialNumber = [claim serialNumber];
-                    NSString* claimedAt    = [claim claimedAt];
-                    NSString* redeemedAt   = [claim redeemedAt];
-                    NSString* recipeId     = [claim recipeId];
-
-                    if (IS_EMPTY(serialNumber)) {
-                        serialNumber = @"";
-                    }
-                    if (IS_EMPTY(claimedAt)) {
-                        claimedAt = @"";
-                    }
-                    if (IS_EMPTY(redeemedAt)) {
-                        redeemedAt = @"";
-                    }
-                    if (IS_EMPTY(recipeId)) {
-                        recipeId = @"";
-                    }
-
-                    [claimDict setObject:serialNumber forKey:@"serialNumber"];
-                    [claimDict setObject:claimedAt forKey:@"claimedAt"];
-                    [claimDict setObject:redeemedAt forKey:@"redeemedAt"];
-                    [claimDict setObject:recipeId forKey:@"recipeId"];
-
-                    [claims addObject:claimDict];
-                }
-                if (IS_EMPTY(smallIcon)) {
-                    smallIcon = @"";
-                }
-                if (IS_EMPTY(icon)) {
-                    icon = @"";
-                }
-
-                // fill exported object
-                NSMutableDictionary* couponDict = [NSMutableDictionary dictionary];
-                [couponDict setObject:name              forKey:@"title"];
-                [couponDict setObject:couponDescription forKey:@"description"];
-                [couponDict setObject:value             forKey:@"value"];
-                [couponDict setObject:expiresAt         forKey:@"expiresAt"];
-                [couponDict setObject:redeemableFrom    forKey:@"redeemableFrom"];
-                [couponDict setObject:claims            forKey:@"claims"];
-                [couponDict setObject:smallIcon         forKey:@"smallIcon"];
-                [couponDict setObject:icon              forKey:@"icon"];
-                NITLogI(TAG, @"coupon %@", couponDict);
-
-                [couponList addObject:couponDict];
+            for(NITCoupon *c in coupons) {
+                [bundledCoupons addObject:[NearITUtils bundleNITCoupon:c]];
             }
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:bundledCoupons];
+        }
 
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:couponList];
+        [[self commandDelegate] sendPluginResult:pluginResult callbackId:[command callbackId]];
+    }];
+}
+
+#pragma mark - Notification History
+
+/**
+ * Request notification history
+ * <code><pre>
+    cordova.exec(successCb, errorCb, "nearit", "getNotificationHistory", []);
+</pre></code>
+ */
+- (void)getNotificationHistory:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    NSMutableArray *bundledNotificationHistory = [[NSMutableArray alloc] init];
+
+    [[NITManager defaultManager] historyWithCompletion:^(NSArray<NITHistoryItem *> * _Nullable items, NSError * _Nullable error) {
+        
+        CDVPluginResult* pluginResult = nil;
+
+        if (error) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                             messageAsString:[error description]];
+        } else {
+            for (NITHistoryItem *item in items) {
+                [bundledNotificationHistory addObject:[NearITUtils bundleNITHistoryItem:item]];
+    		}
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:bundledNotificationHistory];
         }
 
         [[self commandDelegate] sendPluginResult:pluginResult callbackId:[command callbackId]];
@@ -528,10 +483,10 @@ __weak CDVNearIT *instance = nil;
 /**
  * Track an event of type "NITRecipeReceived"
  * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventReceived", [trackingInfo]);
+    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWForEventReceived", [trackingInfo]);
 </pre></code>
  */
-- (void)sendTrackingWithRecipeIdForEventReceived:( CDVInvokedUrlCommand* _Nonnull )command
+- (void)sendTrackingForEventReceived:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 
@@ -552,10 +507,10 @@ __weak CDVNearIT *instance = nil;
 /**
  * Track an event of type "NITRecipeOpened"
  * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForEventOpened", [trackingInfo]);
+    cordova.exec(successCb, errorCb, "nearit", "sendTrackingForEventOpened", [trackingInfo]);
 </pre></code>
  */
-- (void)sendTrackingWithRecipeIdForEventOpened:( CDVInvokedUrlCommand* _Nonnull )command
+- (void)sendTrackingForEventOpened:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 
@@ -602,10 +557,10 @@ __weak CDVNearIT *instance = nil;
 /**
  * Track a custom event
  * <code><pre>
-    cordova.exec(successCb, errorCb, "nearit", "sendTrackingWithRecipeIdForCustomEvent", [trackingInfo, eventName]);
+    cordova.exec(successCb, errorCb, "nearit", "sendTrackingForCustomEvent", [trackingInfo, eventName]);
 </pre></code>
  */
-- (void)sendTrackingWithRecipeIdForCustomEvent:( CDVInvokedUrlCommand* _Nonnull )command
+- (void)sendTrackingForCustomEvent:( CDVInvokedUrlCommand* _Nonnull )command
 {
     CDVPluginResult* pluginResult = nil;
 
@@ -683,29 +638,102 @@ __weak CDVNearIT *instance = nil;
                                   callbackId:[command callbackId]];
 }
 
-/**
- * DEPRECATED
- */
-- (void)refreshRecipes:( CDVInvokedUrlCommand* _Nonnull )command
-{
-    [[NITManager defaultManager] refreshConfigWithCompletionHandler:^(NSError* error) {
-        CDVPluginResult* pluginResult = nil;
-
-        if (error) {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                            messageAsString:[error description]];
-        } else {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        }
-
-        [[self commandDelegate] sendPluginResult:pluginResult
-                                      callbackId:[command callbackId]];
-    }];
-}
-
 // MARK: Customization
 - (void)disableDefaultRangingNotifications {
     [NITManager defaultManager].showForegroundNotification = false;
+}
+
+#pragma mark - UIs
+
+- (void)showCouponList:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+
+    NITLogD(TAG, @"UIBindings :: show coupon list");
+    [[CDVNearItUI sharedInstance] showCouponList];
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                  callbackId:[command callbackId]];
+}
+
+- (void)showNotificationHistory:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+
+    NITLogD(TAG, @"UIBindings :: show notification history");
+    [[CDVNearItUI sharedInstance] showNotificationHistory];
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                callbackId:[command callbackId]];
+}
+
+- (void)showContent:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    CDVPluginResult* pluginResult = nil;
+
+    NITLogD(TAG, @"UIBindings :: show content");
+    NSString* eventType   = [[command arguments] objectAtIndex:0];
+    NSMutableDictionary* event = [[command arguments] objectAtIndex:1];
+
+    if ([eventType isEqualToString:EVENT_TYPE_CONTENT]) {
+        NITContent* nearContent = [NearITUtils unbundleNITContent:event];
+        NITTrackingInfo* trackingInfo = [NearITUtils unbundleTrackingInfo:[event objectForKey:@"trackingInfo"]];
+        [[CDVNearItUI sharedInstance] showContentDialogWithContent:nearContent trackingInfo:trackingInfo];
+    } else if ([eventType isEqualToString:EVENT_TYPE_COUPON]) {
+        NITCoupon* coupon = [NearITUtils unbundleNITCoupon:event];
+        [[CDVNearItUI sharedInstance] showCouponDialogWithCoupon:coupon];
+    } else if ([eventType isEqualToString:EVENT_TYPE_FEEDBACK]) {
+        NITFeedback* feedback = [NearITUtils unbundleNITFeedback:event];
+        [[CDVNearItUI sharedInstance] showFeedbackDialogWithFeedback:feedback];
+    }
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                callbackId:[command callbackId]];
+}
+
+- (void)requestPermissions:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    permissionInvokedUrlCommand = command;
+    NITLogD(TAG, @"UIBindings :: request permissions");
+    NSString* explanation = [[command arguments] objectAtIndex:0];
+    [[CDVNearItUI sharedInstance] showPermissionsDialogWithExplanation:explanation ? explanation : nil delegate:self];
+}
+
+- (void)onDeviceReady:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    [((AppDelegate*) UIApplication.sharedApplication.delegate) eventuallyRestoreNotification];
+}
+
+#pragma NITPermissionsViewControllerDelegate
+
+- (void)dialogClosedWithLocationGranted:(BOOL)locationGranted notificationsGranted:(BOOL)notificationsGranted {
+    if (permissionInvokedUrlCommand != nil) {
+        NSDictionary* result = @{
+            @"location": [NSNumber numberWithBool:locationGranted],
+            @"notifications": [NSNumber numberWithBool:notificationsGranted],
+            @"bluetooth": @YES
+        };
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
+        [[self commandDelegate] sendPluginResult:pluginResult callbackId:[permissionInvokedUrlCommand callbackId]];
+    }
+}
+
+- (void)locationGranted:(BOOL)granted {
+    if (permissionInvokedUrlCommand != nil) {
+        
+    }
+}
+
+- (void)notificationsGranted:(BOOL)granted {
+    if (permissionInvokedUrlCommand != nil) {
+        
+    }
 }
 
 @end

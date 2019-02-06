@@ -4,8 +4,8 @@
     "description": "NearIT Cordova SDK sample project",
     "private": true,
     "devDependencies": {
-        "@ionic/v1-toolkit": "^1.0.8",
-        "gulp": "^3.5.6",
+        "@ionic/v1-toolkit": "^1.0.18",
+        "gulp": "^3.9.1",
         "gulp-clean-css": "^3.7.0",
         "gulp-rename": "^1.2.0",
         "gulp-sass": "^3.1.0",
@@ -21,7 +21,11 @@
         "cordova-plugin-splashscreen": "^4.1.0",
         "cordova-plugin-statusbar": "^2.4.2",
         "cordova-plugin-whitelist": "^1.3.3",
-        "ionic-plugin-keyboard": "^2.2.1"
+        "elementtree": "^0.1.7",
+        "ionic-plugin-keyboard": "^2.2.1",
+        "plist": "^3.0.1",
+        "shelljs": "^0.8.3",
+        "xml2js": "^0.4.19"
     },
     "cordova": {
         "plugins": {

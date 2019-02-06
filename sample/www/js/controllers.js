@@ -2,36 +2,63 @@ angular.module('starter.controllers', [])
 
 .controller('MainCtrl', function($scope, $ionicPlatform) {
 
-  $ionicPlatform.ready(function() {
-    toastr.info("Welcome to NearIT sample");
-  });
+  var appendLog = function() {
+    var args = Array.prototype.slice.call(arguments);
+    args = [new Date().toLocaleTimeString()].concat(args);
+    var logLine = args.join(' - ') + "<br/>\n";
 
+    var logDiv = document.getElementById("js_logs");
+    if (logDiv) {
+        logDiv.innerHTML = logLine + logDiv.innerHTML;
+    }
 
-  /*$scope.refresh = function() {
-    console.log('refresh button clicked');
+    setTimeout(function() {
+      window.location = '#/tab/dash';
+    }, 1000);
+  }
 
-    // nearit-cordova-sdk
-    $ionicPlatform.ready(function() {
-      if (window.nearit) {
-        // ensure that the plugin is initialized
-
-        
-
-        toastr.info("Refreshing recipes", "", {progressBar:true});
-
-        nearit.refreshRecipes(function() {
-          toastr.remove();
-          toastr.success('Recipes refreshed');
-        }, function(error) {
-          toastr.remove();
-          toastr.error('Error while refreshing recipes');
-          alert('Error while refreshing recipes ' + error);
+  $scope.requestPermissions = function() {
+    if (window.nearit) {
+      nearit.requestPermissions(
+        "YOUR MESSAGE THAT EXPLAINS WHY YOU ARE REQUESTING THESE PERMISSIONS",
+        function(result) {
+          if (result.location && result.bluetooth && result.notifications) {
+            nearit.startRadar();
+          }
+          appendLog(`Location permission granted: ${result.location}`);
+          appendLog(`Notifications permission granted: ${result.notifications}`);
+          appendLog(`Bluetooth enabled: ${result.bluetooth}`);
         });
+    }
+  };
 
-        //
-      }
-    });
-    // @end nearit-cordova-sdk
+  $scope.showNotificationHistory = function() {
+    if (window.nearit) {
+      nearit.showNotificationHistory();
+    }
+  };
 
-  };*/
+  $scope.getProfileId = function() {
+    if (window.nearit) {
+      nearit.getProfileId(function(profileId) {
+        appendLog(`ProfileId: <b>${profileId}</b>`);
+      }, function(errorMsg) {
+        appendLog(errorMsg);
+      });
+    }
+  };
+  
+  $scope.showCouponList = function() {
+    if (window.nearit) {
+      nearit.showCouponList();
+    }
+  };
+
+  $scope.triggerInAppEvent = function() {
+    if (window.nearit) {
+      nearit.triggerEvent("feedback");
+      nearit.triggerEvent("your_in_app_event");
+    }
+  };
+
 });
