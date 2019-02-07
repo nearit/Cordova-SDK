@@ -30,6 +30,7 @@ import android.support.annotation.NonNull;
 
 import com.nearit.ui_bindings.NearITUIBindings;
 import com.nearit.ui_bindings.NearItLaunchMode;
+import com.nearit.ui_bindings.permissions.PermissionsRequestIntentBuilder;
 
 import it.near.sdk.reactions.contentplugin.model.Content;
 import it.near.sdk.reactions.couponplugin.model.Coupon;
@@ -60,7 +61,11 @@ public class CDVNearItUI {
         context.startActivity(NearITUIBindings.getInstance(context).couponListIntentBuilder().build());
     }
 
-    public static void showPermissionsDialog(Activity activity, int CDV_NEARIT_PERM_REQ) {
-        activity.startActivityForResult(NearITUIBindings.getInstance(activity).permissionsIntentBuilder(NearItLaunchMode.SINGLE_TOP).build(), CDV_NEARIT_PERM_REQ);
+    public static void showPermissionsDialog(Activity activity, String explanation, int CDV_NEARIT_PERM_REQ) {
+        PermissionsRequestIntentBuilder builder = NearITUIBindings.getInstance(activity).permissionsIntentBuilder(NearItLaunchMode.SINGLE_TOP);
+        if (explanation != null) {
+            builder.setExplanation(explanation);
+        }
+        activity.startActivityForResult(builder.build(), CDV_NEARIT_PERM_REQ);
     }
 }

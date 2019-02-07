@@ -705,9 +705,67 @@ __weak CDVNearIT *instance = nil;
     [[CDVNearItUI sharedInstance] showPermissionsDialogWithExplanation:explanation ? explanation : nil delegate:self];
 }
 
+#pragma mark - Lifecycle
+
 - (void)onDeviceReady:( CDVInvokedUrlCommand* _Nonnull)command
 {
     [((AppDelegate*) UIApplication.sharedApplication.delegate) eventuallyRestoreNotification];
+}
+
+
+#pragma mark - Permissions utils
+
+- (void)isLocationGranted:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    CDVPluginResult* pluginResult = nil;
+    NSString *status = [CDVNearItPermissions getLocationStatus];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                            messageAsString:status];
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                      callbackId:[command callbackId]];
+}
+
+- (void)isNotificationGranted:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    CDVPluginResult* pluginResult = nil;
+    NSString *status = [CDVNearItPermissions getNotificationStatus];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                            messageAsString:status];
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                        callbackId:[command callbackId]];
+}
+
+- (void)isBluetoothEnabled:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                        callbackId:[command callbackId]];
+}
+
+- (void)areLocationServicesOn:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    CDVPluginResult* pluginResult = nil;
+    BOOL *status = [CDVNearItPermissions areLocationServicesOn];
+    if (status) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    }
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                        callbackId:[command callbackId]];
+}
+
+- (void)checkPermissions: ( CDVInvokedUrlCommand* _Nonnull)command
+{
+    NSDictionary* result = @{
+            @"location": [CDVNearItPermissions getLocationStatus],
+            @"notifications": [CDVNearItPermissions getNotificationStatus],
+            @"bluetooth": @YES,
+            @"locationServices": [NSNumber numberWithBool:[CDVNearItPermissions areLocationServicesOn]]
+        };
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                        callbackId:[command callbackId]];
 }
 
 #pragma NITPermissionsViewControllerDelegate
@@ -715,9 +773,10 @@ __weak CDVNearIT *instance = nil;
 - (void)dialogClosedWithLocationGranted:(BOOL)locationGranted notificationsGranted:(BOOL)notificationsGranted {
     if (permissionInvokedUrlCommand != nil) {
         NSDictionary* result = @{
-            @"location": [NSNumber numberWithBool:locationGranted],
-            @"notifications": [NSNumber numberWithBool:notificationsGranted],
-            @"bluetooth": @YES
+            @"location": [CDVNearItPermissions getLocationStatus],
+            @"notifications": [CDVNearItPermissions getNotificationStatus],
+            @"bluetooth": @YES,
+            @"locationServices": [NSNumber numberWithBool:[CDVNearItPermissions areLocationServicesOn]]
         };
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
         [[self commandDelegate] sendPluginResult:pluginResult callbackId:[permissionInvokedUrlCommand callbackId]];

@@ -41,4 +41,9 @@ NSString* EVENT_TYPE_COUPON = @"eventCoupon.nearit";
 NSString* EVENT_TYPE_CONTENT = @"eventContent.nearit";
 NSString* EVENT_TYPE_FEEDBACK = @"eventFeedback.nearit";
 
+NSString* CDVN_NEVER_ASKED = @"never_asked";
+NSString* CDVN_DENIED = @"denied";
+NSString* CDVN_GRANTED_ALWAYS = @"always";
+NSString* CDVN_GRANTED_WHEN_IN_USE = @"when_in_use";
+
 @end
