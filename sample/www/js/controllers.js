@@ -45,7 +45,7 @@ angular.module('starter.controllers', [])
 
   $scope.showNotificationHistory = function() {
     if (window.nearit) {
-      nearit.showNotificationHistory();
+      nearit.showNotificationHistory("My notifications");
     }
   };
 
@@ -61,7 +61,7 @@ angular.module('starter.controllers', [])
   
   $scope.showCouponList = function() {
     if (window.nearit) {
-      nearit.showCouponList();
+      nearit.showCouponList("My coupons");
     }
   };
 

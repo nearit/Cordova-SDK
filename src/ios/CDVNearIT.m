@@ -649,8 +649,10 @@ __weak CDVNearIT *instance = nil;
 {
     CDVPluginResult* pluginResult = nil;
 
+    NSString* title = [[command arguments] objectAtIndex:0];
+
     NITLogD(TAG, @"UIBindings :: show coupon list");
-    [[CDVNearItUI sharedInstance] showCouponList];
+    [[CDVNearItUI sharedInstance] showCouponListWithTitle:title];
 
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
 
@@ -662,8 +664,10 @@ __weak CDVNearIT *instance = nil;
 {
     CDVPluginResult* pluginResult = nil;
 
+    NSString* title = [[command arguments] objectAtIndex:0];
+
     NITLogD(TAG, @"UIBindings :: show notification history");
-    [[CDVNearItUI sharedInstance] showNotificationHistory];
+    [[CDVNearItUI sharedInstance] showNotificationHistoryWithTitle:title];
 
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
 

@@ -32,16 +32,24 @@
     [vc show];
 }
 
-- (void)showNotificationHistory
+- (void)showNotificationHistoryWithTitle:(NSString * _Nullable)title;
 {
     NITNotificationHistoryViewController *historyVC = [[NITNotificationHistoryViewController alloc] init];
-    [historyVC show];
+    if (title != nil) {
+        [historyVC showWithTitle:title];
+    } else {
+        [historyVC show];
+    }
 }
 
-- (void)showCouponList
+- (void)showCouponListWithTitle:(NSString * _Nullable)title;
 {
     NITCouponListViewController *couponsVC = [[NITCouponListViewController alloc] init];
-    [couponsVC show];
+    if (title != nil) {
+        [couponsVC showWithTitle:title];
+    } else {
+        [couponsVC show];
+    }
 }
 
 - (void)showPermissionsDialogWithExplanation:(NSString*)explanation delegate:(id<NITPermissionsViewControllerDelegate>)delegate

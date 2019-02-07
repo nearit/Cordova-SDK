@@ -148,9 +148,9 @@ public class CDVNearIT extends CordovaPlugin {
 					} else if (action.equals("requestPermissions")) {
 						CDVNearIT.this.requestPermissions(args, callbackContext);
 					} else if (action.equals("showCouponList")) {
-						CDVNearIT.this.showCouponList();
+						CDVNearIT.this.showCouponList(args);
 					} else if (action.equals("showNotificationHistory")) {
-						CDVNearIT.this.showNotificationHistory();
+						CDVNearIT.this.showNotificationHistory(args);
 					} else if (action.equals("showContent")) {
 						CDVNearIT.this.showContent(args);
 					} else if (action.equals("isBluetoothEnabled")) {
@@ -752,30 +752,36 @@ public class CDVNearIT extends CordovaPlugin {
 	/**
 	 * Show coupon list
 	 * <code><pre>
-		 cordova.exec(successCb, errorCb, "nearit", "showCouponList", []);
+		 cordova.exec(successCb, errorCb, "nearit", "showCouponList", [title]);
 	   </pre></code>
+	 * @param args Cordova exec arguments
 	 * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void showCouponList() throws Exception {
+	public void showCouponList(JSONArray args) throws Exception {
 		Log.d(TAG, "UIBindings :: show coupon list");
+		NITHelper.validateArgsCount(args, 1);
+		final String activityTitle = NITHelper.validateNullableStringArgument(args, 0, "title");
 		Activity activity = this.cordova.getActivity();
 		if (activity != null) {
-			CDVNearItUI.showCouponList(activity);
+			CDVNearItUI.showCouponList(activity, activityTitle);
 		}
 	}
 
 	/**
 	 * Show notification history
 	 * <code><pre>
-		 cordova.exec(successCb, errorCb, "nearit", "showNotificationHistory", []);
+		 cordova.exec(successCb, errorCb, "nearit", "showNotificationHistory", [title]);
 	   </pre></code>
+	 * @param args Cordova exec arguments
 	 * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void showNotificationHistory() throws Exception {
+	public void showNotificationHistory(JSONArray args) throws Exception {
 		Log.d(TAG, "UIBindings :: show notification history");
+		NITHelper.validateArgsCount(args, 1);
+		final String activityTitle = NITHelper.validateNullableStringArgument(args, 0, "title");
 		Activity activity = this.cordova.getActivity();
 		if (activity != null) {
-			CDVNearItUI.showNotificationHistory(activity);
+			CDVNearItUI.showNotificationHistory(activity, activityTitle);
 		}
 	}
 
@@ -821,10 +827,14 @@ public class CDVNearIT extends CordovaPlugin {
 			Activity activity = this.cordova.getActivity();
 			if (permissionsCallbackContext != null && activity != null) {
 				try {
+					boolean location = PermissionsUtils.checkLocationPermission(activity);
+					boolean notifications = PermissionsUtils.areNotificationsEnabled(activity);
+
 					Map<String, Object> res = new HashMap<String,Object>();
-					res.put("location", (PermissionsUtils.checkLocationPermission(activity) && PermissionsUtils.checkLocationServices(activity)));
-					res.put("notifications", PermissionsUtils.areNotificationsEnabled(activity));
+					res.put("location", location ? "always" : "denied");
+					res.put("notifications", notifications ? "always" : "denied");
 					res.put("bluetooth", PermissionsUtils.checkBluetooth(activity));
+					res.put("locationServices", PermissionsUtils.checkLocationServices(activity));
 					JSONObject result = new JSONObject(res);
 					permissionsCallbackContext.success(result);
 				} catch (Exception e) {

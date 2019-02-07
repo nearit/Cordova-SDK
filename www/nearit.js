@@ -316,12 +316,12 @@ NearIT.prototype.requestPermissions = function(explanation, successCallback, err
     exec(successCallback, errorCallback, this.serviceName, "requestPermissions", [explanation]);
 };
 
-NearIT.prototype.showCouponList = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "showCouponList", []);
+NearIT.prototype.showCouponList = function(title, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "showCouponList", [title]);
 };
 
-NearIT.prototype.showNotificationHistory = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "showNotificationHistory", []);
+NearIT.prototype.showNotificationHistory = function(title, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "showNotificationHistory", [title]);
 };
 
 NearIT.prototype.showContent = function(event, successCallback, errorCallback) {
