@@ -332,4 +332,24 @@ NearIT.prototype.onDeviceReady = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "onDeviceReady", []);
 };
 
+NearIT.prototype.isBluetoothEnabled = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "isBluetoothEnabled", []);
+};
+
+NearIT.prototype.areLocationServicesOn = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "areLocationServicesOn", []);
+};
+
+NearIT.prototype.isLocationGranted = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "isLocationGranted", []);
+};
+
+NearIT.prototype.isNotificationGranted = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "isNotificationGranted", []);
+};
+
+NearIT.prototype.checkPermissions = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "checkPermissions", []);
+};
+
 module.exports = new NearIT();

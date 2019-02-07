@@ -153,6 +153,18 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.showNotificationHistory();
 					} else if (action.equals("showContent")) {
 						CDVNearIT.this.showContent(args);
+					} else if (action.equals("isBluetoothEnabled")) {
+						CDVNearIT.this.isBluetoothEnabled(callbackContext);
+					} else if (action.equals("areLocationServicesOn")) {
+						CDVNearIT.this.areLocationServicesOn(callbackContext);
+					} else if (action.equals("isLocationGranted")) {
+						CDVNearIT.this.isLocationGranted(callbackContext);
+					} else if (action.equals("isNotificationGranted")) {
+						CDVNearIT.this.isNotificationGranted(callbackContext);
+					} else if (action.equals("checkPermissions")) {
+						CDVNearIT.this.checkPermissions(callbackContext);
+					} else if (action.equals("showContent")) {
+						CDVNearIT.this.showContent(args);
 					} else {
 						final String message = "unknown action " + action;
 						Log.e(TAG, message);
@@ -841,4 +853,84 @@ public class CDVNearIT extends CordovaPlugin {
 			NearUtils.parseContents(intent, new CDVNearITContentListener());
 		}
 	}
+
+	public void isLocationGranted(CallbackContext callbackContext) throws Exception {
+		Activity activity = cordova.getActivity();
+		if (activity != null) {
+			boolean granted = PermissionsUtils.checkLocationPermission(activity);
+			if (granted) {
+				callbackContext.success("always");
+			} else {
+				callbackContext.success("denied");
+			}
+		} else {
+			Log.e(TAG, "NITManager :: isLocationGranted error, null activity");
+			callbackContext.success("Can\'t get location permission status");
+		}
+	}
+
+	public void areLocationServicesOn(CallbackContext callbackContext) throws Exception {
+		Activity activity = cordova.getActivity();
+		if (activity != null) {
+			boolean granted = PermissionsUtils.checkLocationServices(activity);
+			if (granted) {
+				callbackContext.success();
+			} else {
+				callbackContext.error("Location services NOT enabled");
+			}
+		} else {
+			Log.e(TAG, "NITManager :: areLocationServicesOn error, null activity");
+			callbackContext.error("Can\'t get location services status");
+		}
+	}
+
+	public void isNotificationGranted(CallbackContext callbackContext) throws Exception {
+		Activity activity = cordova.getActivity();
+		if (activity != null) {
+			boolean granted = PermissionsUtils.areNotificationsEnabled(activity);
+			if (granted) {
+				callbackContext.success("always");
+			} else {
+				callbackContext.success("denied");
+			}
+		} else {
+			Log.e(TAG, "NITManager :: isNotificationGranted error, null activity");
+			callbackContext.error("Can\'t get notification permission status");
+		}
+	}
+
+	public void isBluetoothEnabled(CallbackContext callbackContext) throws Exception {
+		Activity activity = cordova.getActivity();
+		if (activity != null) {
+			boolean granted = PermissionsUtils.checkBluetooth(activity);
+			if (granted) {
+				callbackContext.success();
+			} else {
+				callbackContext.error("Bluetooth NOT enabled");
+			}
+		} else {
+			Log.e(TAG, "NITManager :: isBluetoothEnabled error, null activity");
+			callbackContext.error("Can\'t get bluetooth status");
+		}
+	}
+
+	public void checkPermissions(CallbackContext callbackContext) throws Exception {
+		Activity activity = cordova.getActivity();
+		if (activity != null) {
+			boolean location = PermissionsUtils.checkLocationPermission(activity);
+			boolean notifications = PermissionsUtils.areNotificationsEnabled(activity);
+
+			Map<String, Object> res = new HashMap<String,Object>();
+			res.put("location", location ? "always" : "denied");
+			res.put("notifications", notifications ? "always" : "denied");
+			res.put("bluetooth", PermissionsUtils.checkBluetooth(activity));
+			res.put("locationServices", PermissionsUtils.checkLocationServices(activity));
+			JSONObject result = new JSONObject(res);
+			callbackContext.success(result);
+		} else {
+			Log.e(TAG, "NITManager :: checkPermissions error, null activity");
+			callbackContext.error("Can\'t check permissions status");
+		}
+	}
+	
 }
