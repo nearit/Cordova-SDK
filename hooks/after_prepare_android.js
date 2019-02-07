@@ -70,7 +70,7 @@ if (platformDir) {
     if (nearApiKeyElm) {
       nearApiKeyElm.attrib['android:value'] = apiKey
     } else {
-      console.log(`* 'near_api_key' meta not found. Will try to add\n`)
+      // console.log(`* 'near_api_key' meta not found. Will try to add\n`)
       try {
         var apiKeyMeta = et.Element('meta-data', {
           'android:name': 'near_api_key',
@@ -112,7 +112,7 @@ if (platformDir) {
         }
       }
     } else {
-      console.log(`* 'NearTestEnrollActivity' not found. Will try to add\n`)
+      //console.log(`* 'NearTestEnrollActivity' not found. Will try to add\n`)
       try {
         var action = et.Element('action', {
           'android:name': 'android.intent.action.VIEW'

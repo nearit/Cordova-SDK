@@ -61,14 +61,14 @@ if (platformDir) {
                 }
             });
             if (!alreadyInjected) {
-                console.log(`* 'near_url_scheme' not found in plist. Will try to add\n`)
+                // console.log(`* 'near_url_scheme' not found in plist. Will try to add\n`)
                 urlTypes.push({
                     "CFBundleTypeRole": "Editor",
                     "CFBundleURLSchemes": [ urlScheme ]
                 })
             }
         } else {
-            console.log(`* 'near_url_scheme' not found in plist. Will try to add\n`)
+            //console.log(`* 'near_url_scheme' not found in plist. Will try to add\n`)
             parsedPlist["CFBundleURLTypes"] = [{
                 "CFBundleTypeRole": "Editor",
                 "CFBundleURLSchemes": [ urlScheme ]
