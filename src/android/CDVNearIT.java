@@ -146,7 +146,7 @@ public class CDVNearIT extends CordovaPlugin {
 					} else if (action.equals("stopRadar")) {
 						CDVNearIT.this.stopRadar();
 					} else if (action.equals("requestPermissions")) {
-						CDVNearIT.this.requestPermissions(callbackContext);
+						CDVNearIT.this.requestPermissions(args, callbackContext);
 					} else if (action.equals("showCouponList")) {
 						CDVNearIT.this.showCouponList();
 					} else if (action.equals("showNotificationHistory")) {
@@ -728,20 +728,24 @@ public class CDVNearIT extends CordovaPlugin {
 	/**
 	 * Request permissions (location, notifications, bluetooth) via dedicated UI
 	 * <code><pre>
-		 cordova.exec(successCb, errorCB, "nearit", "requestPermissions", []);
+		 cordova.exec(successCb, errorCB, "nearit", "requestPermissions", [explanation]);
 	   </pre></code>
+	 * @param args Cordova exec arguments
 	 * @param callbackContext Cordova callback context
 	 * @throws Exception if there is any validation error or other kind of exception
 	 */
-	public void requestPermissions(CallbackContext callbackContext) throws Exception {
+	public void requestPermissions(JSONArray args, CallbackContext callbackContext) throws Exception {
 		Log.d(TAG, "UIBindings :: request permissions");
 		
 		this.permissionsCallbackContext = callbackContext;
 
+		NITHelper.validateArgsCount(args, 1);
+		final String explanation = NITHelper.validateStringArgument(args, 0, "explanation");
+
 		cordova.setActivityResultCallback(this);
 		Activity activity = this.cordova.getActivity();
 		if (activity != null) {
-			CDVNearItUI.showPermissionsDialog(activity, CDV_NEARIT_PERM_REQ);
+			CDVNearItUI.showPermissionsDialog(activity, explanation, CDV_NEARIT_PERM_REQ);
 		}
 	}
 
