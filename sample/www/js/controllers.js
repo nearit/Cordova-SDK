@@ -19,16 +19,27 @@ angular.module('starter.controllers', [])
 
   $scope.requestPermissions = function() {
     if (window.nearit) {
-      nearit.requestPermissions(
-        "YOUR MESSAGE THAT EXPLAINS WHY YOU ARE REQUESTING THESE PERMISSIONS",
-        function(result) {
-          if (result.location && result.bluetooth && result.notifications) {
-            nearit.startRadar();
-          }
-          appendLog(`Location permission granted: ${result.location}`);
-          appendLog(`Notifications permission granted: ${result.notifications}`);
-          appendLog(`Bluetooth enabled: ${result.bluetooth}`);
-        });
+      nearit.checkPermissions(function(status) {
+        if (status.notifications != "always" ||
+            status.location != "always" ||
+            !status.bluetooth ||
+            !status.locationServices) {
+          nearit.requestPermissions(
+            "YOUR MESSAGE THAT EXPLAINS WHY YOU ARE REQUESTING THESE PERMISSIONS",
+            function(result) {
+              appendLog(`Location permission granted: ${result.location}`);
+              appendLog(`Notifications permission granted: ${result.notifications}`);
+              appendLog(`Bluetooth enabled: ${result.bluetooth}`);
+              appendLog(`Location services: ${result.locationServices}`);
+              if (result.location && result.bluetooth && result.notifications) {
+                nearit.startRadar();
+              }
+            }
+          );
+        } else {
+          nearit.startRadar();
+        }
+      });
     }
   };
 
