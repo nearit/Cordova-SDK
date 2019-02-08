@@ -39,4 +39,9 @@ extern NSString* EVENT_TYPE_COUPON;
 extern NSString* EVENT_TYPE_CONTENT;
 extern NSString* EVENT_TYPE_FEEDBACK;
 
+extern NSString* CDVN_NEVER_ASKED;
+extern NSString* CDVN_DENIED;
+extern NSString* CDVN_GRANTED_ALWAYS;
+extern NSString* CDVN_GRANTED_WHEN_IN_USE;
+
 @end

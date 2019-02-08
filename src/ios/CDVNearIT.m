@@ -40,6 +40,7 @@ __weak CDVNearIT *instance = nil;
 
 @implementation CDVNearIT {
     CDVInvokedUrlCommand* permissionInvokedUrlCommand;
+    CDVInvokedUrlCommand* historyUpdatesInvokedUrlCommand;
 }
 
 + ( CDVNearIT * _Nullable )instance
@@ -451,6 +452,23 @@ __weak CDVNearIT *instance = nil;
     }];
 }
 
+- (void)addNotificationHistoryUpdateListener:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    historyUpdatesInvokedUrlCommand = command;
+    [NITManager defaultManager].notificationDelegate = self;
+}
+
+/**
+ * Mark notification history as old
+ * <code><pre>
+    cordova.exec(successCb, errorCb, "nearit", "markNotificationHistoryAsOld", []);
+</pre></code>
+ */
+- (void)markNotificationHistoryAsOld:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    [[NITManager defaultManager] markNotificationHistoryAsOld];
+}
+
 #pragma mark - In-app Event
 /**
  * Trigger in-app event
@@ -649,8 +667,10 @@ __weak CDVNearIT *instance = nil;
 {
     CDVPluginResult* pluginResult = nil;
 
+    NSString* title = [[command arguments] objectAtIndex:0];
+
     NITLogD(TAG, @"UIBindings :: show coupon list");
-    [[CDVNearItUI sharedInstance] showCouponList];
+    [[CDVNearItUI sharedInstance] showCouponListWithTitle:title];
 
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
 
@@ -662,8 +682,10 @@ __weak CDVNearIT *instance = nil;
 {
     CDVPluginResult* pluginResult = nil;
 
+    NSString* title = [[command arguments] objectAtIndex:0];
+
     NITLogD(TAG, @"UIBindings :: show notification history");
-    [[CDVNearItUI sharedInstance] showNotificationHistory];
+    [[CDVNearItUI sharedInstance] showNotificationHistoryWithTitle:title];
 
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
 
@@ -705,9 +727,67 @@ __weak CDVNearIT *instance = nil;
     [[CDVNearItUI sharedInstance] showPermissionsDialogWithExplanation:explanation ? explanation : nil delegate:self];
 }
 
+#pragma mark - Lifecycle
+
 - (void)onDeviceReady:( CDVInvokedUrlCommand* _Nonnull)command
 {
     [((AppDelegate*) UIApplication.sharedApplication.delegate) eventuallyRestoreNotification];
+}
+
+
+#pragma mark - Permissions utils
+
+- (void)isLocationGranted:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    CDVPluginResult* pluginResult = nil;
+    NSString *status = [CDVNearItPermissions getLocationStatus];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                            messageAsString:status];
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                      callbackId:[command callbackId]];
+}
+
+- (void)isNotificationGranted:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    CDVPluginResult* pluginResult = nil;
+    NSString *status = [CDVNearItPermissions getNotificationStatus];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                            messageAsString:status];
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                        callbackId:[command callbackId]];
+}
+
+- (void)isBluetoothEnabled:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                        callbackId:[command callbackId]];
+}
+
+- (void)areLocationServicesOn:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    CDVPluginResult* pluginResult = nil;
+    BOOL *status = [CDVNearItPermissions areLocationServicesOn];
+    if (status) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    }
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                        callbackId:[command callbackId]];
+}
+
+- (void)checkPermissions: ( CDVInvokedUrlCommand* _Nonnull)command
+{
+    NSDictionary* result = @{
+            @"location": [CDVNearItPermissions getLocationStatus],
+            @"notifications": [CDVNearItPermissions getNotificationStatus],
+            @"bluetooth": @YES,
+            @"locationServices": [NSNumber numberWithBool:[CDVNearItPermissions areLocationServicesOn]]
+        };
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
+    [[self commandDelegate] sendPluginResult:pluginResult
+                                        callbackId:[command callbackId]];
 }
 
 #pragma NITPermissionsViewControllerDelegate
@@ -715,9 +795,10 @@ __weak CDVNearIT *instance = nil;
 - (void)dialogClosedWithLocationGranted:(BOOL)locationGranted notificationsGranted:(BOOL)notificationsGranted {
     if (permissionInvokedUrlCommand != nil) {
         NSDictionary* result = @{
-            @"location": [NSNumber numberWithBool:locationGranted],
-            @"notifications": [NSNumber numberWithBool:notificationsGranted],
-            @"bluetooth": @YES
+            @"location": [CDVNearItPermissions getLocationStatus],
+            @"notifications": [CDVNearItPermissions getNotificationStatus],
+            @"bluetooth": @YES,
+            @"locationServices": [NSNumber numberWithBool:[CDVNearItPermissions areLocationServicesOn]]
         };
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
         [[self commandDelegate] sendPluginResult:pluginResult callbackId:[permissionInvokedUrlCommand callbackId]];
@@ -733,6 +814,24 @@ __weak CDVNearIT *instance = nil;
 - (void)notificationsGranted:(BOOL)granted {
     if (permissionInvokedUrlCommand != nil) {
         
+    }
+}
+
+#pragma NITNotificationUpdateDelegate
+
+- (void)historyUpdatedWithItems:(NSArray<NITHistoryItem *> * _Nullable)items {
+    if (historyUpdatesInvokedUrlCommand != nil) {
+        NSMutableArray *bundledNotificationHistory = [[NSMutableArray alloc] init];
+
+        CDVPluginResult* pluginResult = nil;
+    
+        for (NITHistoryItem *item in items) {
+            [bundledNotificationHistory addObject:[NearITUtils bundleNITHistoryItem:item]];
+        }
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:bundledNotificationHistory];
+        [pluginResult setKeepCallbackAsBool:@YES];
+
+        [[self commandDelegate] sendPluginResult:pluginResult callbackId:[historyUpdatesInvokedUrlCommand callbackId]];
     }
 }
 

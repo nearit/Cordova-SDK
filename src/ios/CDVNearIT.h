@@ -37,6 +37,7 @@
 #import "CDVNearItUI.h"
 #import "NearITUtils.h"
 #import "NearITConsts.h"
+#import "CDVNearItPermissions.h"
 #import <NearITSDK/NearITSDK.h>
 
 
@@ -94,6 +95,8 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 #pragma mark - NotificationHistory
 
 - (void)getNotificationHistory:( CDVInvokedUrlCommand* _Nonnull)command;
+- (void)addNotificationHistoryUpdateListener:( CDVInvokedUrlCommand* _Nonnull)command;
+- (void)markNotificationHistoryAsOld:( CDVInvokedUrlCommand* _Nonnull)command;
 
 #pragma mark - In-app Event
 
@@ -120,6 +123,16 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 - (void)showContent:( CDVInvokedUrlCommand* _Nonnull)command;
 - (void)requestPermissions:( CDVInvokedUrlCommand* _Nonnull )command;
 
+#pragma mark - Lifecycle
+
 - (void)onDeviceReady:( CDVInvokedUrlCommand* _Nonnull)command;
+
+#pragma mark - Permissions utils
+
+- (void)isLocationGranted:( CDVInvokedUrlCommand* _Nonnull)command;
+- (void)isNotificationGranted:( CDVInvokedUrlCommand* _Nonnull)command;
+- (void)isBluetoothEnabled:( CDVInvokedUrlCommand* _Nonnull)command;
+- (void)areLocationServicesOn:( CDVInvokedUrlCommand* _Nonnull)command;
+- (void)checkPermissions: ( CDVInvokedUrlCommand* _Nonnull)command;
 
 @end

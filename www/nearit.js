@@ -199,14 +199,32 @@ NearIT.prototype.getCoupons = function(successCallback, errorCallback) {
  *  Notification history
  */
 
- /**
-  * Retrieve NearIT notification history
+/**
+ * Retrieve NearIT notification history
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+*/
+NearIT.prototype.getNotificationHistory = function(successCallback, errorCallback) {
+     exec(successCallback, errorCallback, this.serviceName, "getNotificationHistory", []);
+};
+
+/**
+  * Add a notification history update listener
   * @param {Function} successCallback The function to call when the call is successful
   * @param {Function} errorCallback The function to call when there is an error
   */
- NearIT.prototype.getNotificationHistory = function(successCallback, errorCallback) {
-     exec(successCallback, errorCallback, this.serviceName, "getNotificationHistory", []);
- };
+NearIT.prototype.addNotificationHistoryUpdateListener = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "addNotificationHistoryUpdateListener", []);
+};
+
+/**
+  * Mark the notification history as old
+  * @param {Function} successCallback The function to call when the call is successful
+  * @param {Function} errorCallback The function to call when there is an error
+  */
+NearIT.prototype.markNotificationHistoryAsOld = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "markNotificationHistoryAsOld", []);
+};
 
 /*
  * Custom Triggers
@@ -316,12 +334,12 @@ NearIT.prototype.requestPermissions = function(explanation, successCallback, err
     exec(successCallback, errorCallback, this.serviceName, "requestPermissions", [explanation]);
 };
 
-NearIT.prototype.showCouponList = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "showCouponList", []);
+NearIT.prototype.showCouponList = function(title, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "showCouponList", [title]);
 };
 
-NearIT.prototype.showNotificationHistory = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "showNotificationHistory", []);
+NearIT.prototype.showNotificationHistory = function(title, successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "showNotificationHistory", [title]);
 };
 
 NearIT.prototype.showContent = function(event, successCallback, errorCallback) {
@@ -330,6 +348,26 @@ NearIT.prototype.showContent = function(event, successCallback, errorCallback) {
 
 NearIT.prototype.onDeviceReady = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, this.serviceName, "onDeviceReady", []);
+};
+
+NearIT.prototype.isBluetoothEnabled = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "isBluetoothEnabled", []);
+};
+
+NearIT.prototype.areLocationServicesOn = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "areLocationServicesOn", []);
+};
+
+NearIT.prototype.isLocationGranted = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "isLocationGranted", []);
+};
+
+NearIT.prototype.isNotificationGranted = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "isNotificationGranted", []);
+};
+
+NearIT.prototype.checkPermissions = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "checkPermissions", []);
 };
 
 module.exports = new NearIT();

@@ -103,6 +103,7 @@ public class NearITUtils {
 
         itemMap.put("read", item.read);
         itemMap.put("timestamp", item.timestamp);
+        itemMap.put("isNew", item.isNew);
         try {
             itemMap.put("trackingInfo", bundleTrackingInfo(item.trackingInfo));
         } catch (Exception e) {
