@@ -58,7 +58,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 
         nearit.onDeviceReady();
 
-        nearit.addNotificationHistoryUpdateListener(function(items) {
+        nearit.setNotificationHistoryUpdateListener(function(items) {
           appendLog(`Notification history update! Count: ${items.filter(item => item.isNew).length}`)
         });
 
