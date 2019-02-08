@@ -64,21 +64,9 @@ function main(rootdir) {
         require("plist");
         require("xml2js");
     } catch (e) {
-        console.log("\x1b[31m%s\x1b[0m", '\nNearIT :: Plugin not added: missing Node dependencies. Please run `npm install shelljs elementtree plist xml2js --save`\n');
-        return;
+        console.log("\x1b[33m%s\x1b[0m", '\nNearIT :: Plugin might not added: missing Node dependencies. Please run `npm install shelljs elementtree plist xml2js --save-prod`\n');
     }
     if (rootdir && fs.existsSync(rootdir)) {
-        // console.log("\n---------------------");
-        // console.log(
-        //     "  _   _               _____ _______    _____              _                 \n" +
-        //     " | \\ | |             |_   _|__   __|  / ____|            | |                \n" +
-        //     " |  \\| | ___  __ _ _ __| |    | |    | |     ___  _ __ __| | _____   ____ _ \n" +
-        //     " | . ` |/ _ \\/ _` | '__| |    | |    | |    / _ \\| '__/ _` |/ _ \\ \\ / / _` |\n" +
-        //     " | |\\  |  __/ (_| | | _| |_   | |    | |___| (_) | | | (_| | (_) \\ V / (_| |\n" +
-        //     " |_| \\_|\\___|\\__,_|_||_____|  |_|     \\_____\\___/|_|  \\__,_|\\___/ \\_/ \\__,_|\n" +
-        //     "\n");
-        // console.log("Working dir:", rootdir);
-
         // go through each of the platform directories that have been prepared
         var platforms = [];
         var platformDir = path.join(rootdir, 'platforms');
@@ -103,8 +91,6 @@ function main(rootdir) {
                 console.error(e);
             }
         });
-
-        console.log("---------------------\n");
     }
 }
 
