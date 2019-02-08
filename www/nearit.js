@@ -209,12 +209,12 @@ NearIT.prototype.getNotificationHistory = function(successCallback, errorCallbac
 };
 
 /**
-  * Add a notification history update listener
+  * Set a notification history update listener
   * @param {Function} successCallback The function to call when the call is successful
   * @param {Function} errorCallback The function to call when there is an error
   */
-NearIT.prototype.addNotificationHistoryUpdateListener = function(successCallback, errorCallback) {
-    exec(successCallback, errorCallback, this.serviceName, "addNotificationHistoryUpdateListener", []);
+NearIT.prototype.setNotificationHistoryUpdateListener = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "setNotificationHistoryUpdateListener", []);
 };
 
 /**

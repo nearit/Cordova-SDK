@@ -452,7 +452,7 @@ __weak CDVNearIT *instance = nil;
     }];
 }
 
-- (void)addNotificationHistoryUpdateListener:( CDVInvokedUrlCommand* _Nonnull)command
+- (void)setNotificationHistoryUpdateListener:( CDVInvokedUrlCommand* _Nonnull)command
 {
     historyUpdatesInvokedUrlCommand = command;
     [NITManager defaultManager].notificationDelegate = self;
