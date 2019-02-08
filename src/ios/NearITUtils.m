@@ -86,9 +86,11 @@
 	NSNumber *read = [NSNumber numberWithBool:item.read];
 	NSNumber *timestamp = [NSNumber numberWithDouble:item.timestamp];
 	NSString *bundledTrackingInfo = [self bundleTrackingInfo:item.trackingInfo];
+    NSNumber *isNew = [NSNumber numberWithBool:item.isNew];
 	
 	[historyDictionary setObject:read forKey:@"read"];
 	[historyDictionary setObject:timestamp forKey:@"timestamp"];
+    [historyDictionary setObject:isNew forKey:@"isNew"];
 	[historyDictionary setObject:(bundledTrackingInfo ? bundledTrackingInfo : [NSNull null]) forKey:@"trackingInfo"];
     NSString* message = item.reactionBundle.notificationMessage;
     if (!message) {

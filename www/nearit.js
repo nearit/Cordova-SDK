@@ -199,14 +199,32 @@ NearIT.prototype.getCoupons = function(successCallback, errorCallback) {
  *  Notification history
  */
 
- /**
-  * Retrieve NearIT notification history
+/**
+ * Retrieve NearIT notification history
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+*/
+NearIT.prototype.getNotificationHistory = function(successCallback, errorCallback) {
+     exec(successCallback, errorCallback, this.serviceName, "getNotificationHistory", []);
+};
+
+/**
+  * Add a notification history update listener
   * @param {Function} successCallback The function to call when the call is successful
   * @param {Function} errorCallback The function to call when there is an error
   */
- NearIT.prototype.getNotificationHistory = function(successCallback, errorCallback) {
-     exec(successCallback, errorCallback, this.serviceName, "getNotificationHistory", []);
- };
+NearIT.prototype.addNotificationHistoryUpdateListener = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "addNotificationHistoryUpdateListener", []);
+};
+
+/**
+  * Mark the notification history as old
+  * @param {Function} successCallback The function to call when the call is successful
+  * @param {Function} errorCallback The function to call when there is an error
+  */
+NearIT.prototype.markNotificationHistoryAsOld = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "markNotificationHistoryAsOld", []);
+};
 
 /*
  * Custom Triggers

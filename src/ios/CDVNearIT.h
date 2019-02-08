@@ -95,6 +95,8 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 #pragma mark - NotificationHistory
 
 - (void)getNotificationHistory:( CDVInvokedUrlCommand* _Nonnull)command;
+- (void)addNotificationHistoryUpdateListener:( CDVInvokedUrlCommand* _Nonnull)command;
+- (void)markNotificationHistoryAsOld:( CDVInvokedUrlCommand* _Nonnull)command;
 
 #pragma mark - In-app Event
 

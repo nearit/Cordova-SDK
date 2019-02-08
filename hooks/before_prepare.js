@@ -85,7 +85,6 @@ function main(rootdir) {
         platforms.forEach(function (platform) {
             try {
                 platform = platform.trim().toLowerCase();
-                console.warn("\nProcessing settings for platform: " + platform);
                 lib.updatePlatformConfig(rootdir, platform, preferenceMappingData);
             } catch (e) {
                 console.error(e);

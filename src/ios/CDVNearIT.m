@@ -40,6 +40,7 @@ __weak CDVNearIT *instance = nil;
 
 @implementation CDVNearIT {
     CDVInvokedUrlCommand* permissionInvokedUrlCommand;
+    CDVInvokedUrlCommand* historyUpdatesInvokedUrlCommand;
 }
 
 + ( CDVNearIT * _Nullable )instance
@@ -451,6 +452,23 @@ __weak CDVNearIT *instance = nil;
     }];
 }
 
+- (void)addNotificationHistoryUpdateListener:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    historyUpdatesInvokedUrlCommand = command;
+    [NITManager defaultManager].notificationDelegate = self;
+}
+
+/**
+ * Mark notification history as old
+ * <code><pre>
+    cordova.exec(successCb, errorCb, "nearit", "markNotificationHistoryAsOld", []);
+</pre></code>
+ */
+- (void)markNotificationHistoryAsOld:( CDVInvokedUrlCommand* _Nonnull)command
+{
+    [[NITManager defaultManager] markNotificationHistoryAsOld];
+}
+
 #pragma mark - In-app Event
 /**
  * Trigger in-app event
@@ -796,6 +814,24 @@ __weak CDVNearIT *instance = nil;
 - (void)notificationsGranted:(BOOL)granted {
     if (permissionInvokedUrlCommand != nil) {
         
+    }
+}
+
+#pragma NITNotificationUpdateDelegate
+
+- (void)historyUpdatedWithItems:(NSArray<NITHistoryItem *> * _Nullable)items {
+    if (historyUpdatesInvokedUrlCommand != nil) {
+        NSMutableArray *bundledNotificationHistory = [[NSMutableArray alloc] init];
+
+        CDVPluginResult* pluginResult = nil;
+    
+        for (NITHistoryItem *item in items) {
+            [bundledNotificationHistory addObject:[NearITUtils bundleNITHistoryItem:item]];
+        }
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:bundledNotificationHistory];
+        [pluginResult setKeepCallbackAsBool:@YES];
+
+        [[self commandDelegate] sendPluginResult:pluginResult callbackId:[historyUpdatesInvokedUrlCommand callbackId]];
     }
 }
 
