@@ -58,6 +58,10 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 
         nearit.onDeviceReady();
 
+        nearit.addNotificationHistoryUpdateListener(function(items) {
+          appendLog(`Notification history update! Count: ${items.filter(item => item.isNew).length}`)
+        });
+
         // ensure that the plugin is initialized
         appendLog('NearIT plugin is READY!')
 
