@@ -77,6 +77,8 @@ public class CDVNearIT extends CordovaPlugin {
 
 	private CallbackContext permissionsCallbackContext = null;
 
+	private NotificationHistoryUpdateListener historyUpdateListener = null;
+
 	public static CDVNearIT getInstance() {
 		return mInstance;
 	}
@@ -131,8 +133,8 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.getCoupons(callbackContext);
 					} else if (action.equals("getNotificationHistory")) {
 						CDVNearIT.this.getNotificationHistory(callbackContext);
-					} else if (action.equals("addNotificationHistoryUpdateListener")) {
-						CDVNearIT.this.addNotificationHistoryUpdateListener(callbackContext);
+					} else if (action.equals("setNotificationHistoryUpdateListener")) {
+						CDVNearIT.this.setNotificationHistoryUpdateListener(callbackContext);
 					} else if (action.equals("markNotificationHistoryAsOld")) {
 						CDVNearIT.this.markNotificationHistoryAsOld();
 					} else if (action.equals("triggerEvent")) {
@@ -585,12 +587,17 @@ public class CDVNearIT extends CordovaPlugin {
 		NearItManager.getInstance().markNotificationHistoryAsOld();
 	}
 
-	public void addNotificationHistoryUpdateListener(final CallbackContext callbackContext) throws Exception {
+	public void setNotificationHistoryUpdateListener(final CallbackContext callbackContext) throws Exception {
 		PluginResult pluginResult = new  PluginResult(PluginResult.Status.NO_RESULT); 
         pluginResult.setKeepCallback(true);
 		callbackContext.sendPluginResult(pluginResult);
-		
-		NearItManager.getInstance().addNotificationHistoryUpdateListener(new NotificationHistoryUpdateListener() {
+
+		if (historyUpdateListener != null) {
+			Log.e(TAG, "remove");
+			NearItManager.getInstance().removeNotificationHistoryUpdateListener(historyUpdateListener);
+		}
+
+		historyUpdateListener = new NotificationHistoryUpdateListener() {
             @Override
             public void onNotificationHistoryUpdated(List<HistoryItem> items) {
                 JSONArray history = new JSONArray();
@@ -600,15 +607,16 @@ public class CDVNearIT extends CordovaPlugin {
 						JSONObject item = NITHelper.historyItemToJson(historyItem);
 						history.put(item);
 					}
+					PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, history);
+          			pluginResult.setKeepCallback(true); // keep callback
+          			callbackContext.sendPluginResult(pluginResult);
 				} catch(JSONException e) {
 					callbackContext.error(e.getMessage());
 				}
-
-				PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, history);
-          		pluginResult.setKeepCallback(true); // keep callback
-          		callbackContext.sendPluginResult(pluginResult);
             }
-        });
+		};
+		Log.e(TAG, "add");
+		NearItManager.getInstance().addNotificationHistoryUpdateListener(historyUpdateListener);
 	}
 
 	/*
