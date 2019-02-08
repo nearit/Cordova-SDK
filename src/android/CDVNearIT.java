@@ -34,6 +34,7 @@ import android.util.Log;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,6 +55,7 @@ import it.near.sdk.reactions.feedbackplugin.model.Feedback;
 import it.near.sdk.recipes.NearITEventHandler;
 import it.near.sdk.recipes.inbox.NotificationHistoryManager;
 import it.near.sdk.recipes.inbox.model.HistoryItem;
+import it.near.sdk.recipes.inbox.update.NotificationHistoryUpdateListener;
 import it.near.sdk.recipes.models.Recipe;
 import it.near.sdk.trackings.TrackingInfo;
 import it.near.sdk.utils.NearUtils;
@@ -129,7 +131,11 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.getCoupons(callbackContext);
 					} else if (action.equals("getNotificationHistory")) {
 						CDVNearIT.this.getNotificationHistory(callbackContext);
-					}else if (action.equals("triggerEvent")) {
+					} else if (action.equals("addNotificationHistoryUpdateListener")) {
+						CDVNearIT.this.addNotificationHistoryUpdateListener(callbackContext);
+					} else if (action.equals("markNotificationHistoryAsOld")) {
+						CDVNearIT.this.markNotificationHistoryAsOld();
+					} else if (action.equals("triggerEvent")) {
 						CDVNearIT.this.triggerEvent(args);
 					} else if (action.equals("sendTrackingForEventNotified")
 								|| action.equals("sendTrackingForEventReceived")) {
@@ -566,6 +572,43 @@ public class CDVNearIT extends CordovaPlugin {
 				callbackContext.error(error);
 			}
 		});
+	}
+
+	/**
+	 * Mark notification history as old
+	 * <code><pre>
+	 	cordova.exec(successCb, errorCb, "nearit", "markNotificationHistoryAsOld", []);
+	   </pre></code>
+	 */
+	public void markNotificationHistoryAsOld() throws Exception {
+		Log.d(TAG, "NITManager :: markNotificationHistoryAsOld()");
+		NearItManager.getInstance().markNotificationHistoryAsOld();
+	}
+
+	public void addNotificationHistoryUpdateListener(final CallbackContext callbackContext) throws Exception {
+		PluginResult pluginResult = new  PluginResult(PluginResult.Status.NO_RESULT); 
+        pluginResult.setKeepCallback(true);
+		callbackContext.sendPluginResult(pluginResult);
+		
+		NearItManager.getInstance().addNotificationHistoryUpdateListener(new NotificationHistoryUpdateListener() {
+            @Override
+            public void onNotificationHistoryUpdated(List<HistoryItem> items) {
+                JSONArray history = new JSONArray();
+
+				try {
+					for(HistoryItem historyItem : items) {
+						JSONObject item = NITHelper.historyItemToJson(historyItem);
+						history.put(item);
+					}
+				} catch(JSONException e) {
+					callbackContext.error(e.getMessage());
+				}
+
+				PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, history);
+          		pluginResult.setKeepCallback(true); // keep callback
+          		callbackContext.sendPluginResult(pluginResult);
+            }
+        });
 	}
 
 	/*

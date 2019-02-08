@@ -209,6 +209,7 @@ static char savedUserInfoKey;
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 {
     completionHandler(UNNotificationPresentationOptionAlert);
+    [[NITManager defaultManager] updateWithNotification:notification];
 }
 
 // MARK: - Push Notification handling
