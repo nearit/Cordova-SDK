@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-nearit",
-  "version": "2.11.2",
+  "version": "2.11.3",
   "description": "Cordova plugin for NearIT SDK",
   "author": {
     "name": "Fabio Cigliano",
