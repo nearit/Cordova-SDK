@@ -68,10 +68,12 @@
                      use-frameworks="true" />
 
         <!--
-            NearIT iOS SDK dependency
+            NearIT iOS SDK and UIs dependencies
             https://github.com/nearit/Near-iOS-SDK
+            https://github.com/nearit/iOS-UI-Bindings
             Supporting iOS 9.0 and later
-            Near-iOS-SDK release 2.11.0
+            iOS-SDK release 2.11.0
+            iOS-UI-Bindings release 2.11.3
         -->
         <pod name="NearITSDK" 
              configurations="release,debug"
@@ -81,7 +83,7 @@
         <pod name="NearUIBinding" 
              configurations="release,debug"
              git="https://github.com/nearit/iOS-UI-Bindings"
-             tag="2.11.1" />
+             tag="2.11.3" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="NearIT">
