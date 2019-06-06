@@ -7,7 +7,7 @@ import { Component, ElementRef, OnInit, AfterViewInit } from '@angular/core';
 })
 export class HomePage {
 
-  constructor(private elementRef: ElementRef) {}
+  constructor() {}
 
   showNotificationHistory() {
     const nearit = (window as any).nearit;
