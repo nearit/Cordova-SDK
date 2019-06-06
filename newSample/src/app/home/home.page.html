@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar class="toolbar">
+    <ion-title>
+      NearIT Sample
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="content">
+  <ion-grid>
+    <ion-row align-items-stretch>
+      <ion-col align-self-stretch>
+        <ion-button color="secondary" expand="block" (click)="requestPermissions()">Request permissions</ion-button>
+        <ion-button color="secondary" expand="block" (click)="getProfileId()">Get profileId</ion-button>
+        <ion-button color="secondary" expand="block" (click)="showNotificationHistory()">Show notification history</ion-button>
+        <ion-button color="secondary" expand="block" (click)="showCouponList()">Show coupon list</ion-button>
+        <ion-button color="secondary" expand="block" (click)="triggerInAppEvent()">Trigger in-app event</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
