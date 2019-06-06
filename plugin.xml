@@ -72,18 +72,18 @@
             https://github.com/nearit/Near-iOS-SDK
             https://github.com/nearit/iOS-UI-Bindings
             Supporting iOS 9.0 and later
-            iOS-SDK release 2.11.0
-            iOS-UI-Bindings release 2.11.3
+            iOS-SDK release 2.11.3
+            iOS-UI-Bindings release 2.11.9
         -->
         <pod name="NearITSDK" 
              configurations="release,debug"
              git="https://github.com/nearit/iOS-SDK"
-             tag="2.11.0" />
+             tag="2.11.3" />
 
         <pod name="NearUIBinding" 
              configurations="release,debug"
              git="https://github.com/nearit/iOS-UI-Bindings"
-             tag="2.11.3" />
+             tag="2.11.9" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="NearIT">
