@@ -24,25 +24,27 @@ export class AppComponent {
 
       const nearit = (window as any).nearit;
 
-      nearit.onDeviceReady();
+      if (nearit) {
+        nearit.onDeviceReady();
 
-      nearit.setNotificationHistoryUpdateListener(items => {
-        console.log(`Notification history update! Count: ${items.filter(item => item.isNew).length}`);
-      });
+        nearit.setNotificationHistoryUpdateListener(items => {
+          console.log(`Notification history update! Count: ${items.filter(item => item.isNew).length}`);
+        });
 
-      nearit.addEventListener(event => {
-        let evtMessage = '';
-        if (event.message) {
-          evtMessage = event.message;
-        } else if (event.data) {
-          evtMessage = event.data;
-        } else if (event.error) {
-          evtMessage = event.error;
-        }
-        console.log(`Event: '<b>${event.type}</b>' - Content: "${evtMessage}"`)
+        nearit.addEventListener(event => {
+          let evtMessage = '';
+          if (event.message) {
+            evtMessage = event.message;
+          } else if (event.data) {
+            evtMessage = event.data;
+          } else if (event.error) {
+            evtMessage = event.error;
+          }
+          console.log(`Event: '<b>${event.type}</b>' - Content: "${evtMessage}"`);
 
-        nearit.showContent(event);
-      });
+          nearit.showContent(event);
+        });
+      }
     });
   }
 }
