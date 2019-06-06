@@ -45,7 +45,7 @@ var plistFile = path.join(platformDir, projectName, projectName + '-Info.plist')
 
 if (platformDir) {
     if (!fs.existsSync(plistFile)) {
-        throw new Error("! Can't find the -Info.plist file. This shouldn't happen, please contact us for support.\n")
+        throw new Error("! Can't find the -Info.plist file. Have you added iOS platform?\n")
     }
 
     var urlScheme = lib.searchPreferenceByName(rootdir, 'android', 'near_url_scheme');

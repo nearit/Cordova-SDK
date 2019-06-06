@@ -79,7 +79,7 @@ if (platformDir) {
         root.find('application')
           .append(apiKeyMeta)
       } catch (e) {
-        throw new Error("! Can't inject `near_api_key` meta inside AndroidManifest.xml. This shouldn't happen, please contact us for support.\n")
+        throw new Error("! Can't inject `near_api_key` meta inside AndroidManifest.xml. Have you added Android platform?\n")
       }
     }
 
@@ -136,7 +136,7 @@ if (platformDir) {
         testDevActivity.append(intentFilter)
         root.find('application').append(testDevActivity)
       } catch (e) {
-        console.log("! Can't inject `near_url_scheme` inside AndroidManifest.xml. This shouldn't happen, please contact us for support.\n")
+        console.log("! Can't inject `near_url_scheme` inside AndroidManifest.xml. Have you added Android platform?\n")
       }
     }
     fs.writeFileSync(manifestFile, tempManifest.write({ indent: 4 }), 'utf-8');
