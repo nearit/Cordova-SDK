@@ -58,7 +58,7 @@
                          forKey:@"expiresAt"];
     [couponDictionary setObject:(coupon.redeemableFrom ? coupon.redeemableFrom : [NSNull null])
                          forKey:@"redeemableFrom"];
-    [couponDictionary setObject:(coupon.serialNumber ? coupon.serialNumber : [NSNull null])
+    [couponDictionary setObject:(coupon.serial ? coupon.serial : [NSNull null])
                          forKey:@"serial"];
     [couponDictionary setObject:(coupon.claimedAt ? coupon.claimedAt : [NSNull null])
                          forKey:@"claimedAt"];
