@@ -39,6 +39,16 @@ export class HomePage {
     }
   }
 
+  getUserData() {
+    const nearit = (window as any).nearit;
+    if (nearit) {
+      nearit.getUserData(
+        userData => console.log(userData),
+        errorMsg => console.log(errorMsg)
+      );
+    }
+  }
+
   requestPermissions() {
     const nearit = (window as any).nearit;
     if (nearit) {
