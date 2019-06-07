@@ -26,7 +26,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-nearit"
         name="NearIT"
-        version="2.11.3">
+        version="2.12.0">
 
     <name>NearIT SDK</name>
     <description>Cordova plugin for NearIT SDK</description>
@@ -72,18 +72,11 @@
             https://github.com/nearit/Near-iOS-SDK
             https://github.com/nearit/iOS-UI-Bindings
             Supporting iOS 9.0 and later
-            iOS-SDK release 2.11.0
-            iOS-UI-Bindings release 2.11.3
+            iOS-SDK release 2.12.0
+            iOS-UI-Bindings release 2.12.0
         -->
-        <pod name="NearITSDK" 
-             configurations="release,debug"
-             git="https://github.com/nearit/iOS-SDK"
-             tag="2.11.0" />
-
-        <pod name="NearUIBinding" 
-             configurations="release,debug"
-             git="https://github.com/nearit/iOS-UI-Bindings"
-             tag="2.11.3" />
+        <framework src="NearITSDK" type="podspec" spec="~> 2.12.0" />
+        <framework src="NearUIBinding" type="podspec" spec="~> 2.12.0" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="NearIT">
