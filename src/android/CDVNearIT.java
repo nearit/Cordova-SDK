@@ -127,7 +127,9 @@ public class CDVNearIT extends CordovaPlugin {
 						CDVNearIT.this.setUserData(args);
 					} else if (action.equals("setMultichoiceUserData")) {
 						CDVNearIT.this.setMultichoiceUserData(args);
-					} else if (action.equals("sendFeedback")) {
+					} else if (action.equals("getUserData")) {
+						CDVNearIT.this.getUserData(callbackContext);
+					}else if (action.equals("sendFeedback")) {
 						CDVNearIT.this.sendFeedback(args, callbackContext);
 					} else if (action.equals("getCoupons")) {
 						CDVNearIT.this.getCoupons(callbackContext);
@@ -400,8 +402,42 @@ public class CDVNearIT extends CordovaPlugin {
      * User Data
      */
 
+		/**
+     * Get user data
+     * <code><pre>
+        cordova.exec("nearit", "getUserData", []);
+    </pre></code>
+     * @param args Cordova exec arguments
+     * @throws Exception if there is any validation error or other kind of exception
+     */
+		public void getUserData(final CallbackContext callbackContext) throws Exception {
+			try {
+				Log.d(TAG, "NITManager :: getUserData");
+
+				cordova.getThreadPool().execute(new Runnable() {
+					@Override
+					public void run() {
+						NearItManager.getInstance().getUserData(new NearItUserProfile.ProfileUserDataListener() {
+							@Override
+							public void onUserData(Map<String, Object> userData) {
+								JSONObject result = new JSONObject(userData);
+								callbackContext.success(result);
+							}
+
+							@Override
+							public void onError(String error) {
+								callbackContext.error("Could not get user profile Id");
+							}
+						});
+					}
+				});
+			} catch (Exception e) {
+				Log.e(TAG, "NITManager :: could not getUserData");
+			}
+		}
+
     /**
-     * Track a user data
+     * Set a user data
      * <code><pre>
         cordova.exec("nearit", "setUserData", [fieldName, userValue]);
     </pre></code>
@@ -410,18 +446,18 @@ public class CDVNearIT extends CordovaPlugin {
      */
     public void setUserData(JSONArray args) throws Exception {
     	try {
-			NITHelper.validateArgsCount(args, 2);
-			String key = NITHelper.validateStringArgument(args, 0, "key");
-			String value = NITHelper.validateNullableStringArgument(args, 1, "value");
-			Log.d(TAG, "NITManager :: setUserData(" + key + ", " + value + ")");
-			NearItManager.getInstance().setUserData(key, value);
-		} catch (Exception e) {
-			Log.e(TAG, "NITManager :: Could not setUserData");
-		}
+				NITHelper.validateArgsCount(args, 2);
+				String key = NITHelper.validateStringArgument(args, 0, "key");
+				String value = NITHelper.validateNullableStringArgument(args, 1, "value");
+				Log.d(TAG, "NITManager :: setUserData(" + key + ", " + value + ")");
+				NearItManager.getInstance().setUserData(key, value);
+			} catch (Exception e) {
+				Log.e(TAG, "NITManager :: Could not setUserData");
+			}
     }
 
 	/**
-     * Track a multiple choice user data
+     * Set a multiple choice user data
      * <code><pre>
         cordova.exec("nearit", "setMultichoiceUserData", [key, userValues]);
     </pre></code>

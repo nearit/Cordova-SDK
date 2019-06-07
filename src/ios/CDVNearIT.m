@@ -276,7 +276,33 @@ __weak CDVNearIT *instance = nil;
 #pragma mark - User Data
 
 /**
- * Track a user data
+ * Get user data
+ * <code><pre>
+    cordova.exec(successCb, errorCb, "nearit", "getUserData", []);
+</pre></code>
+ */
+- (void)getUserData:( CDVInvokedUrlCommand* _Nonnull )command
+{
+    NITLogD(TAG, @"NITManager :: getUserData");
+
+    [[NITManager defaultManager] getUserDataWithCompletionHandler:^(NSDictionary<NSString *,id> * _Nullable userData, NSError * _Nullable error) {
+        CDVPluginResult* pluginResult = nil;
+
+        if (!error) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                             messageAsDictionary:userData];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                             messageAsString:[error description]];
+        }
+        
+        [[self commandDelegate] sendPluginResult:pluginResult
+                                      callbackId:[command callbackId]];
+    }];
+}
+
+/**
+ * Set a user data
  * <code><pre>
     cordova.exec(successCb, errorCb, "nearit", "setUserData", [fieldName, userValue]);
 </pre></code>
@@ -305,7 +331,7 @@ __weak CDVNearIT *instance = nil;
 }
 
 /**
- * Track a multichoice user data
+ * Set a multichoice user data
  * <code><pre>
     cordova.exec(successCb, errorCb, "nearit", "setMultichoiceUserData", [fieldName, userValue]);
 </pre></code>
