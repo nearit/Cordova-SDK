@@ -420,7 +420,8 @@ public class CDVNearIT extends CordovaPlugin {
 						NearItManager.getInstance().getUserData(new NearItUserProfile.ProfileUserDataListener() {
 							@Override
 							public void onUserData(Map<String, Object> userData) {
-								callbackContext.success(userData);
+								JSONObject result = new JSONObject(userData);
+								callbackContext.success(result);
 							}
 
 							@Override
