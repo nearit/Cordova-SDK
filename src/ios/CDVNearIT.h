@@ -81,6 +81,7 @@ typedef NS_ENUM(NSUInteger, CDVEventType) {
 
 #pragma mark - User Data
 
+- (void)getUserData:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)setUserData:( CDVInvokedUrlCommand* _Nonnull )command;
 - (void)setMultichoiceUserData:( CDVInvokedUrlCommand* _Nonnull )command;
 

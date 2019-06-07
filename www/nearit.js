@@ -155,6 +155,15 @@ NearIT.prototype.setMultichoiceUserData = function(key, values, successCallback,
     exec(successCallback, errorCallback, this.serviceName, "setMultichoiceUserData", [key, values]);
 };
 
+/**
+ * Get NearIT user profile data
+ * @param {Function} successCallback The function to call when the call is successful
+ * @param {Function} errorCallback The function to call when there is an error
+ */
+NearIT.prototype.getUserData = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, this.serviceName, "getUserData", []);
+};
+
 /*
  * User feedback
  */
