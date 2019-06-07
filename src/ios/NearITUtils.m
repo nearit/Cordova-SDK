@@ -58,11 +58,14 @@
                          forKey:@"expiresAt"];
     [couponDictionary setObject:(coupon.redeemableFrom ? coupon.redeemableFrom : [NSNull null])
                          forKey:@"redeemableFrom"];
-    
+    [couponDictionary setObject:(coupon.serialNumber ? coupon.serialNumber : [NSNull null])
+                         forKey:@"serial"];
+    [couponDictionary setObject:(coupon.claimedAt ? coupon.claimedAt : [NSNull null])
+                         forKey:@"claimedAt"];
+    [couponDictionary setObject:(coupon.redeemedAt ? coupon.redeemedAt : [NSNull null])
+                         forKey:@"redeemedAt"];
+
     if (coupon.claims.count > 0) {
-        [couponDictionary setObject:(coupon.claims[0].serialNumber ? coupon.claims[0].serialNumber : [NSNull null]) forKey:@"serial"];
-        [couponDictionary setObject:(coupon.claims[0].claimedAt ? coupon.claims[0].claimedAt : [NSNull null]) forKey:@"claimedAt"];
-        [couponDictionary setObject:(coupon.claims[0].redeemedAt ? coupon.claims[0].redeemedAt : [NSNull null]) forKey:@"redeemedAt"];
         [couponDictionary setObject:(coupon.claims[0].recipeId ? coupon.claims[0].recipeId : [NSNull null]) forKey:@"recipeId"];
     }
     
